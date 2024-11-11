@@ -1,11 +1,11 @@
-# React + Vite
+# Ilusões Industriais - Projeto de Alta fidelidade
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Este é um template de alta fidelidade do projeto Ilusões Industriais, utilizando a biblioteca React.
 
-Currently, two official plugins are available:
+Atualmente, o protótipo conta com:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- React-boostrap
+- React-router-dom
 
 
-rafc -> snippet p/a criar um componente const arrow function
+Por enquanto, apenas os componentes tem algum corpo.
