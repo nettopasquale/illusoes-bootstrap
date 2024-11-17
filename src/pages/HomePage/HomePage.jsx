@@ -1,4 +1,5 @@
 import Cards from "../../components/Cards/Cards";
+//import NewCards from "../../components/Cards/NewCards";
 import Footer from "../../components/Footer/Footer";
 import BarraNav from "../../components/Navbar/BarraNav";
 import BarraNavTab from "../../components/NavBar_Tab/BarraNavTab";
