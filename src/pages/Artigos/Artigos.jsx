@@ -5,7 +5,7 @@ import BarraNav from "../../components/Navbar/BarraNav"
 const Artigos = () => {
   return (
     <>
-    <BarraNav></BarraNav>
+      <BarraNav></BarraNav>
     <Footer></Footer>
   </>
   )

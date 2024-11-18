@@ -1,5 +1,5 @@
 import Cards from "../../components/Cards/Cards";
-//import NewCards from "../../components/Cards/NewCards";
+import Carrossel from "../../components/Carrossel/Carrossel";
 import Footer from "../../components/Footer/Footer";
 import BarraNav from "../../components/Navbar/BarraNav";
 import BarraNavTab from "../../components/NavBar_Tab/BarraNavTab";
@@ -8,17 +8,11 @@ import BarraNavTab from "../../components/NavBar_Tab/BarraNavTab";
 export default function HomePage() {
   return (
     <>
-      <main>
-
+      <main className="w-100">
         <BarraNav></BarraNav>
-
-        <p>Embbeded</p>
-
+        <Carrossel></Carrossel>
         <BarraNavTab></BarraNavTab>
-
         <Cards></Cards>
-        
-        
       </main>
 
       <Footer></Footer>

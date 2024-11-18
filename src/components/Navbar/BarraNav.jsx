@@ -4,13 +4,12 @@ import NavDropdown from 'react-bootstrap/NavDropdown'
 import Form from 'react-bootstrap/Form'
 import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button'
-import './BarraNav.css'
 import dk_logo from "../../assets/Do-key_kongo.jpg"
 
 const BarraNav = () => {
   return (
-      <Navbar expand="lg" className="bg-body-tertiary">
-        <Container fluid>
+      <Navbar expand="lg" className="navbar-nav nav-fill w-100" bg='dark'>
+        <Container fluid className="w-100">
           <Navbar.Brand href="#">
             <img
               alt=''
@@ -18,7 +17,6 @@ const BarraNav = () => {
               width="30"
               height="30"
               className='d-inline-block align-top' />
-            Ilusões Industriais
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -27,12 +25,12 @@ const BarraNav = () => {
               style={{ maxHeight: '100px' }}
               navbarScroll
             >
-              <Nav.Link href="#action1">Login</Nav.Link>
-              <Nav.Link href="#action2">DM</Nav.Link>
-              <Nav.Link href="#" disabled>
+              <Nav.Link href="#action1" className='fw-bold text-white fs-5'>Login</Nav.Link>
+              <Nav.Link href="#action2" className='fw-bold text-white fs-5'>DM</Nav.Link>
+              <Nav.Link href="#" disabled className='fw-bold text-white fs-5'>
               Meu Carrinho
               </Nav.Link>
-              <NavDropdown title="Mais" id="navbarScrollingDropdown">
+              <NavDropdown title="Mais" id="navbarScrollingDropdown" className='fw-bold text-white fs-5' >
                 <NavDropdown.Item href="#action3">Home</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="#action4">
