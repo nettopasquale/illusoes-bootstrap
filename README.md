@@ -1,9 +1,7 @@
 ## Ilusões Industriais
-Projeto da disciplina Engenharia de Software II
+Projeto da disciplina Engenharia de Software III
 
-## Membros do grupo: 
-Guilherme Nobrega  
-Jean Marcos Saraiva da Silva  
+## Membros do grupo:  
 Pasquale Milone Neto  
 Victor Domingues Leite 
 
@@ -23,6 +21,7 @@ No Futuro, a plataforma pretende adicionar:
 - [ ] Streaming de eventos e campeonatos pela plataforma
 - [ ] Leilões de cartas e outros produtos relacionados, com total segurança da plataforma
 - [ ] Planos pagos com novas funcionalidades
+
 
 ## Modelo de negócio e tamanho de mercado: 
 A plataforma permite o cadastro gratuito para qualquer pessoa. para todas elas, bastará apenas um cadastro do perfil, para que seja possível escrever artigos, organizar eventos e campeonatos, particiar do forum, divulgar cartas em leilões, etc.  
@@ -77,3 +76,21 @@ https://www.figma.com/design/u53GnZZCyBt0fpS7MOfxXG/IlusInd-Alta?node-id=0-1&t=0
 ## Video de Apresentação do Protótipo de Alta Fidelidade
 https://youtu.be/HXytk92nlQ4?si=-mtzXdY7_JZ0iSH1
 
+## ATUALIZAÇÃO: ENGENHARIA DE SOFTWARE III
+
+A plataforma deverá implementar as seguintes funcionalidades:
+- [ ] Sistema de Login e usuário funcionais;
+- [ ] Menus funcionando;
+- [ ] Sistemas de cadastro simples;
+
+## EM ANDAMENTO:
+- Sistema de Login e usuário funcionais;
+    -- Modal está implementado e funcionando, falta corrigir o fechamento. Falta implementar
+    a lógica do login e cadastro de usuário;
+
+- Menus funcionando;
+    -- Páginas do site estão em andamento, esqueleto está montado com componentes quase prontos;
+    Falta corrigir a rota das páginas;
+
+- Sistemas de cadastro simples;
+    -- Ainda não implementado. Utilizar exemplo do professor;
