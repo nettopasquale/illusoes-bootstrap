@@ -76,21 +76,21 @@ https://www.figma.com/design/u53GnZZCyBt0fpS7MOfxXG/IlusInd-Alta?node-id=0-1&t=0
 ## Video de Apresentação do Protótipo de Alta Fidelidade
 https://youtu.be/HXytk92nlQ4?si=-mtzXdY7_JZ0iSH1
 
-## ATUALIZAÇÃO: ENGENHARIA DE SOFTWARE III
+## ATUALIZAÇÃO: ENGENHARIA DE SOFTWARE III 
 
 A plataforma deverá implementar as seguintes funcionalidades:
 - [ ] Sistema de Login e usuário funcionais;
 - [ ] Menus funcionando;
 - [ ] Sistemas de cadastro simples;
 
-## EM ANDAMENTO:
-- Sistema de Login e usuário funcionais;
+## EM ANDAMENTO: 
+- Sistema de Login e usuário funcionais; 
     -- Modal está implementado e funcionando, falta corrigir o fechamento. Falta implementar
     a lógica do login e cadastro de usuário;
 
-- Menus funcionando;
+- Menus funcionando; 
     -- Páginas do site estão em andamento, esqueleto está montado com componentes quase prontos;
     Falta corrigir a rota das páginas;
 
-- Sistemas de cadastro simples;
+- Sistemas de cadastro simples; 
     -- Ainda não implementado. Utilizar exemplo do professor;
