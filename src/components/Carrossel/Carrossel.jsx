@@ -1,32 +1,42 @@
 /* eslint-disable no-unused-vars */
 import React from 'react'
 import { Carousel, Image } from 'react-bootstrap'
-import liliana from '../../assets/imgs/Magic/liliana-vess-1920_jpg.png'
+import liliana from '../../assets/imgs/Magic/liliana-vess-1920_jpg.jpg'
 import yug25 from '../../assets/imgs/Yugioh/25thniv.jpg'
 import SVPok from '../../assets/imgs/Pokemon/Scarlet-Violet-English-1.jpg'
 
 const Carrossel = () => {
   return (
-    <Carousel>
-      <Carousel.Item interval={1000}>
-        <Image src={yug25} className='w-75'/>
-        <Carousel.Caption>
-          <h3 className='fw-bold text-black fs-3'>Lançamento: Set 25th Anniversary Yugioh!</h3>
-          <p className='fw-bold text-black'>As cartas clássicas novamente disponíveis</p>
+    <Carousel className='w-100 mt-1'>
+      <Carousel.Item interval={1500}>
+        <Image src={yug25} className='w-50'fluid/>
+        <Carousel.Caption className='bg-dark bg-opacity-50 rounded p-3 mx-auto' style={{maxWidth: "50%"}}>
+          <h3 className='fw-bold text-white text-center fs-3'>
+            Lançamento: Set 25th Anniversary Yugioh!
+          </h3>
+          <p className='fw-bold text-white text-center'>
+            As cartas clássicas novamente disponíveis
+          </p>
         </Carousel.Caption>
       </Carousel.Item>
-      <Carousel.Item interval={1000}>
-        <Image src={SVPok} className='w-75' />
-        <Carousel.Caption>
-          <h3 className='fw-bold text-black fs-3'>Campeonato Scarlet e Violet - Pokémon</h3>
-          <p className='fw-bold text-black'>Para todas as idades</p>
+      <Carousel.Item interval={1500}>
+        <Image src={SVPok} className='w-50' fluid/>
+        <Carousel.Caption className='bg-dark bg-opacity-50 rounded p-3 mx-auto' style={{maxWidth: "50%"}}>
+          <h3 className='fw-bold text-white text-center fs-3'>
+            Campeonato Scarlet e Violet - Pokémon
+          </h3>
+          <p className='fw-bold text-white text-center'>
+            Para todas as idades
+          </p>
         </Carousel.Caption>
       </Carousel.Item>
-      <Carousel.Item interval={1000}>
-              <Image src={liliana} className='w-75' />
-        <Carousel.Caption>
-          <h3 className='fw-bold text-black fs-3'>Liliana Death Wielder</h3>
-          <p className='fw-bold text-black'>
+      <Carousel.Item interval={1500}>
+              <Image src={liliana} className='w-50' fluid />
+        <Carousel.Caption className='bg-dark bg-opacity-50 rounded p-3 mx-auto' style={{maxWidth: "50%"}}>
+          <h3 className='fw-bold text-white text-center fs-3'>
+            Liliana Death Wielder
+          </h3>
+          <p className='fw-bold text-white text-center'>
             Veja como montar um Deck focado em suporte para Liliana
           </p>
         </Carousel.Caption>

@@ -9,28 +9,34 @@ const Cards = () => {
     }
 
     return (
-        <Container fluid className='mt-4 justify-content-center'>
-            <Row>
+        <Container className='mt-4'>
+            <Row className='g-4'>
                 {
                     listaArtigos.map(artigo => {
                         return (
-                            
-                            <Col key={artigo.id} style={{cursor:'pointer'}}>
-                                    <Card border='dark' style={{ width: '22rem' }} onClick={onClick}>
-                                        <Card.Img src={artigo.image} variant="top" className='img-fluid rounded'/>
-                                            <Card.Body>
-                                                <Card.Title className='text-start mt-1 mb-2 fw-bold fs-3'>{artigo.Title} </Card.Title>
-                                                    <Card.Text className='text-start fs-5'>
-                                                    {artigo.SubTitle} 
-                                                    </Card.Text>
-                                                    <span className='text-start fs-5 p-2'>
-                                                    {artigo.author} 
-                                                    </span>
-                                                    <span className='text-end fs-6'>
-                                                    {artigo.data} 
-                                                    </span>
-                                            </Card.Body>
-                                    </Card>
+                            <Col key={artigo.id} xs={12} sm={6} md={3}>
+                                <Card
+                                    style={{ cursor: 'pointer' }}
+                                    onClick={onClick}
+                                    className='p-0 border-black h-100 card-group'>
+                                    <Card.Img src={artigo.image} className='card-img-top img-fluid' style={{width:"250px"}}/>
+                                    <Card.Body className='h-50'>
+                                        <Card.Title className='text-start text-wrap mt-1 mb-2 fw-bold fs-4'>
+                                            {artigo.Title} 
+                                        </Card.Title>
+                                        <Card.Text className='text-start fs-5'>
+                                            {artigo.SubTitle} 
+                                        </Card.Text>
+                                        <div className='d-flex justify-content-between fs-6 px-2'>
+                                            <span className='text-start fs-5 p-2'>
+                                                {artigo.author} 
+                                            </span>
+                                            <span className='fs-6'>
+                                                {artigo.data} 
+                                            </span>
+                                        </div>
+                                    </Card.Body>
+                                </Card>
                             </Col>
                         )
                     })

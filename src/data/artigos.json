@@ -1,98 +1,98 @@
 [
-        {
-            "id": 1, 
-            "image": "public/assets/imgs/Yugioh/agido_the_ancient_sentry.png",
-            "Title": "O terror Agido em decks anciões!",
-            "SubTitle": "Agido tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 2, 
-            "image": "public/assets/imgs/Yugioh/black_shadow_squall.png",
-            "Title": "Black Shadow Squall",
-            "SubTitle": "Black Shadow Squall tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 3, 
-            "image": "public/assets/imgs/Yugioh/dark_magician_girl.jpg",
-            "Title": "Dark Magician Girl",
-            "SubTitle": "Dark Magician Girl tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 4, 
-            "image": "public/assets/imgs/Yugioh/card_destruction__rush_duel.jpg",
-            "Title": "Card Destruction",
-            "SubTitle": "Card Destruction tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 5, 
-            "image": "public/assets/imgs/Yugioh/court_of_cards.jpg",
-            "Title": "Court of Cards",
-            "SubTitle": "Court of Cards tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 6, 
-            "image": "public/assets/imgs/Yugioh/eldlich_the_golden_lord.png",
-            "Title": "Eldlich the Golden Lord",
-            "SubTitle": "Eldlich tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 7, 
-            "image": "public/assets/imgs/Yugioh/melffy_sealy.jpg",
-            "Title": "Melffy Seally",
-            "SubTitle": "Melffy tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 8, 
-            "image": "public/assets/imgs/Yugioh/nibiru.jpg",
-            "Title": "Nibiru",
-            "SubTitle": "Nibiru tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 9, 
-            "image": "public/assets/imgs/Yugioh/scapegoat.jpg",
-            "Title": "Scapegoat",
-            "SubTitle": "Scapegoat tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 10, 
-            "image": "public/assets/imgs/Yugioh/red_eyes_dark_dragoon.jpg",
-            "Title": "Red Eyes Dark Dragoon",
-            "SubTitle": "Dark Dragoon tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 11, 
-            "image": "public/assets/imgs/Yugioh/the_legendary_exodia_incarnate.jpg",
-            "Title": "The Legendary Exodia Incarnate",
-            "SubTitle": "Exodia Incarnate tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        },
-        {
-            "id": 12, 
-            "image": "public/assets/imgs/Yugioh/timaeus_the_united_dragon.png",
-            "Title": "Timaeus the United Dragon",
-            "SubTitle": "Timaeus tem feito diferença nos torneios mundiais.",
-            "author": "Pasquale Milhão",
-            "data": "01/10/2024"
-        }
-    ]
+            {
+                "id": 1, 
+                "image": "assets/imgs/Yugioh/agido.jpg",
+                "Title": "O terror Agido!",
+                "SubTitle": "Agido tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 2, 
+                "image": "assets/imgs/Yugioh/black_shadow_squall.jpg",
+                "Title": "Black Shadow Squall",
+                "SubTitle": "Black Shadow Squall tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 3, 
+                "image": "assets/imgs/Yugioh/dark_magician_girl.jpg",
+                "Title": "Dark Magician Girl",
+                "SubTitle": "Dark Magician Girl tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 4, 
+                "image": "assets/imgs/Yugioh/card_destruction__rush_duel.jpg",
+                "Title": "Card Destruction",
+                "SubTitle": "Card Destruction tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 5, 
+                "image": "assets/imgs/Yugioh/court_of_cards.jpg",
+                "Title": "Court of Cards",
+                "SubTitle": "Court of Cards tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 6, 
+                "image": "assets/imgs/Yugioh/eldlich_the_golden_lord.jpg",
+                "Title": "Eldlich the Golden Lord",
+                "SubTitle": "Eldlich tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 7, 
+                "image": "assets/imgs/Yugioh/melffy_sealy.jpg",
+                "Title": "Melffy Seally",
+                "SubTitle": "Melffy tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 8, 
+                "image": "assets/imgs/Yugioh/nibiru.jpg",
+                "Title": "Nibiru",
+                "SubTitle": "Nibiru tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 9, 
+                "image": "assets/imgs/Yugioh/scapegoat.jpg",
+                "Title": "Scapegoat",
+                "SubTitle": "Scapegoat tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 10, 
+                "image": "assets/imgs/Yugioh/red_eyes_dark_dragoon.jpg",
+                "Title": "Red Eyes Dark Dragoon",
+                "SubTitle": "Dark Dragoon tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 11, 
+                "image": "assets/imgs/Yugioh/the_legendary_exodia_incarnate.jpg",
+                "Title": "The Legendary Exodia Incarnate",
+                "SubTitle": "Exodia Incarnate tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            },
+            {
+                "id": 12, 
+                "image": "assets/imgs/Yugioh/timaeus_the_united_dragon.jpg",
+                "Title": "Timaeus the United Dragon",
+                "SubTitle": "Timaeus tem feito diferença nos torneios mundiais.",
+                "author": "Pasquale Milhão",
+                "data": "01/10/2024"
+            }
+        ]

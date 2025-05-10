@@ -1,8 +1,10 @@
 #root {
-  max-width: 1280px;
+  max-width: 3840px;
+  height: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
+  background-color: var(--bs-secondary-bg);
 }
 
 .logo {
@@ -39,4 +41,8 @@
 
 .read-the-docs {
   color: #888;
+}
+
+html, body, #root{
+  background-color: var(--bs-secondary-bg);
 }

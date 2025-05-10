@@ -1,21 +1,19 @@
-import { Container, Row, Col, Stack, Image, Nav, NavLink } from "react-bootstrap"
-import dk_logo from "../../assets/Do-key_kongo.jpg"
+import {Row, Col, Stack, Image, Nav, NavLink } from "react-bootstrap"
+import ilusoes_logo from "../../assets/ilusoes_logo.png"
 
 
 const Footer = () => {
   return (
-    <footer>
-      <Container className="mt-3 w-100">
+      <>
         <Row className="bg-dark text-white p-4">
           <Col className="mx-5">
             <Stack>
               <Image
-                src={dk_logo}
+                src={ilusoes_logo}
                 alt=""
                 rounded
                 width={150}
-              height={150}/>
-
+                height={150}/>
                 <h2 className="text-center">Projeto Ilusões Industriais</h2>
               
             </Stack>
@@ -90,8 +88,9 @@ const Footer = () => {
             <p>Projeto Ilusões Industriais</p>
           </Col>
         </Row>
-      </Container>
-    </footer>
+      
+      </>
+
   )
 }
 

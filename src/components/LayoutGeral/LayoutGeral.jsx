@@ -1,0 +1,32 @@
+import PropTypes from "prop-types";
+import Header from "../../components/Header/Header";
+import Footer from "../Footer/Footer";
+
+LayoutGeral.propTypes = {
+    children: PropTypes.node
+}
+
+
+function LayoutGeral({children}) {
+    return (
+        <div className="d-flex flex-column w-100 bg-body-secondary">
+
+            <div className="position-fixed top-0 w-100 z-3">
+                <Header></Header>
+            </div>
+
+            {/* Espaço reservado do header */}
+            <div style={{ height: "70px" }} /> 
+
+            <main className="flex-grow-1 px-3">
+                    {children}
+            </main>
+
+            <footer className="container-fluid">
+                <Footer></Footer>
+            </footer>
+        </div>
+    )
+}
+
+export default LayoutGeral;

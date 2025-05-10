@@ -1,13 +1,12 @@
-import Footer from "../../components/Footer/Footer"
-import BarraNav from "../../components/Navbar/BarraNav"
-
+import LayoutGeral from "../../components/LayoutGeral/LayoutGeral"
 
 
 const Marketplace = () => {
   return (
     <>
-      <BarraNav></BarraNav>
-      <Footer></Footer>
+      <LayoutGeral>
+
+      </LayoutGeral>
     </>
   )
 }

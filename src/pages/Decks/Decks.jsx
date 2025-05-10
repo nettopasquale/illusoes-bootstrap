@@ -1,9 +1,10 @@
-import BarraNav from "../../components/Navbar/BarraNav"
-
+import LayoutGeral from "../../components/LayoutGeral/LayoutGeral"
 
 const Decks = () => {
   return (
-    <BarraNav></BarraNav>
+      <LayoutGeral>
+
+      </LayoutGeral>
   )
 }
 
