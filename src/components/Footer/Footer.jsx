@@ -10,7 +10,8 @@ const Footer = () => {
             <Stack>
               <Image
                 src={ilusoes_logo}
-                alt=""
+              alt=""
+              className="img-fluid"
                 rounded
                 width={150}
                 height={150}/>

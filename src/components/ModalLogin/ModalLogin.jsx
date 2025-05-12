@@ -1,22 +1,34 @@
 import { Button, Modal, Form, Col, Row } from 'react-bootstrap';
 import { BsFillPersonFill } from "react-icons/bs";
 import PropTypes from 'prop-types';
+import { useState, useRef, useEffect } from 'react';
 
-Login.propTypes = {
+ModalLogin.propTypes = {
   handleShow: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired
 }
 
-function Login({ handleShow, handleClose }) {
+
+
+function ModalLogin() {
+  //modal
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const userRef = useRef();
+  const userEffect = useEffect(()=>{});
   
   const handleLogin = (e) => {
     e.preventDefault();
-    handleClose();
+    //handleClose();
   }
+
 
   return (
     <>
-    <Modal show={handleShow} onHide={handleClose} animation={true} centered>
+    <Modal show={show} onClick={handleShow} onHide={handleClose} animation={true} centered>
       <Modal.Header closeButton>
           <Modal.Title>
           <BsFillPersonFill className='me-2'/> Login
@@ -55,4 +67,4 @@ function Login({ handleShow, handleClose }) {
   )
 }
 
-export default Login;
+export default ModalLogin;

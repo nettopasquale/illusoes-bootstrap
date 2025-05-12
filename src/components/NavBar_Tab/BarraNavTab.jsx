@@ -1,4 +1,14 @@
-import Nav from 'react-bootstrap/Nav';
+import {Nav} from 'react-bootstrap';
+
+import PropTypes from 'prop-types';
+
+BarraNavTab.propTypes = {
+  activeKey: PropTypes.string.isRequired,
+  linkRef: PropTypes.string.isRequired,
+  linkName: PropTypes.string.isRequired,
+
+}
+
 
 function BarraNavTab() {
   return (

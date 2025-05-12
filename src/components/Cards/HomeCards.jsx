@@ -1,21 +1,31 @@
-import { Container} from 'react-bootstrap';
+import { Container, Nav} from 'react-bootstrap';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-//import artigos from "../../data/artigos.json"
+import artigos from "../../data/artigos.json";
+import PropTypes from 'prop-types';
 
-function Cards(props){
+Cards.propTypes = {
+  activeKey: PropTypes.string.isRequired,
+  linkRef: PropTypes.string.isRequired,
+  linkName: PropTypes.string.isRequired,
+}
+
+
+function Cards({activeKey, linkRef, linkName}){
     function onClick() {
         console.log("Vai para o site!")    
-    }
-
+  }
+  
     const settings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 5,
-        slidesToScroll: 1,
-        responsive: [
+      dots: true,
+      infinite: false,
+      speed: 500,
+      slidesToShow: 5,
+      slidesToScroll: 1,
+      adaptiveHeight: false,
+      swipeToSlide: true,
+      responsive: [
             {
 
                 breakpoint: 1024,
@@ -26,7 +36,7 @@ function Cards(props){
       
                   slidesToScroll: 3,
       
-                  infinite: true,
+                  infinite: false,
       
                   dots: true
       
@@ -64,14 +74,23 @@ function Cards(props){
       
               }
       
-        ]
+      ],
     };
 
-    let dados = Array.from(props)
+  let dados = artigos;
+
 
     return (
-      <Container className="container-fluid mt-4 justify-content-center m-0">
-        <Slider {...settings} className="mb-1">
+      <Container fluid className="mt-4 mb-4 justify-content-center g-4">
+        <Nav fill variant="tabs" defaultActiveKey={activeKey} className='mt-3'>
+          <Nav.Item>
+            <Nav.Link href={linkRef} className='fw-bold fs-2'>
+              {linkName}
+              
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
+        <Slider {...settings} className="mt-4 mb-4 g-4">
           {dados.map((dado) => {
             return (
                 <div className="card border-primary card-body justify-content-between align-content-around" key={dado.id} onClick={onClick}>

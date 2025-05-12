@@ -1,11 +1,9 @@
-const dbConfig = require("../config/db.config.js");
-
-const mongoose = require("mongoose");
-mongoose.Promise = global.Promise;
+import { url } from "../config/db.config.js";
+import mongoose from "mongoose";
 
 const db = {};
 db.mongoose = mongoose;
-db.url = dbConfig.url;
-db.usuarios = require("./usuario.model.js")(mongoose);
+db.url = url;
+db.usuarios = import("./usuario.model.js").default(mongoose);
 
-module.exports = db;
+export default db;

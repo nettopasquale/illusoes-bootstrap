@@ -9,7 +9,7 @@ LayoutGeral.propTypes = {
 
 function LayoutGeral({children}) {
     return (
-        <div className="d-flex flex-column w-100 bg-body-secondary">
+        <div className="d-flex flex-column flex-grow-1 justify-content-center align-items-center w-100 bg-body-secondary px-3">
 
             <div className="position-fixed top-0 w-100 z-3">
                 <Header></Header>
@@ -22,7 +22,7 @@ function LayoutGeral({children}) {
                     {children}
             </main>
 
-            <footer className="container-fluid">
+            <footer className="container-fluid fixed-bottom">
                 <Footer></Footer>
             </footer>
         </div>
