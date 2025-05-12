@@ -22,7 +22,7 @@ function LayoutGeral({children}) {
                     {children}
             </main>
 
-            <footer className="container-fluid fixed-bottom">
+            <footer className="container-fluid p-0 m-0">
                 <Footer></Footer>
             </footer>
         </div>

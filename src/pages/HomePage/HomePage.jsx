@@ -10,12 +10,13 @@ export default function HomePage() {
 
   return (
     <LayoutGeral>
-      {/* <Carrossel></Carrossel>
-      <HomeCards activeKey="/artigos" linkRef="/artigos" linkName="Artigos"></HomeCards>
+      <Carrossel></Carrossel>
+      {/* <HomeCards activeKey="/artigos" linkRef="/artigos" linkName="Artigos"></HomeCards>
       <HomeCards activeKey="/eventos" linkRef="/eventos" linkName="Eventos"></HomeCards>
-      <HomeCards activeKey="/campeonatos" linkRef="/campeonatos" linkName="Campeonatos"></HomeCards>
-      <Cards></Cards> */}
-      <Cadastro></Cadastro>
+      <HomeCards activeKey="/campeonatos" linkRef="/campeonatos" linkName="Campeonatos"></HomeCards> */}
+      <BarraNavTab></BarraNavTab>
+      <Cards></Cards>
+      {/* <Cadastro></Cadastro> */}
       {/* <Login></Login> */}
     </LayoutGeral>
   );

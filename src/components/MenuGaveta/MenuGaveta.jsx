@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button, Nav, Offcanvas } from 'react-bootstrap'
 import { FaBars } from 'react-icons/fa'; 
-import { Link } from 'react-router-dom'
+//import { Link } from 'react-router-dom'
 
 function MenuGaveta() {
   const [showDrawer, setShowDrawer] = useState(false);
@@ -23,38 +23,38 @@ function MenuGaveta() {
         </Offcanvas.Header>
         <Offcanvas.Body>
           <Nav className="flex-column">
-            <Nav.Link href="/">
-              <Link>Home</Link>
+            <Nav.Link href="/" className="fs-5">
+              Home
             </Nav.Link>
-            <Nav.Link href="/artigos">
-                <Link>Artigos</Link>
+            <Nav.Link href="/artigos" className="fs-5">
+                Artigos
             </Nav.Link>
-            <Nav.Link href="/eventos">
-              <Link>Eventos</Link>
+            <Nav.Link href="/eventos" className="fs-5">
+              Eventos
             </Nav.Link>
-            <Nav.Link href="/decks">
-              <Link>Decks</Link>  
+            <Nav.Link href="/decks" className="fs-5">
+              Decks 
             </Nav.Link>
-            <Nav.Link href="/colecoes">
-              <Link>Coleções</Link>
+            <Nav.Link href="/colecoes" className="fs-5">
+              Coleções
             </Nav.Link>
-            <Nav.Link href="/campeonatos">
-              <Link>Campeonatos</Link>
+            <Nav.Link href="/campeonatos" className="fs-5">
+              Campeonatos
             </Nav.Link>
-            <Nav.Link href="/cardgames">
-              <Link> Card Games</Link>
+            <Nav.Link href="/cardgames" className="fs-5">
+              Card Games
             </Nav.Link>
-            <Nav.Link href="/comunidade">
-              <Link>Comunidade</Link>
+            <Nav.Link href="/comunidade" className="fs-5">
+              Comunidade
             </Nav.Link>
-            <Nav.Link href="/forum">
-              <Link>Fórum</Link>
+            <Nav.Link href="/forum" className="fs-5">
+              Fórum
             </Nav.Link>
-            <Nav.Link href="/about">
-              <Link>Sobre nós</Link>
+            <Nav.Link href="/about" className="fs-5">
+              Sobre nós
             </Nav.Link>
-            <Nav.Link href="/contato">
-              <Link>Contato</Link>
+            <Nav.Link href="/contato" className="fs-5">
+              Contato
             </Nav.Link>
           </Nav>
         </Offcanvas.Body>
