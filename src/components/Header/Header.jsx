@@ -2,17 +2,21 @@ import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap'
 import { BsFillPersonFill, BsCart3, BsEnvelope } from "react-icons/bs";
 import ilusoes_logo from "../../assets/ilusoes_logo.png"
 //import { Link } from 'react-router-dom'
-import { useState } from 'react';
-import ModalLogin from '../ModalLogin/ModalLogin';
+//import { useState } from 'react';
+//import ModalLogin from '../ModalLogin/ModalLogin';
+//import Example from '../ModalLogin/tesse';
 import MenuGaveta from '../MenuGaveta/MenuGaveta';
+import PropTypes from "prop-types";
 
 
+const Header = ({onUserClick}) => {
+  //const [modalShow, setModalShow] = useState(false);
 
-const Header = () => {
-  const [modalShow, setModalShow] = useState(false);
+  // const handleClose = () => setModalShow(false);
+  // const handleShow = () => setModalShow(true);
 
-  const handleClose = () => setModalShow(false);
-  const handleShow = () => setModalShow(true);
+ // console.log("Modal aberto?", modalShow);
+
 
   return (
       <Navbar expand="lg" className="w-100  navbar fixed-top" bg='dark'>
@@ -45,14 +49,14 @@ const Header = () => {
             <div className='d-flex align-items-center gap-3'>
               <Nav.Link
                 className='fw-bold text-white fs-5'
-                onClick={handleShow}>
+                onClick={onUserClick}>
                 <BsFillPersonFill
                   size={20}
                   style={{ cursor: 'pointer' }}
                   role='button'
-                  title='Usuário'
-                  onClick={handleShow}/>
-                <ModalLogin handleShow={modalShow} handleClose={handleClose}></ModalLogin>
+                  title='Usuário'/>
+                {/* <ModalLogin show={modalShow} onClose={() => setModalShow(false)}></ModalLogin> */}
+                {/* <Example></Example> */}
               </Nav.Link>
               
               <Nav.Link href="#action2" className='fw-bold text-white fs-5'>
@@ -83,3 +87,7 @@ const Header = () => {
 }
 
 export default Header
+
+Header.propTypes = {
+  onUserClick: PropTypes.func.isRequired
+}

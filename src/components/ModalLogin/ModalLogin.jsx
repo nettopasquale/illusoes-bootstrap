@@ -1,34 +1,32 @@
 import { Button, Modal, Form, Col, Row } from 'react-bootstrap';
 import { BsFillPersonFill } from "react-icons/bs";
 import PropTypes from 'prop-types';
-import { useState, useRef, useEffect } from 'react';
+import { useEffect } from 'react';
 
 ModalLogin.propTypes = {
-  handleShow: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired
+  show: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired
 }
 
 
 
-function ModalLogin() {
+function ModalLogin({show, onClose}) {
   //modal
-  const [show, setShow] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
-
-  const userRef = useRef();
-  const userEffect = useEffect(()=>{});
-  
   const handleLogin = (e) => {
     e.preventDefault();
-    //handleClose();
+    onClose();
   }
+
+  console.log("Recebido show:", show);
+
+  useEffect(() => {
+  console.log("Modal show prop mudou para:", show);
+}, [show]);
 
 
   return (
     <>
-    <Modal show={show} onClick={handleShow} onHide={handleClose} animation={true} centered>
+    <Modal show={show} onHide={onClose} animation={true} centered>
       <Modal.Header closeButton>
           <Modal.Title>
           <BsFillPersonFill className='me-2'/> Login
@@ -54,13 +52,13 @@ function ModalLogin() {
               <Form.Control type="password" placeholder="****" />
             </Col>
           </Form.Group>
+          <Modal.Footer>
+            <Button variant="secondary" type='submit'>
+              Avançar
+            </Button>
+          </Modal.Footer>
         </Form>
       </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" type='submit'>
-          Avançar
-        </Button>
-      </Modal.Footer>
     </Modal>
   </>
     
