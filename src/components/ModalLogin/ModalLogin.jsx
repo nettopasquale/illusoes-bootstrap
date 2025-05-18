@@ -1,4 +1,5 @@
-import { Button, Modal, Form, Col, Row } from 'react-bootstrap';
+import { Button, Modal, Form, Col, Row, Container, Nav } from 'react-bootstrap';
+import { Link } from "react-router-dom";
 import { BsFillPersonFill } from "react-icons/bs";
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
@@ -7,8 +8,6 @@ ModalLogin.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired
 }
-
-
 
 function ModalLogin({show, onClose}) {
   //modal
@@ -56,7 +55,16 @@ function ModalLogin({show, onClose}) {
             <Button variant="secondary" type='submit'>
               Avançar
             </Button>
-          </Modal.Footer>
+            </Modal.Footer>
+            <Container className="d-flex flex-column mt-4 mb-4 justify-content-center g-4">
+            <span className="fs-5">Ainda não é cadastrado?</span>
+            <Nav>
+              <Nav.Link className="fs-5">
+              <Link to={"/cadastro"}>Faça seu cadastro</Link>
+              </Nav.Link>
+            </Nav>
+          </Container>
+
         </Form>
       </Modal.Body>
     </Modal>

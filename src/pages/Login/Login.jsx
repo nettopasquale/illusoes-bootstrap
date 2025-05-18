@@ -1,5 +1,7 @@
 import { Button, Form, Container, Alert, Nav } from "react-bootstrap";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../context/useAuth";
 import axios from "axios";
 import * as yup from "yup";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
@@ -27,11 +29,11 @@ function Login() {
     usuario: "",
     email: "",
     senha: "",
-    confirmarSenha: "",
   });
 
   const [erro, setErro] = useState({});
   const [sucesso, setSucesso] = useState(false);
+  const [mensagem, setMensagem] = useState("");
 
   //controle de mudança dos inputs
   const handleChange = (e) => {
@@ -40,8 +42,10 @@ function Login() {
     setErro({});
   };
 
-  // controle de Submit
-  const handleSubmit = async (event) => {
+  const { login } = useAuth();
+
+  // controle de login
+  const handleLogin = async (event) => {
     event.preventDefault();
     try {
       await schema.validate(formData, { abortEarly: false });
@@ -49,38 +53,33 @@ function Login() {
       setSucesso(false);
 
       //enviar p o Backend
-      const resposta = await axios.post("http://localhost:4200/usuarios", {
+      const resposta = await axios.post("http://localhost:8080/users/login", {
         usuario: formData.usuario,
         email: formData.email,
         senha: formData.senha,
       });
 
-      if (resposta.status === 201 || resposta.status === 200) {
-        setSucesso(true);
-        setFormData({
-          nome: "",
-          email: "",
-          senha: "",
-          confirmarSenha: "",
-        });
+      if (resposta.data.token) {
+        login(resposta.data.token, resposta.data.usuario);
+        setMensagem("Login realizado com sucesso!");
       }
     } catch (error) {
-      if (error.resposta && error.resposta.data?.error) {
-        //erro do backend
-        setErro({ global: error.resposta.data.error });
-      } else if (error.inner) {
-        //erro de validação do yup
-        const erroFormatado = {};
-        error.inner.forEach((e) => {
-          erroFormatado[e.path] = e.message;
-        });
-        setErro(erroFormatado);
+      if (error.name === "ValidationError") {
+        //erro de validação
+        const formatados = {};
+
+        error.inner.forEach((e) => (formatados[e.path] = e.message));
+        setErro(formatados);
+      } else if (error.resposta) {
+        //erro da resposta
+        setErro(erro.resposta.data.message || "Erro no Login");
       } else {
         setErro({ global: "Erro inesperado. Tente novamente" });
       }
       setSucesso(false);
     }
   };
+
   return (
     <LayoutGeral>
       <Container
@@ -91,8 +90,12 @@ function Login() {
         {sucesso && (
           <Alert variant="success">Cadastro realizado com sucesso!</Alert>
         )}
+
         {erro.global && <Alert variant="danger">{erro.global}</Alert>}
-        <Form noValidate onSubmit={handleSubmit}>
+
+        {mensagem && <Alert variant="info">{mensagem}</Alert>}
+
+        <Form noValidate onSubmit={handleLogin}>
           <Form.Group className="mb-3" controlId="formUserName">
             <Form.Label className="mb-3 fs-4">Usuário</Form.Label>
             <Form.Control
@@ -126,7 +129,9 @@ function Login() {
               className="fs-5"
               isInvalid={!!erro.email}
               aria-invalid={
-                formData.email ? "border border-success" : "border border-danger"
+                formData.email
+                  ? "border border-success"
+                  : "border border-danger"
               }
             />
             <Form.Control.Feedback type="invalid">
@@ -162,26 +167,23 @@ function Login() {
             className="fs-4"
             style={{ width: "150px" }}
             disabled={
-              !formData.usuario ||
-              !formData.email ||
-              !formData.senha ||
-              !formData.confirmarSenha
+              !formData.usuario || !formData.email || !formData.senha
                 ? true
                 : false
-            }>
+            }
+          >
             Login
           </Button>
           <Container className="d-flex flex-column mt-4 mb-4 justify-content-center g-4">
             <span className="fs-5">Ainda não é cadastrado?</span>
             <Nav>
-              <Nav.Link href="/cadastro" className="fs-5">
-                Faça seu cadastro
+              <Nav.Link className="fs-5">
+                <Link to={"/cadastro"}>Faça seu cadastro</Link>
               </Nav.Link>
             </Nav>
           </Container>
         </Form>
       </Container>
-
     </LayoutGeral>
   );
 }
