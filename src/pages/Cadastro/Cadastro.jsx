@@ -53,7 +53,7 @@ function Cadastro() {
       setSucesso(false);
 
       //enviar p o Backend
-      const resposta = await axios.post("http://localhost:4200/usuarios", {
+      const resposta = await axios.post("http://localhost:8080/users", {
         usuario: formData.usuario,
         email: formData.email,
         senha: formData.senha,
@@ -62,16 +62,16 @@ function Cadastro() {
       if (resposta.status === 201 || resposta.status === 200) {
         setSucesso(true);
         setFormData({
-          nome: "",
+          usuario: "",
           email: "",
           senha: "",
           confirmarSenha: "",
         });
       }
     } catch (error) {
-      if (error.resposta && error.resposta.data?.error) {
+      if (error.response && error.response.data?.error) {
         //erro do backend
-        setErro({ global: error.resposta.data.error });
+        setErro({ global: error.response.data.error || "Erro do servidor." });
       } else if (error.inner) {
         //erro de validação do yup
         const erroFormatado = {};
@@ -86,7 +86,7 @@ function Cadastro() {
     }
   };
 
-
+  console.log("Enviando", formData);
     return (
       <LayoutGeral>
         <Container

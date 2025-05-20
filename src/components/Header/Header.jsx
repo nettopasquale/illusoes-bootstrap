@@ -1,13 +1,23 @@
 import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap'
 import { BsFillPersonFill, BsCart3, BsEnvelope } from "react-icons/bs";
+import { useNavigate } from 'react-router-dom';
 import ilusoes_logo from "../../assets/ilusoes_logo.png"
 import dk_profile from "../../assets/Do-key_kongo.jpg"
 import { memo } from 'react';
 import MenuGaveta from '../MenuGaveta/MenuGaveta';
 import PropTypes from "prop-types";
+import { useAuth } from '../../context/useAuth';
 
 
 const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
+  
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  }
 
   return (
     <Navbar expand="lg" className="w-100  navbar fixed-top" bg='dark'>
@@ -40,9 +50,10 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
             <div className='d-flex align-items-center gap-3'>
 
               {autenticado ? (
+                <>
                   <Nav.Link
                   className='fw-bold text-white fs-5'
-                  onClick={onUserClick}>
+                  disabled>
                   <Navbar.Brand href="#" className='me-3'>
                     <img
                       alt=''
@@ -52,8 +63,12 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
                       className="d-flex align-items-center" />
                     {usuario?.nome}
                   </Navbar.Brand>
-                </Nav.Link>
-              
+                  </Nav.Link>
+                    <Nav.Link
+                      onClick={handleLogout}>
+                      Sair
+                  </Nav.Link>
+                </>
               ) : (
                 <Nav.Link
                   className='fw-bold text-white fs-5'

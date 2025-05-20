@@ -5,11 +5,13 @@ import mongoose from "mongoose";
 import userRouters from "./routes/user.routes.js";
 
 dotenv.config();
+
 const app = express();
 console.log(process.env.PORT);
 
+
 let corsOptions = {
-  origin: "http://localhost:8081"
+  origin: "http://localhost:5137"
 };
 
 //middlewere
@@ -29,7 +31,12 @@ try {
 }
 
 
-app.use("/api", userRouters);
+app.use("/", userRouters);
+
+app.use((req, res, next) => {
+  console.log("rota acessada: ", req.method, req.originalUrl);
+  next();
+})
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;

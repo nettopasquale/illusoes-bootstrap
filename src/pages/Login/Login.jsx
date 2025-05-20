@@ -8,8 +8,7 @@ import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 
 // schema do login
 const schema = yup.object().shape({
-  usuario: yup.string().required("Nome do usuário é obrigatório"),
-  email: yup.string().email("Email inválido").required("Email é obrigatório"),
+  login: yup.string().required("Usuário ou Email é obrigatório"),
   senha: yup
     .string()
     .min(8, "A senha deve conter no mínimo 8 caracteres!")
@@ -26,8 +25,7 @@ const schema = yup.object().shape({
 function Login() {
   //validação form
   const [formData, setFormData] = useState({
-    usuario: "",
-    email: "",
+    login: "",
     senha: "",
   });
 
@@ -38,8 +36,8 @@ function Login() {
   //controle de mudança dos inputs
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setSucesso(false);
     setErro({});
+    setSucesso(false);
   };
 
   const { login } = useAuth();
@@ -54,8 +52,7 @@ function Login() {
 
       //enviar p o Backend
       const resposta = await axios.post("http://localhost:8080/users/login", {
-        usuario: formData.usuario,
-        email: formData.email,
+        login: formData.login,
         senha: formData.senha,
       });
 
@@ -70,9 +67,9 @@ function Login() {
 
         error.inner.forEach((e) => (formatados[e.path] = e.message));
         setErro(formatados);
-      } else if (error.resposta) {
+      } else if (error.response) {
         //erro da resposta
-        setErro(erro.resposta.data.message || "Erro no Login");
+        setErro(erro.response.data.message || "Erro no Login");
       } else {
         setErro({ global: "Erro inesperado. Tente novamente" });
       }
@@ -96,46 +93,24 @@ function Login() {
         {mensagem && <Alert variant="info">{mensagem}</Alert>}
 
         <Form noValidate onSubmit={handleLogin}>
-          <Form.Group className="mb-3" controlId="formUserName">
-            <Form.Label className="mb-3 fs-4">Usuário</Form.Label>
+          <Form.Group className="mb-3" controlId="formLogin">
+            <Form.Label className="mb-3 fs-4">Usuário ou Email</Form.Label>
             <Form.Control
               type="text"
-              name="usuario"
-              value={formData.usuario}
+              name="login"
+              value={formData.login}
               onChange={handleChange}
-              placeholder="Digite o nome do usuário"
+              placeholder="Digite o usuário ou email"
               required
-              isInvalid={!!erro.nome}
+              isInvalid={!!erro.login}
               aria-invalid={
-                formData.usuario ? "bordborder-success" : "border border-danger"
+                formData.login ? "bordborder-success" : "border border-danger"
               }
               className="fs-5"
               style={{ width: "300px" }}
             />
             <Form.Control.Feedback type="invalid">
-              {erro.nome}
-            </Form.Control.Feedback>
-          </Form.Group>
-
-          <Form.Group className="mb-3" controlId="formEmail">
-            <Form.Label className="mb-3 fs-4">Email</Form.Label>
-            <Form.Control
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Digite seu email"
-              required
-              className="fs-5"
-              isInvalid={!!erro.email}
-              aria-invalid={
-                formData.email
-                  ? "border border-success"
-                  : "border border-danger"
-              }
-            />
-            <Form.Control.Feedback type="invalid">
-              {erro.email}
+              {erro.login}
             </Form.Control.Feedback>
           </Form.Group>
 
@@ -167,7 +142,7 @@ function Login() {
             className="fs-4"
             style={{ width: "150px" }}
             disabled={
-              !formData.usuario || !formData.email || !formData.senha
+              !formData.login || !formData.senha
                 ? true
                 : false
             }
