@@ -1,7 +1,8 @@
-import { Container, Row, Col, Card} from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import artigos from "../../data/artigos.json"
 
-const Cards = () => {
+const Cards = ({to}) => {
     let listaArtigos =artigos
  
     function onClick() {
@@ -15,6 +16,7 @@ const Cards = () => {
                     listaArtigos.map(artigo => {
                         return (
                             <Col key={artigo.id} xs={12} sm={6} md={3}>
+                                <Link to={to}>
                                 <Card
                                     style={{ cursor: 'pointer' }}
                                     onClick={onClick}
@@ -36,7 +38,8 @@ const Cards = () => {
                                             </span>
                                         </div>
                                     </Card.Body>
-                                </Card>
+                                </Card>                       
+                                </Link>
                             </Col>
                         )
                     })

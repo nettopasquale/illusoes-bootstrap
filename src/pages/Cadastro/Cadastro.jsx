@@ -25,7 +25,7 @@ const schema = yup.object().shape({
     .required("Confirmação de senha é obrigatória"),
 });
 
-function Cadastro() {
+export default function Cadastro() {
   //validação form
   const [formData, setFormData] = useState({
     usuario: "",
@@ -209,5 +209,3 @@ function Cadastro() {
       </LayoutGeral>
   );
 }
-
-export default Cadastro;

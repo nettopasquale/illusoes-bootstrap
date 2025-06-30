@@ -27,25 +27,22 @@ function MenuGaveta() {
               <Link to={"/"}>Home</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
-              <Link to={"/artigos"}>Artigos</Link>
+              <Link to={"/artigos/:tipo"}>Notícias</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
-              <Link to={"/eventos"}>Eventos</Link>
+              <Link to={"/artigos/:tipo"}>Artigos</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
-              <Link to={"/decks"}>Decks</Link>
+              <Link to={"/eventos/:tipo"}>Eventos</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
               <Link to={"/colecoes"}>Coleções</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
-              <Link to={"/campeonatos"}>Campeonatos</Link>
+              <Link to={"/eventos/:tipo"}>Campeonatos</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
               <Link to={"/cardgames"}>Card Games</Link>
-            </Nav.Link>
-            <Nav.Link className="fs-5">
-              <Link to={"/comunidade"}>Comunidade</Link>
             </Nav.Link>
             <Nav.Link href="/forum" className="fs-5">
               <Link to={"/forum"}>Fórum</Link>

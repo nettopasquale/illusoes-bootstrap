@@ -31,8 +31,7 @@ const schema = yup.object().shape({
     .required("Senha é obrigatória"),
 });
 
-
-function ModalLogin({ show, onClose }) {
+export default function ModalLogin({ show, onClose }) {
     //validação form
     const [formData, setFormData] = useState({
       login: "",
@@ -217,8 +216,6 @@ function ModalLogin({ show, onClose }) {
     
   )
 }
-
-export default ModalLogin;
 
 ModalLogin.propTypes = {
   show: PropTypes.bool.isRequired,

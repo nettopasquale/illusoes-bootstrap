@@ -22,7 +22,7 @@ const schema = yup.object().shape({
     .required("Senha é obrigatória"),
 });
 
-function Login() {
+export default  function Login() {
   //validação form
   const [formData, setFormData] = useState({
     login: "",
@@ -162,5 +162,3 @@ function Login() {
     </LayoutGeral>
   );
 }
-
-export default Login;

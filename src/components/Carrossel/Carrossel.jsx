@@ -1,14 +1,22 @@
 /* eslint-disable no-unused-vars */
-import React from 'react'
+import {useState} from 'react'
 import { Carousel, Image } from 'react-bootstrap'
 import liliana from '../../assets/imgs/Magic/liliana-vess-1920_jpg.jpg'
 import yug25 from '../../assets/imgs/Yugioh/25thniv.jpg'
 import SVPok from '../../assets/imgs/Pokemon/Scarlet-Violet-English-1.jpg'
 
 const Carrossel = () => {
+  //controle do carossel
+  const [index, setIndex] = useState(0);
+
+  const handleSelect = (selectedIndex) => {
+    setIndex(selectedIndex);
+  };
+
   return (
-    <Carousel className='w-100 mt-1'>
-      <Carousel.Item interval={1500}>
+    <Carousel className='w-100 mt-1'
+      slide={false} activeIndex={index} onSelect={handleSelect} data-bs-theme="dark">
+      <Carousel.Item interval={500000}>
         <Image src={yug25} className='w-50'fluid/>
         <Carousel.Caption className='bg-dark bg-opacity-50 rounded p-3 mx-auto' style={{maxWidth: "50%"}}>
           <h3 className='fw-bold text-white text-center fs-3'>
@@ -19,7 +27,7 @@ const Carrossel = () => {
           </p>
         </Carousel.Caption>
       </Carousel.Item>
-      <Carousel.Item interval={1500}>
+      <Carousel.Item interval={500000}>
         <Image src={SVPok} className='w-50' fluid/>
         <Carousel.Caption className='bg-dark bg-opacity-50 rounded p-3 mx-auto' style={{maxWidth: "50%"}}>
           <h3 className='fw-bold text-white text-center fs-3'>
@@ -30,7 +38,7 @@ const Carrossel = () => {
           </p>
         </Carousel.Caption>
       </Carousel.Item>
-      <Carousel.Item interval={1500}>
+      <Carousel.Item interval={500000}>
               <Image src={liliana} className='w-50' fluid />
         <Carousel.Caption className='bg-dark bg-opacity-50 rounded p-3 mx-auto' style={{maxWidth: "50%"}}>
           <h3 className='fw-bold text-white text-center fs-3'>

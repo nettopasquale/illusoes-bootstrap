@@ -1,9 +1,9 @@
 import { Container, Col, Image } from "react-bootstrap";
-import { useEventos } from "../../hooks/useEventos";
+import { useNoticias } from "../../hooks/useNoticias";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 
-export default function Eventos() {
-  const { tipo, conteudo, erro } = useEventos();
+export default function Noticias() {
+  const { tipo, conteudo, erro } = useNoticias();
 
   if (erro) {
     return <div className="text-center text-danger mt-5">{erro}</div>;
@@ -15,7 +15,7 @@ export default function Eventos() {
 
   return (
     <LayoutGeral>
-      <section id="artigo" className="block evento-block">
+      <section id="artigo" className="block artigo-block">
         <Container fluid className="mt-3">
           <div className="text-start mt-5">
             <h1 className="fs-1 fw-bold">{conteudo.titulo}</h1>
@@ -37,7 +37,7 @@ export default function Eventos() {
                 width={700}
                 height={200}
                 className="img-fluid rounded"
-                alt="imagem do evento"
+                alt="imagem da notícia"
               />
             )}
           </Col>
