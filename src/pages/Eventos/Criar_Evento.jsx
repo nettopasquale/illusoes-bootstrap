@@ -3,7 +3,7 @@ import { useState } from "react";
 import axios from "axios";
 import { Form, Button, Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 
 export default function CriarEvento({ tipo }){
   const [formData, setFormData] = useState({
