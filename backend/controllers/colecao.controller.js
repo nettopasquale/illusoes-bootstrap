@@ -36,8 +36,9 @@ export const listarColecoes = async (req, res) => {
 
 // listar Colecaoou Campeonato por ID
 export const listarEventoPorID = async (req, res) => {
+    const { id } = req.params.id;
     try {
-        const colecao= await Colecao.findById(req.params.id);
+        const colecao= await Colecao.findById(id);
 
         if (!colecao) return res.status(404).json({ error: "Colecao não encontrado" });
 
@@ -49,35 +50,39 @@ export const listarEventoPorID = async (req, res) => {
 }
 
 // atualizar Colecaoou Campeonato
-export const editarColecao= async (req, res) => {
+export const editarColecao = async (req, res) => {
+    const { id } = req.params.id;
     try {
-        const colecao= await Colecao.findById(req.params.id);
+        const colecao= await Colecao.findById(id);
 
         if (!colecao) return res.status(404).json({ error: "Colecao não encontrada" });
 
-        // Garante que só o autor pode editar
-        if (colecao.dono.toString() !== req.usuarioId) {
+        // Garante que só o autor ou admn pode editar
+        if (colecao.dono.toString() !== req.usuarioId
+            && req.usuarioTipo !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
         // Atualiza com os novos dados
-        Object.assign(colecao, req.body);
+        const colecaoAtualizada = await Colecao.findByIdAndUpdate(id, req.body, { new: true });
 
-        await colecao.save();
-        res.json(colecao);
+        res.json(colecaoAtualizada);
     } catch (erro) {
         res.status(500).json({ error: erro.message });
     }
 };
 
 // deletar Colecaoou Campeonato
-export const deletarColecao= async (req, res) => {
+export const deletarColecao = async (req, res) => {
+    const { id } = req.params.id;
     try {
-        const colecao= await Colecao.findById(req.params.id);
+        const colecao= await Colecao.findById(id);
 
         if (!colecao) return res.status(404).json({ error: "Colecao não encontrada" });
 
-        if (colecao.dono.toString() !== req.usuarioId) {
+        //apenas autor e admin podem deletar
+        if (colecao.dono.toString() !== req.usuarioId
+            && req.usuarioTipo !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 

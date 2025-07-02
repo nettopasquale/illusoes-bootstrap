@@ -49,8 +49,9 @@ export const listarAnuncios = async (req, res) => {
 
 // listar Anuncio por ID
 export const listarAnuncioPorID = async (req, res) => {
+    const { id } = req.params.id;
     try {
-        const anuncio = await Anuncio.findById(req.params.id);
+        const anuncio = await Anuncio.findById(id);
 
         if (!anuncio) return res.status(404).json({ error: "Anúncio não encontrado" });
 
@@ -63,21 +64,22 @@ export const listarAnuncioPorID = async (req, res) => {
 
 // atualizar Anuncio
 export const editarAnuncio = async (req, res) => {
+    const { id } = req.params.id;
     try {
-        const anuncio = await Anuncio.findById(req.params.id);
+        const anuncio = await Anuncio.findById(id);
 
         if (!anuncio) return res.status(404).json({ error: "Anúncio não encontrado" });
 
-        // Garante que só o vendedor pode editar
-        if (anuncio.vendedor.toString() !== req.userId) {
+        // Garante que só o vendedor ou admn pode editar
+        if (anuncio.vendedor.toString() !== req.userId
+            && req.usuarioTipo !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
         // Atualiza com os novos dados
-        Object.assign(anuncio, req.body);
+        const anuncioAtualizado = await Anuncio.findByIdAndUpdate(id, req.body, { new: true });
 
-        await anuncio.save();
-        res.json(anuncio);
+        res.json(anuncioAtualizado);
     } catch (erro) {
         res.status(500).json({ error: erro.message });
     }
@@ -85,12 +87,15 @@ export const editarAnuncio = async (req, res) => {
 
 // deletar Anuncio
 export const deletarAnuncio = async (req, res) => {
+    const {id} = req.params.id
     try {
-        const anuncio = await Anuncio.findById(req.params.id);
+        const anuncio = await Anuncio.findById(id);
 
         if (!anuncio) return res.status(404).json({ error: "Anúncio não encontrado" });
 
-        if (anuncio.vendedor.toString() !== req.userId) {
+        //apenas vendedor e admin podem deletar
+        if (anuncio.vendedor.toString() !== req.userId
+            && req.usuarioTipo !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 

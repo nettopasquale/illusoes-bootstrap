@@ -48,8 +48,9 @@ export const listarEventos = async (req, res) => {
 
 // listar Evento ou Campeonato por ID
 export const listarEventoPorID = async (req, res) => {
+    const { id } = req.params.id;
     try {
-        const evento = await EventoCamp.findById(req.params.id);
+        const evento = await EventoCamp.findById(id);
 
         if (!evento) return res.status(404).json({ error: "Evento não encontrado" });
 
@@ -62,21 +63,22 @@ export const listarEventoPorID = async (req, res) => {
 
 // atualizar Evento ou Campeonato
 export const editarEvento = async (req, res) => {
+    const { id } = req.params.id;
     try {
-        const evento = await EventoCamp.findById(req.params.id);
+        const evento = await EventoCamp.findById(id);
 
         if (!evento) return res.status(404).json({ error: "Evento não encontrado" });
 
-        // Garante que só o autor pode editar
-        if (evento.criador.toString() !== req.usuarioId) {
+        // Garante que só o autor  ou admn pode editar
+        if (evento.criador.toString() !== req.usuarioId
+            && req.usuarioTipo !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
         // Atualiza com os novos dados
-        Object.assign(evento, req.body);
+        const eventoAtualizado = await EventoCamp.findByIdAndUpdate(id, req.body, {new: true});
 
-        await evento.save();
-        res.json(evento);
+        res.json(eventoAtualizado);
     } catch (erro) {
         res.status(500).json({ error: erro.message });
     }
@@ -84,12 +86,15 @@ export const editarEvento = async (req, res) => {
 
 // deletar Evento ou Campeonato
 export const deletarEvento = async (req, res) => {
+    const { id } = req.params.id;
     try {
-        const evento = await EventoCamp.findById(req.params.id);
+        const evento = await EventoCamp.findById(id);
 
         if (!evento) return res.status(404).json({ error: "Evento não encontrado" });
 
-        if (evento.criador.toString() !== req.usuarioId) {
+        //só o autor ou o admn podem deletar
+        if (evento.criador.toString() !== req.usuarioId
+            && req.usuarioTipo !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 

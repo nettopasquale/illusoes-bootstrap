@@ -1,16 +1,12 @@
 import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import dotenv from "dotenv";
-dotenv.config();
-
-const key = process.env.MONGO_URI;
-
+import { key } from "../config.js";
+console.log("JWT_SECRET:", process.env.JWT_SECRET);
 // rota do Login
 
 export const login = async (req, res) => {
-    console.log("JWT_SECRET:", process.env.JWT_SECRET);
-    const { login, senha } = req.body;
+    const { login, senha} = req.body;
 
     try {
         const user = await User.findOne({
@@ -24,16 +20,22 @@ export const login = async (req, res) => {
         if (!senhaValida) return res.status(401).json({ message: "Senha inválida" })
 
         const token = jwt.sign(
-            { id: user._id, email: user.email, tipo: user.tipo },
+            { id: user._id, email: user.email, role: user.tipo },
             key,
             { expiresIn: "2h" }
         );
+        console.log(token);
 
         res.json({
             token, usuario:
                 { id: user._id, nome: user.usuario, email: user.email }
         })
-        console.log(`O usuario de id ${user._id}, nome: ${user.usuario}, email: ${user.email} e senha ${user.senha} foi logado!`);
+        console.log("Requisição de login:");
+        console.log("Login:", login);
+        console.log("Email:", user.email);
+        console.log("Usuário:", user.usuario);
+        console.log("Senha enviada:", senha);
+        console.log("Senha no banco:", user?.senha);
     } catch (erro) {
         res.status(500).json({ message: erro.message })
         console.error("Erro ao logar: ", erro.message);
@@ -44,7 +46,7 @@ export const login = async (req, res) => {
 
 //função protegida
 export const funcaoProtegida = (req, res) => {
-    res.json({ message: "Você acessou uma rota protegida!", usuarioId: req.usuarioId });
+    res.json({ message: "Você acessou uma rota protegida!", userId: req.userId });
 }
 
 //Criar usuário
@@ -117,8 +119,6 @@ export const updateUser = async (req, res) => {
 // deletar usuario
 
 export const deleteUser = async (req, res) => {
-    console.log("Tentando deletar:", req.params.id);
-
     try {
         const user = await User.findByIdAndDelete(req.params.id);
 

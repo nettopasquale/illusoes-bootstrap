@@ -1,17 +1,12 @@
 import { Container, Col, Image } from "react-bootstrap";
-import { useEventos } from "../../hooks/useEventos";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import { useConteudo } from "../../hooks/useConteudo";
 
 export default function Eventos() {
-  const { tipo, conteudo, erro } = useEventos();
-
-  if (erro) {
-    return <div className="text-center text-danger mt-5">{erro}</div>;
-  }
-
-  if (!conteudo) {
-    return <div className="text-center mt-5">Carregando...</div>;
-  }
+  const { conteudo, erro } = useConteudo("http://localhost:8080/eventos");
+  
+  if (erro) return <div className="text-center text-danger mt-5">{erro}</div>;
+  if (!conteudo) return <div className="text-center mt-5">Carregando...</div>;
 
   return (
     <LayoutGeral>
@@ -24,7 +19,7 @@ export default function Eventos() {
           <div className="text-start mt-3">
             <span>{conteudo.autor?.nome || "Autor desconhecido"}</span>
             <span>
-              {new Date(conteudo.dataPublicacao).toLocaleDateString()}
+              {new Date(conteudo.dataPublicacao).toLocaleDateString("pt-BR")}
             </span>
           </div>
           0

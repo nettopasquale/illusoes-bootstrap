@@ -51,6 +51,8 @@ export const listarNoticias = async (req, res) => {
 export const listarNoticiaPorID = async (req, res) => {
     try {
         const noticia = await NoticiaArtigo.findById(req.params.id);
+        console.log("Conteúdo noticia");
+        console.log(noticia);
 
         if (!noticia) return res.status(404).json({ error: "Notícia não encontrada" });
 
@@ -68,16 +70,24 @@ export const editarNoticia = async (req, res) => {
 
         if (!noticia) return res.status(404).json({ error: "Notícia não encontrada" });
 
-        // Garante que só o autor pode editar
-        if (noticia.autor.toString() !== req.usuarioId) {
+        // Verifica se o campo autor existe antes de usar toString()
+        if (
+            (!noticia.autor || noticia.autor.toString() !== req.userId) &&
+            req.userRole !== "admin"
+        ) {
+            return res.status(403).json({ error: "Não autorizado" });
+        }
+
+        // Garante que só o autor ou o admin pode editar
+        if (noticia.autor.toString() !== req.userId
+            && req.userRole !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
         // Atualiza com os novos dados
-        Object.assign(noticia, req.body);
+        const noticiaAtualizada = await NoticiaArtigo.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-        await noticia.save();
-        res.json(noticia);
+        res.status(200).json(noticiaAtualizada);
     } catch (erro) {
         res.status(500).json({ error: erro.message });
     }
@@ -87,10 +97,21 @@ export const editarNoticia = async (req, res) => {
 export const deletarNoticia = async (req, res) => {
     try {
         const noticia = await NoticiaArtigo.findById(req.params.id);
+        console.log("Conteúdo noticia");
+        console.log(noticia);
 
         if (!noticia) return res.status(404).json({ error: "Notícia não encontrada" });
 
-        if (noticia.autor.toString() !== req.usuarioId) {
+        if (
+            (!noticia.autor || noticia.autor.toString() !== req.userId) &&
+            req.userRole !== "admin"
+        ) {
+            return res.status(403).json({ error: "Não autorizado" });
+        }
+
+        // Garante que ou o autor ou o admin deletem a noticia/artigo
+        if (noticia.autor.toString() !== req.userId
+            && req.userRole !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
@@ -99,4 +120,33 @@ export const deletarNoticia = async (req, res) => {
     } catch (erro) {
         res.status(500).json({ error: erro.message });
     }
+};
+
+//Deletar noticias sem autor
+export const deletarNoticiasSemAutor = async (req, res) => {
+  try {
+    // if (req.userRole !== "admin") {
+    //   return res.status(403).json({ error: "Apenas administradores podem deletar órfãos" });
+    // }
+
+    const resultado = await NoticiaArtigo.deleteMany({ autor: { $exists: false } });
+    res.json({ message: `${resultado.deletedCount} notícias/artigos sem autor foram deletados.` });
+  } catch (erro) {
+    res.status(500).json({ error: erro.message });
+  }
+};
+
+// APENAS PARA CONVENIENCIA
+export const deletarTodasNoticias = async (req, res) => {
+  try {
+    // Apenas administradores podem fazer isso
+    // if (req.userRole !== "admin") {
+    //   return res.status(403).json({ error: "Apenas administradores podem deletar tudo" });
+    // }
+
+    const resultado = await NoticiaArtigo.deleteMany({});
+    res.json({ message: `Todas as notícias/artigos foram deletados (${resultado.deletedCount} itens).` });
+  } catch (erro) {
+    res.status(500).json({ error: erro.message });
+  }
 };

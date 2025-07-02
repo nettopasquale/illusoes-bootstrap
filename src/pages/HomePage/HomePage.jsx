@@ -9,7 +9,7 @@ export default function HomePage() {
 
   return (
     <LayoutGeral>
-      <Carrossel></Carrossel>
+      {/* <Carrossel></Carrossel> */}
       <BarraNavTab></BarraNavTab>
       <ListarNoticias tipo="artigo"></ListarNoticias>
       <ListarNoticias tipo="noticia"></ListarNoticias>

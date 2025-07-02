@@ -13,9 +13,9 @@ const colecaoRouters = express.Router();
 
 //filtro por tipo
 colecaoRouters.get('/colecoes', listarColecoes); //?tipo=artigo ou ?tipo=noticia
-colecaoRouters.get('colecoes/:id', listarEventoPorID);
-colecaoRouters.post('/colecoes', verificarToken, verificarAdmin, criarColecao);
-colecaoRouters.put('/colecoes/:id', verificarToken, verificarAdmin, editarColecao);
-colecaoRouters.delete('/colecoes/:id', verificarToken, verificarAdmin, deletarColecao);
+colecaoRouters.get('/colecoes/:id', listarEventoPorID);
+colecaoRouters.post('/colecoes', verificarToken, criarColecao);
+colecaoRouters.put('/colecoes/:id', verificarToken, editarColecao);
+colecaoRouters.delete('/colecoes/:id', verificarToken, deletarColecao);
 
 export default colecaoRouters;

@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { CalendarDays, User } from "lucide-react";
 
 const ListaEventos = ({ tipo }) => {
-  const [noticias, setEventos] = useState([]);
+  const [eventos, setEventos] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,56 +43,57 @@ const ListaEventos = ({ tipo }) => {
   };
 
   return (
-    <div className="my-10 px-4">
-      {noticias.length > 0 ? (
-        <div className="bg-black bg-opacity-80 rounded-xl p-4">
-          <h2 className="text-white text-2xl mb-4 capitalize">
-            {tipo === "evento" ? "Eventos" : "Campeonatos"} Recentes
-          </h2>
-          <Carousel
-            responsive={responsive}
-            draggable
-            swipeable
-            showDots
-            infinite={false}
-            arrows
-            keyBoardControl
-            containerClass="carousel-container"
-            itemClass="px-2"
+<div className="my-5 px-4">
+  {eventos.length > 0 ? (
+    <div className="bg-dark bg-opacity-75 rounded p-4">
+      <h2 className="text-white fs-3 fw-bold mb-4 text-capitalize">
+        {tipo === "artigo" ? "Artigos" : "Notícias"} Recentes
+      </h2>
+      <Carousel
+        responsive={responsive}
+        draggable
+        swipeable
+        showDots
+        infinite={false}
+        arrows
+        keyBoardControl
+        containerClass="carousel-container"
+        itemClass="px-2"
+      >
+        {eventos.map((evento) => (
+          <div
+            key={evento._id}
+            className="bg-white rounded overflow-hidden shadow-sm cursor-pointer"
+            onClick={() => navigate(`/eventos/${tipo}/${evento._id}`)}
+            style={{ width: "100%", maxWidth: "350px", margin: "0 auto" }}
           >
-            {noticias.map((evento) => (
-              <div
-                key={evento._id}
-                className="bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:shadow-lg transition duration-300"
-                onClick={() => navigate(`/eventos/${tipo}/${evento._id}`)}
-              >
-                {evento.imagem && (
-                  <img
-                    src={evento.imagem}
-                    alt={evento.titulo}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold">{evento.titulo}</h3>
-                  <p className="text-sm text-gray-600">{evento.subTitulo}</p>
-                  <p className="text-xs text-gray-400 mt-2">
-                    Publicado em:{" "}
-                    {new Date(evento.dataPublicacao).toLocaleDateString(
-                      "pt-BR"
-                    )}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </Carousel>
-        </div>
-      ) : (
-        <p className="text fw-bold text-center text-lg mt-8">
-          Nenhum {tipo === "evento" ? "evento" : "campeonato"} cadastrado ainda.
-        </p>
-      )}
+            {evento.imagem && (
+              <img
+                src={evento.imagem}
+                alt={evento.titulo}
+                className="d-block w-100"
+                style={{ height: "200px", objectFit: "cover" }}
+              />
+            )}
+            <div className="p-3">
+              <h3 className="fs-5 fw-bold">{evento.titulo}</h3>
+              <p className="text-secondary">{evento.subTitulo}</p>
+              <small className="text-muted">
+                Publicado em:{" "}
+                {new Date(evento.dataPublicacao).toLocaleDateString("pt-BR")}
+              </small>
+            </div>
+          </div>
+        ))}
+      </Carousel>
     </div>
+  ) : (
+    <p className="text-center fs-5 mt-4 fw-semibold">
+      Nenhum {tipo === "evento" ? "evento" : "campeonato"} cadastrado ainda.
+    </p>
+  )}
+</div>
+
   );
 };
 

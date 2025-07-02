@@ -14,8 +14,8 @@ const anuncioRouters = express.Router();
 //filtro por tipo
 anuncioRouters.get('/marketplace/anuncios', listarAnuncios); //?tipo=artigo ou ?tipo=noticia
 anuncioRouters.get('/marketplace/anuncios/:id', listarAnuncioPorID);
-anuncioRouters.post('//marketplace/anuncios', verificarToken, verificarAdmin, criarAnuncio);
-anuncioRouters.put('/marketplace/anuncios/:id', verificarToken, verificarAdmin, editarAnuncio);
-anuncioRouters.delete('/marketplace/anuncios/:id', verificarToken, verificarAdmin, deletarAnuncio);
+anuncioRouters.post('/marketplace/anuncios', verificarToken, criarAnuncio);
+anuncioRouters.put('/marketplace/anuncios/:id', verificarToken, editarAnuncio);
+anuncioRouters.delete('/marketplace/anuncios/:id', verificarToken, deletarAnuncio);
 
 export default anuncioRouters;

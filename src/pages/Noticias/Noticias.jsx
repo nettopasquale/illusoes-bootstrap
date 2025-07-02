@@ -1,9 +1,9 @@
 import { Container, Col, Image } from "react-bootstrap";
-import { useNoticias } from "../../hooks/useNoticias";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import { useConteudo } from "../../hooks/useConteudo";
 
 export default function Noticias() {
-  const { tipo, conteudo, erro } = useNoticias();
+  const {conteudo, erro } = useConteudo("http://localhost:8080/noticias");
 
   if (erro) {
     return <div className="text-center text-danger mt-5">{erro}</div>;

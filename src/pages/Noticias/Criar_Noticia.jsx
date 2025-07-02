@@ -1,16 +1,13 @@
 import { Button, Form, Container, Alert, Nav } from "react-bootstrap";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-import useCriarNoticia from "../../hooks/useCriarNoticia";
+import useCriao from "../../hooks/useCriacao";
+import { schemaNoticia } from "../../schema/schema";
 
 export default function CriarNoticia() {
-  const {
-    mensagem,
-    register,
-    handleSubmit,
-    formState,
-    errors,
-    onSubmit,
-  } = useCriarNoticia();
+  const { mensagem, register, handleSubmit, errors, onSubmit } = useCriao(
+    schemaNoticia,
+    "http://localhost:8080/noticias"
+  );
 
   return (
     <LayoutGeral>
@@ -18,7 +15,7 @@ export default function CriarNoticia() {
         <div>
           <h1>Criar Noticia / Artigo</h1>
         </div>
-        {mensagem && <div className="alert alert-info">{mensagem}</div>}
+        {mensagem && <div className="alert alert-info mt-3">{mensagem}</div>}
 
         <Form noValidate onSubmit={handleSubmit(onSubmit)}>
           <Form.Group className="mb-3" controlId="formTitulo">
@@ -31,7 +28,7 @@ export default function CriarNoticia() {
               required
               isInvalid={!!errors.titulo}
               aria-invalid={
-                formState.titulo ? "bordborder-success" : "border border-danger"
+                errors.titulo ? "bordborder-success" : "border border-danger"
               }
               className="fs-5"
               style={{ width: "300px" }}
@@ -48,20 +45,18 @@ export default function CriarNoticia() {
             <Form.Control
               type="text"
               name="subtitulo"
-              {...register("subtitulo")}
+              {...register("subTitulo")}
               placeholder="Digite um subtitulo"
               required
               isInvalid={!!errors.subTitulo}
               aria-invalid={
-                formState.subTitulo
-                  ? "bordborder-success"
-                  : "border border-danger"
+                errors.subTitulo ? "bordborder-success" : "border border-danger"
               }
               className="fs-5"
               style={{ width: "300px" }}
             />
             <Form.Control.Feedback type="invalid">
-              {errors.titulo && (
+              {errors.subTitulo && (
                 <p className="text-danger">{errors.subTitulo.message}</p>
               )}
             </Form.Control.Feedback>
@@ -104,7 +99,14 @@ export default function CriarNoticia() {
             type="submit"
             className="fs-4 btn btn-primary"
             style={{ width: "150px" }}
-            disabled={!formState.titulo || !formState.subTitulo || !formState.conteudo || !formState.tipo ? true : false}
+            disabled={
+              !errors.titulo ||
+              !errors.subTitulo ||
+              !errors.conteudo ||
+              !errors.tipo
+                ? true
+                : false
+            }
           >
             Publicar
           </Button>

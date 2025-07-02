@@ -3,7 +3,6 @@ Projeto da disciplina Engenharia de Software III
 
 ## Membros do grupo:  
 Pasquale Milone Neto  
-Victor Domingues Leite 
 
 ## Tema e resumo: 
 Comunidade temática de card games, direcionada para o público nerd/geek, de 13 à 40 anos, que desejam estar engajados com a comunidade de seu hobbie predileto, bem como pequenas e médias empresas que desejam organizar eventos.  
@@ -94,3 +93,11 @@ A plataforma deverá implementar as seguintes funcionalidades:
 
 - Sistemas de cadastro simples; 
     -- Ainda não implementado. Utilizar exemplo do professor;
+
+
+user: teste0
+senha: @Teste000
+
+Admin:
+user: admin
+senha: Admin@123

@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import mongoose from "mongoose";
 import userRouters from "./routes/user.routes.js";
 import noticiaRouters from "./routes/noticiaArtigo.routes.js";
@@ -9,11 +8,8 @@ import colecaoRouters from "./routes/colecao.routes.js";
 import anuncioRouters from "./routes/anuncio.routes.js";
 import forumRouters from "./routes/forum.routes.js";
 
-dotenv.config();
-
 const app = express();
 console.log(process.env.PORT);
-
 
 let corsOptions = {
   origin: "http://localhost:5137"
