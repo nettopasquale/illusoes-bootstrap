@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import { upload } from "./uploads/upload.js";
 import userRouters from "./routes/user.routes.js";
 import noticiaRouters from "./routes/noticiaArtigo.routes.js";
 import eventoRouters from "./routes/eventoCamp.routes.js";
@@ -20,7 +21,8 @@ app.use(cors(corsOptions));
 // parse requests of content-type - application/json
 app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
-app.use(express.urlencoded({ extended: true }));
+//extender limite de 10mb
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 
 //conexão MongoDB
 try {
@@ -38,6 +40,13 @@ app.use("/", eventoRouters);
 app.use("/", colecaoRouters);
 app.use("/", anuncioRouters);
 app.use("/", forumRouters);
+app.use('/uploads', express.static('uploads')); //rota estática das imagens
+
+//rota de upar imagem
+app.post('/upload', upload.single('imagem'), (req, res) => {
+  console.log(req.file); // aqui estará o arquivo enviado
+  res.send('Imagem recebida com sucesso!');
+});
 
 app.use((req, res, next) => {
   console.log("rota acessada: ", req.method, req.originalUrl);

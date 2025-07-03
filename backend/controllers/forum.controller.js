@@ -6,7 +6,7 @@ export const criarTopico = async (req, res) => {
   try {
     const novoTopico = new ForumTopico({
       titulo: req.body.titulo,
-      criador: req.usuarioId,
+      criador: req.userId,
       secao: req.body.secao
     });
 
@@ -14,7 +14,7 @@ export const criarTopico = async (req, res) => {
 
     const primeiraPostagem = new ForumPost({
       topico: salvo._id,
-      autor: req.usuarioId,
+      autor: req.userId,
       conteudo: req.body.conteudo,
       numeroPostagem: 1
     });
@@ -35,7 +35,7 @@ export const responderTopico = async (req, res) => {
 
     const novaPostagem = new ForumPost({
       topico: topicoId,
-      autor: req.usuarioId,
+      autor: req.userId,
       conteudo,
       numeroPostagem: totalPosts + 1,
       citacoes
@@ -45,7 +45,7 @@ export const responderTopico = async (req, res) => {
 
     await ForumTopico.findByIdAndUpdate(topicoId, {
       $inc: { respostas: 1 },
-      ultimaResposta: { usuario: req.usuarioId, data: new Date() }
+      ultimaResposta: { usuario: req.userId, data: new Date() }
     });
 
     res.status(201).json(novaPostagem);
@@ -80,13 +80,12 @@ export const buscarTopicos = async (req, res) => {
 //Editar postagem
 export const editarPostagem = async (req, res) => {
   try {
-    const { id } = req.params;
-    const post = await ForumPost.findById(id);
+    const post = await ForumPost.findById(req.params.id);
 
     if (!post) return res.status(404).json({ erro: "Postagem não encontrada." });
 
-    const ehDono = post.autor.toString() === req.usuarioId;
-    const ehAdmin = req.usuarioTipo === "admin";
+    const ehDono = post.autor.toString() === req.userId;
+    const ehAdmin = req.userRole === "admin";
 
     if (!ehDono && !ehAdmin)
       return res.status(403).json({ erro: "Permissão negada." });
@@ -107,12 +106,11 @@ export const editarPostagem = async (req, res) => {
 // Excluir Postagem
 export const excluirPostagem = async (req, res) => {
   try {
-    const { id } = req.params;
-    const post = await ForumPost.findById(id);
+    const post = await ForumPost.findById(req.params.id);
     if (!post) return res.status(404).json({ erro: "Postagem não encontrada." });
 
-    const ehDono = post.autor.toString() === req.usuarioId;
-    const ehAdmin = req.usuarioTipo === "admin";
+    const ehDono = post.autor.toString() === req.userId;
+    const ehAdmin = req.userRole === "admin";
 
     if (!ehDono && !ehAdmin)
       return res.status(403).json({ erro: "Permissão negada." });
@@ -129,10 +127,9 @@ export const excluirPostagem = async (req, res) => {
 // Trancar tópicos - Apenas Admin
 export const trancarTopico = async (req, res) => {
   try {
-    const { id } = req.params;
-    if (req.usuarioTipo !== "admin") return res.status(403).json({ erro: "Apenas administradores." });
+    if (req.userRole !== "admin") return res.status(403).json({ erro: "Apenas administradores." });
 
-    const topico = await ForumTopico.findById(id);
+    const topico = await ForumTopico.findById(req.params.id);
     if (!topico) return res.status(404).json({ erro: "Tópico não encontrado." });
 
     topico.trancado = !topico.trancado;
@@ -147,11 +144,10 @@ export const trancarTopico = async (req, res) => {
 // Excluir Tópico - Apenas Admin
 export const excluirTopico = async (req, res) => {
   try {
-    if (req.usuarioTipo !== "admin")
+    if (req.userRole !== "admin")
       return res.status(403).json({ erro: "Apenas administradores podem excluir tópicos." });
 
-    const { id } = req.params;
-    const topico = await ForumTopico.findById(id);
+    const topico = await ForumTopico.findById(req.params.id);
     if (!topico) return res.status(404).json({ erro: "Tópico não encontrado." });
 
     topico.status = "removido"; // exclusão lógica

@@ -48,9 +48,8 @@ export const listarEventos = async (req, res) => {
 
 // listar Evento ou Campeonato por ID
 export const listarEventoPorID = async (req, res) => {
-    const { id } = req.params.id;
     try {
-        const evento = await EventoCamp.findById(id);
+        const evento = await EventoCamp.findById(req.params.id);
 
         if (!evento) return res.status(404).json({ error: "Evento não encontrado" });
 
@@ -63,20 +62,24 @@ export const listarEventoPorID = async (req, res) => {
 
 // atualizar Evento ou Campeonato
 export const editarEvento = async (req, res) => {
-    const { id } = req.params.id;
     try {
-        const evento = await EventoCamp.findById(id);
+        const evento = await EventoCamp.findById(req.params.id);
 
         if (!evento) return res.status(404).json({ error: "Evento não encontrado" });
 
         // Garante que só o autor  ou admn pode editar
-        if (evento.criador.toString() !== req.usuarioId
-            && req.usuarioTipo !== "admin") {
+        if (evento.criador.toString() !== req.userId
+            && req.userRole !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
+        //imagem
+        if (req.file) {
+            req.body.imagem = `/uploads/${req.file.filename}`;
+        }
+
         // Atualiza com os novos dados
-        const eventoAtualizado = await EventoCamp.findByIdAndUpdate(id, req.body, {new: true});
+        const eventoAtualizado = await EventoCamp.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
         res.json(eventoAtualizado);
     } catch (erro) {
@@ -86,20 +89,48 @@ export const editarEvento = async (req, res) => {
 
 // deletar Evento ou Campeonato
 export const deletarEvento = async (req, res) => {
-    const { id } = req.params.id;
     try {
-        const evento = await EventoCamp.findById(id);
+        const evento = await EventoCamp.findById(req.params.id);
 
         if (!evento) return res.status(404).json({ error: "Evento não encontrado" });
 
         //só o autor ou o admn podem deletar
-        if (evento.criador.toString() !== req.usuarioId
-            && req.usuarioTipo !== "admin") {
+        if (evento.criador.toString() !== req.userId
+            && req.userRole !== "admin") {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
         await evento.deleteOne();
         res.json({ message: "Evento deletado com sucesso" });
+    } catch (erro) {
+        res.status(500).json({ error: erro.message });
+    }
+};
+
+// deleter eventos e campeonatos sem criador
+export const deletarEventosSemCriador = async (req, res) => {
+    try {
+        if (req.userRole !== "admin") {
+            return res.status(403).json({ error: "Apenas administradores podem deletar órfãos" });
+        }
+
+        const resultado = await EventoCamp.deleteMany({ criador: { $exists: false } });
+        res.json({ message: `${resultado.deletedCount} eventos/campeonatos sem criador foram deletados.` });
+    } catch (erro) {
+        res.status(500).json({ error: erro.message });
+    }
+};
+
+// APENAS PARA CONVENIENCIA
+export const deletarTodosEventos = async (req, res) => {
+    try {
+        // Apenas administradores podem fazer isso
+        if (req.userRole !== "admin") {
+            return res.status(403).json({ error: "Apenas administradores podem deletar tudo" });
+        }
+
+        const resultado = await EventoCamp.deleteMany({});
+        res.json({ message: `Todas os eventos/campeonatos foram deletados (${resultado.deletedCount} itens).` });
     } catch (erro) {
         res.status(500).json({ error: erro.message });
     }

@@ -1,11 +1,11 @@
 import Colecao from "../models/colecao.model.js";
 
 //Criar Colecao ou Campeonato
-export const criarColecao= async (req, res) => {
+export const criarColecao = async (req, res) => {
     try {
         const { nome, descricao, cartas } = req.body;
 
-        const novaColecao= new Colecao({
+        const novaColecao = new Colecao({
             nome,
             descricao,
             cartas,
@@ -36,9 +36,8 @@ export const listarColecoes = async (req, res) => {
 
 // listar Colecaoou Campeonato por ID
 export const listarEventoPorID = async (req, res) => {
-    const { id } = req.params.id;
     try {
-        const colecao= await Colecao.findById(id);
+        const colecao = await Colecao.findById(req.params.id);
 
         if (!colecao) return res.status(404).json({ error: "Colecao não encontrado" });
 
@@ -51,9 +50,8 @@ export const listarEventoPorID = async (req, res) => {
 
 // atualizar Colecaoou Campeonato
 export const editarColecao = async (req, res) => {
-    const { id } = req.params.id;
     try {
-        const colecao= await Colecao.findById(id);
+        const colecao = await Colecao.findById(req.params.id);
 
         if (!colecao) return res.status(404).json({ error: "Colecao não encontrada" });
 
@@ -63,8 +61,13 @@ export const editarColecao = async (req, res) => {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
+        //imagem
+        if (req.file) {
+            req.body.imagem = `/uploads/${req.file.filename}`;
+        }
+
         // Atualiza com os novos dados
-        const colecaoAtualizada = await Colecao.findByIdAndUpdate(id, req.body, { new: true });
+        const colecaoAtualizada = await Colecao.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
         res.json(colecaoAtualizada);
     } catch (erro) {
@@ -74,9 +77,8 @@ export const editarColecao = async (req, res) => {
 
 // deletar Colecaoou Campeonato
 export const deletarColecao = async (req, res) => {
-    const { id } = req.params.id;
     try {
-        const colecao= await Colecao.findById(id);
+        const colecao = await Colecao.findById(req.params.id);
 
         if (!colecao) return res.status(404).json({ error: "Colecao não encontrada" });
 

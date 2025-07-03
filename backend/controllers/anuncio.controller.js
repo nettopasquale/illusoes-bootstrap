@@ -8,7 +8,7 @@ export const criarAnuncio = async (req, res) => {
 
         // Validação simples para evitar valores inválidos
         if (!["carta", "deck", "box", "booster", "sleeve", "playmate"].includes(tipo)) {
-            return res.status(400).json({ error: "Tipo inválido: deve ser 'carta' ou 'deck' ou 'box' ou 'booster' ou 'sleeve' ou 'playmate'"});
+            return res.status(400).json({ error: "Tipo inválido: deve ser 'carta' ou 'deck' ou 'box' ou 'booster' ou 'sleeve' ou 'playmate'" });
         }
 
         const novoAnuncio = new Anuncio({
@@ -49,9 +49,8 @@ export const listarAnuncios = async (req, res) => {
 
 // listar Anuncio por ID
 export const listarAnuncioPorID = async (req, res) => {
-    const { id } = req.params.id;
     try {
-        const anuncio = await Anuncio.findById(id);
+        const anuncio = await Anuncio.findById(req.params.id);
 
         if (!anuncio) return res.status(404).json({ error: "Anúncio não encontrado" });
 
@@ -64,9 +63,8 @@ export const listarAnuncioPorID = async (req, res) => {
 
 // atualizar Anuncio
 export const editarAnuncio = async (req, res) => {
-    const { id } = req.params.id;
     try {
-        const anuncio = await Anuncio.findById(id);
+        const anuncio = await Anuncio.findById(req.params.id);
 
         if (!anuncio) return res.status(404).json({ error: "Anúncio não encontrado" });
 
@@ -76,8 +74,13 @@ export const editarAnuncio = async (req, res) => {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
+        //imagem
+        if (req.file) {
+            req.body.imagem = `/uploads/${req.file.filename}`;
+        }
+
         // Atualiza com os novos dados
-        const anuncioAtualizado = await Anuncio.findByIdAndUpdate(id, req.body, { new: true });
+        const anuncioAtualizado = await Anuncio.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators:true });
 
         res.json(anuncioAtualizado);
     } catch (erro) {
@@ -87,9 +90,8 @@ export const editarAnuncio = async (req, res) => {
 
 // deletar Anuncio
 export const deletarAnuncio = async (req, res) => {
-    const {id} = req.params.id
     try {
-        const anuncio = await Anuncio.findById(id);
+        const anuncio = await Anuncio.findById(req.params.id);
 
         if (!anuncio) return res.status(404).json({ error: "Anúncio não encontrado" });
 

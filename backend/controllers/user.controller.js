@@ -2,7 +2,6 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { key } from "../config.js";
-console.log("JWT_SECRET:", process.env.JWT_SECRET);
 // rota do Login
 
 export const login = async (req, res) => {
@@ -22,7 +21,7 @@ export const login = async (req, res) => {
         const token = jwt.sign(
             { id: user._id, email: user.email, role: user.tipo },
             key,
-            { expiresIn: "2h" }
+            { expiresIn: "24h" }
         );
         console.log(token);
 
@@ -34,6 +33,7 @@ export const login = async (req, res) => {
         console.log("Login:", login);
         console.log("Email:", user.email);
         console.log("Usuário:", user.usuario);
+        console.log("Tipo:", user.tipo);
         console.log("Senha enviada:", senha);
         console.log("Senha no banco:", user?.senha);
     } catch (erro) {

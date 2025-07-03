@@ -17,7 +17,9 @@ export function verificarToken(req, res, next) {
         console.log("=== Token decodificado com sucesso ===");
         if (typeof decoded === "object" && "id" in decoded) {
             req.userId = decoded.id;
-            req.userRole = decoded.tipo; // salva tipo: "admin" ou "usuario"
+            req.userRole = decoded.role; // salva tipo: "admin" ou "usuario"
+            console.log(`usuarioID: ${req.userId} / ${decoded.id}`)
+            console.log(`usuarioTipo: ${req.userRole} / ${decoded.role}`)
             next();
         } else {
             res.status(401).json({ message: "Token inválido" })

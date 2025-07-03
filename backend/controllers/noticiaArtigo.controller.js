@@ -1,4 +1,3 @@
-
 import NoticiaArtigo from "../models/noticiaArtigo.model.js";
 
 //Criar Noticia ou Artigo
@@ -75,7 +74,7 @@ export const editarNoticia = async (req, res) => {
             (!noticia.autor || noticia.autor.toString() !== req.userId) &&
             req.userRole !== "admin"
         ) {
-            return res.status(403).json({ error: "Não autorizado" });
+            return res.status(403).json({ error: "Autor inexistente ou incorreto" });
         }
 
         // Garante que só o autor ou o admin pode editar
@@ -84,8 +83,13 @@ export const editarNoticia = async (req, res) => {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
+        //imagem
+        if (req.file) {
+            req.body.imagem = `/uploads/${req.file.filename}`;
+        }
+
         // Atualiza com os novos dados
-        const noticiaAtualizada = await NoticiaArtigo.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const noticiaAtualizada = await NoticiaArtigo.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 
         res.status(200).json(noticiaAtualizada);
     } catch (erro) {
@@ -124,29 +128,29 @@ export const deletarNoticia = async (req, res) => {
 
 //Deletar noticias sem autor
 export const deletarNoticiasSemAutor = async (req, res) => {
-  try {
-    // if (req.userRole !== "admin") {
-    //   return res.status(403).json({ error: "Apenas administradores podem deletar órfãos" });
-    // }
+    try {
+        if (req.userRole !== "admin") {
+            return res.status(403).json({ error: "Apenas administradores podem deletar órfãos" });
+        }
 
-    const resultado = await NoticiaArtigo.deleteMany({ autor: { $exists: false } });
-    res.json({ message: `${resultado.deletedCount} notícias/artigos sem autor foram deletados.` });
-  } catch (erro) {
-    res.status(500).json({ error: erro.message });
-  }
+        const resultado = await NoticiaArtigo.deleteMany({ autor: { $exists: false } });
+        res.json({ message: `${resultado.deletedCount} notícias/artigos sem autor foram deletados.` });
+    } catch (erro) {
+        res.status(500).json({ error: erro.message });
+    }
 };
 
 // APENAS PARA CONVENIENCIA
 export const deletarTodasNoticias = async (req, res) => {
-  try {
-    // Apenas administradores podem fazer isso
-    // if (req.userRole !== "admin") {
-    //   return res.status(403).json({ error: "Apenas administradores podem deletar tudo" });
-    // }
+    try {
+        // Apenas administradores podem fazer isso
+        if (req.userRole !== "admin") {
+            return res.status(403).json({ error: "Apenas administradores podem deletar tudo" });
+        }
 
-    const resultado = await NoticiaArtigo.deleteMany({});
-    res.json({ message: `Todas as notícias/artigos foram deletados (${resultado.deletedCount} itens).` });
-  } catch (erro) {
-    res.status(500).json({ error: erro.message });
-  }
+        const resultado = await NoticiaArtigo.deleteMany({});
+        res.json({ message: `Todas as notícias/artigos foram deletados (${resultado.deletedCount} itens).` });
+    } catch (erro) {
+        res.status(500).json({ error: erro.message });
+    }
 };

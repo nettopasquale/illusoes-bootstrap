@@ -9,13 +9,13 @@ export default function HomePage() {
 
   return (
     <LayoutGeral>
-      {/* <Carrossel></Carrossel> */}
+      <Carrossel></Carrossel>
       <BarraNavTab></BarraNavTab>
-      <ListarNoticias tipo="artigo"></ListarNoticias>
       <ListarNoticias tipo="noticia"></ListarNoticias>
+      <ListarNoticias tipo="artigo"></ListarNoticias>
       <ListarEventos tipo="evento"></ListarEventos>
       <ListarEventos tipo="campeonato"></ListarEventos>
-      <Cards to="/artigos"></Cards>
+      {/* <Cards to="/artigos"></Cards> */}
     </LayoutGeral>
   );
 };

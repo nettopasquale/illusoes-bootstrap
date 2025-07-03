@@ -3,7 +3,7 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { CalendarDays, User } from "lucide-react";
+import { Container } from "react-bootstrap";
 
 const ListaNoticias = ({ tipo }) => {
   const [noticias, setNoticias] = useState([]);
@@ -26,13 +26,13 @@ const ListaNoticias = ({ tipo }) => {
 
   const responsive = {
     desktop: {
-      breakpoint: { max: 3000, min: 1024 },
-      items: 3,
+      breakpoint: { max: 3840, min: 1024 },
+      items: 5,
       slidesToSlide: 1,
     },
     tablet: {
       breakpoint: { max: 1024, min: 768 },
-      items: 2,
+      items: 3,
       slidesToSlide: 1,
     },
     mobile: {
@@ -43,57 +43,68 @@ const ListaNoticias = ({ tipo }) => {
   };
 
   return (
-<div className="my-5 px-4">
-  {noticias.length > 0 ? (
-    <div className="bg-dark bg-opacity-75 rounded p-4">
-      <h2 className="text-white fs-3 fw-bold mb-4 text-capitalize">
-        {tipo === "artigo" ? "Artigos" : "Notícias"} Recentes
-      </h2>
-      <Carousel
-        responsive={responsive}
-        draggable
-        swipeable
-        showDots
-        infinite={false}
-        arrows
-        keyBoardControl
-        containerClass="carousel-container"
-        itemClass="px-2"
-      >
-        {noticias.map((noticia) => (
-          <div
-            key={noticia._id}
-            className="bg-white rounded overflow-hidden shadow-sm cursor-pointer"
-            onClick={() => navigate(`/noticias/${tipo}/${noticia._id}`)}
-            style={{ width: "100%", maxWidth: "350px", margin: "0 auto" }}
+    <Container fluid className="my-5">
+      {noticias.length > 0 ? (
+        <div
+          className="bg-opacity-80 rounded-5 p-4 mx-auto"
+          style={{ maxWidth: "1200px" }}
+        >
+          <h2 className="text fw-bold fs-3 mb-4">
+            {tipo === "artigo" ? "Artigos" : "Notícias"} Recentes
+          </h2>
+          <Carousel
+            responsive={responsive}
+            draggable
+            swipeable
+            showDots
+            infinite={false}
+            arrows
+            keyBoardControl
+            containerClass="carousel-container"
+            itemClass="px-3" // padding lateral por card
+            removeArrowOnDeviceType={["mobile"]}
           >
-            {noticia.imagem && (
-              <img
-                src={noticia.imagem}
-                alt={noticia.titulo}
-                className="d-block w-100"
-                style={{ height: "200px", objectFit: "cover" }}
-              />
-            )}
-            <div className="p-3">
-              <h3 className="fs-5 fw-bold">{noticia.titulo}</h3>
-              <p className="text-secondary">{noticia.subTitulo}</p>
-              <small className="text-muted">
-                Publicado em:{" "}
-                {new Date(noticia.dataPublicacao).toLocaleDateString("pt-BR")}
-              </small>
-            </div>
-          </div>
-        ))}
-      </Carousel>
-    </div>
-  ) : (
-    <p className="text-center fs-5 mt-4 fw-semibold">
-      Nenhuma {tipo === "artigo" ? "artigo" : "notícia"} cadastrada ainda.
-    </p>
-  )}
-</div>
-
+            {noticias.map((noticia) => (
+              <div
+                key={noticia._id}
+                className="rounded overflow-hidden cursor-pointer hover:shadow-xl transition duration-300"
+                style={{
+                  
+                  maxWidth: "300px",
+                  cursor: "pointer",
+                }}
+                onClick={() => navigate(`/noticias/${tipo}/${noticia._id}`)}
+              >
+                {noticia.imagem && (
+                  <img
+                    src={`http://localhost:8080${noticia.imagem}`}
+                    alt={noticia.titulo}
+                    className="card-img-top"
+                    style={{ height: "88px", objectFit: "cover", display: "block" }}
+                  />
+                )}
+                <div className="card-body bg-white p-3">
+                  <h5 className="card-title">{noticia.titulo}</h5>
+                  <p className="card-text">{noticia.subTitulo}</p>
+                  <small className="text-muted">
+                    Publicado em:{" "}
+                    {new Date(noticia.dataPublicacao).toLocaleDateString(
+                      "pt-BR"
+                    )}
+                  </small>
+                </div>
+              </div>
+            ))}
+          </Carousel>
+        </div>
+      ) : (
+        <p className="text-center text fw-bold">
+          {tipo === "artigo"
+            ? "Nenhum artigo cadastrado ainda."
+            : " Nenhuma noticia cadastrada ainda."}
+        </p>
+      )}
+    </Container>
   );
 };
 
