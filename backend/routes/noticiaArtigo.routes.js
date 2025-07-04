@@ -15,12 +15,12 @@ import {verificarToken, verificarAdmin } from "../middleware/auth.middleware.js"
 const noticiaRouters = express.Router();
 
 //filtro por tipo
-noticiaRouters.get('/noticias', listarNoticias); //?tipo=artigo ou ?tipo=noticia
-noticiaRouters.get('/noticias/:id', listarNoticiaPorID);
+noticiaRouters.get('/noticias/:tipo', listarNoticias); //?tipo=artigo ou ?tipo=noticia
+noticiaRouters.get('/noticias/:tipo/:id', listarNoticiaPorID);
 noticiaRouters.post('/noticias', verificarToken, criarNoticia);
-noticiaRouters.put('/noticias/:id', verificarToken, editarNoticia);
-noticiaRouters.patch('/noticias/:id', verificarToken, upload.single('imagem'), editarNoticia);
-noticiaRouters.delete('/noticias/:id', verificarToken, verificarAdmin, deletarNoticia);
+noticiaRouters.put('/noticias/:tipo/:id', verificarToken, editarNoticia);
+noticiaRouters.patch('/noticias/:tipo/:id', verificarToken, upload.single('imagem'), editarNoticia);
+noticiaRouters.delete('/noticias/:tipo/:id', verificarToken, verificarAdmin, deletarNoticia);
 noticiaRouters.delete('/noticias', verificarToken, verificarAdmin, deletarNoticiasSemAutor);
 
 export default noticiaRouters;

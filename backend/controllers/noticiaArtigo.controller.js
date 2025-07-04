@@ -34,8 +34,7 @@ export const criarNoticia = async (req, res) => {
 // listar Noticias ou Artigos
 export const listarNoticias = async (req, res) => {
     try {
-        const { tipo } = req.query; // Ex: ?tipo=artigo
-
+        const { tipo } = req.params; // Ex: ?tipo=artigo
         const filtro = tipo ? { tipo } : {};
 
         const noticias = await NoticiaArtigo.find(filtro).populate("autor", "nome");

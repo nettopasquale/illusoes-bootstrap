@@ -4,25 +4,15 @@ import "react-multi-carousel/lib/styles.css";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Container } from "react-bootstrap";
+import { useListarConteudo } from "../../hooks/useListarConteudo";
 
 const ListaEventos = ({ tipo }) => {
-  const [eventos, setEventos] = useState([]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchEventos= async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:8080/eventos?tipo=${tipo}`
-        );
-        setEventos(response.data);
-      } catch (error) {
-        console.error("Erro ao buscar eventos:", error);
-      }
-    };
-
-    fetchEventos();
-  }, [tipo]);
+  const {
+    conteudos: eventos,
+    erro,
+    carregando,
+    navigate,
+  } = useListarConteudo("http://localhost:8080/eventos", tipo);
 
   const responsive = {
     desktop: {
@@ -42,16 +32,20 @@ const ListaEventos = ({ tipo }) => {
     },
   };
 
+  if (carregando) return <p>Carregando...</p>;
+  if (erro) return <p>{erro}</p>;
+
   return (
-  <Container fluid className="my-5">
+    <Container fluid className="my-5">
       {eventos.length > 0 ? (
         <div
           className="bg-opacity-80 rounded-5 p-4 mx-auto"
           style={{ maxWidth: "1200px" }}
         >
-          <h2 className="text fw-bold fs-3 mb-4">
+          <h2 className="text fw-bold text-start fs-3 mb-4">
             {tipo === "campeonato" ? "Campeonatos" : "Eventos"} Recentes
           </h2>
+          <hr></hr>
           <Carousel
             responsive={responsive}
             draggable
@@ -82,9 +76,13 @@ const ListaEventos = ({ tipo }) => {
                     style={{ height: "88px", objectFit: "cover" }}
                   />
                 )}
-                <div className="card-body bg-white p-3">
-                  <h5 className="card-title">{evento.titulo}</h5>
-                  <p className="card-text">{evento.subTitulo}</p>
+                <div className="card-body bg-white p-3 rounded-bottom-3">
+                  <h5 className="card-title fw-bold text-start">
+                    {evento.titulo}
+                  </h5>
+                  <p className="card-text text-multiline-truncate">
+                    {evento.subTitulo}
+                  </p>
                   <small className="text-muted">
                     Publicado em:{" "}
                     {new Date(evento.dataPublicacao).toLocaleDateString(
@@ -104,7 +102,6 @@ const ListaEventos = ({ tipo }) => {
         </p>
       )}
     </Container>
-
   );
 };
 

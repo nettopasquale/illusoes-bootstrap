@@ -1,5 +1,5 @@
 import {Nav} from 'react-bootstrap';
-
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 BarraNavTab.propTypes = {
@@ -12,24 +12,41 @@ BarraNavTab.propTypes = {
 
 function BarraNavTab() {
   return (
-    <Nav fill variant="tabs" defaultActiveKey="/home" className='mt-3'>
+    <Nav fill variant="tabs" defaultActiveKey="/home" className='mt-3 flex-row gap-1 justify-content-around align-content-around'>
       <Nav.Item>
-        <Nav.Link href="/" className='fw-bold fs-2'>Home</Nav.Link>
+        <Nav.Link className='fw-bold fs-2'>
+          <Link to={"/"}>Home</Link>
+        </Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link eventKey="link-1" href="/artigos" className='fw-bold fs-2'>Artigos</Nav.Link>
+        <Nav.Link className='fw-bold fs-2'>
+          <Link to={"/noticias/:tipo"}>Noticias</Link>
+        </Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link eventKey="link-2" href="/decks" className='fw-bold fs-2'>Decks</Nav.Link>
+        <Nav.Link className='fw-bold fs-2'>
+        <Link to={"/noticias/:tipo"}>Artigos</Link>
+        </Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link eventKey="link-3" href="/eventos" className='fw-bold fs-2'>Eventos</Nav.Link>
+        <Nav.Link className='fw-bold fs-2'>
+          <Link to={"/eventos/:tipo"}>Eventos</Link>
+        </Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link eventKey="link-4" href="/campeonatos" className='fw-bold fs-2'>Campeonatos</Nav.Link>
+        <Nav.Link className='fw-bold fs-2'>
+          <Link to={"/eventos/:tipo"}>Campeonatos</Link>
+        </Nav.Link>
       </Nav.Item>
       <Nav.Item>
-        <Nav.Link eventKey="link-5" href="/marketplace" className='fw-bold fs-2'>Marketplace</Nav.Link>
+        <Nav.Link className='fw-bold fs-2'>
+        <Link to={"/colecoes"}>Coleções</Link>
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link className='fw-bold fs-2'>
+        <Link to={"/marketplace"}>Marketplace</Link>
+        </Nav.Link>
       </Nav.Item>
     </Nav>
   );

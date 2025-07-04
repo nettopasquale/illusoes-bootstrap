@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-export function useConteudo(baseURL) {
+export const useConteudo = (baseURL)=> {
   const { tipo, id } = useParams();
   const [conteudo, setConteudo] = useState(null);
   const [erro, setErro] = useState(null);
@@ -12,6 +12,7 @@ export function useConteudo(baseURL) {
     const buscarConteudo = async () => {
       try {
         const response = await axios.get(`${baseURL}/${tipo}/${id}`);
+        console.log(response);
         setConteudo(response.data);
       } catch (err) {
         setErro("Conteúdo não encontrado.");
@@ -21,5 +22,5 @@ export function useConteudo(baseURL) {
     if (id) buscarConteudo();
   }, [baseURL, id]);
 
-  return { tipo, conteudo, erro };
+  return { tipo, id, conteudo, erro };
 }

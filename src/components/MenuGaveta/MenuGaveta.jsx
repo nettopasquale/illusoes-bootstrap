@@ -36,10 +36,10 @@ function MenuGaveta() {
               <Link to={"/eventos/:tipo"}>Eventos</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
-              <Link to={"/colecoes"}>Coleções</Link>
+              <Link to={"/eventos/:tipo"}>Campeonatos</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
-              <Link to={"/eventos/:tipo"}>Campeonatos</Link>
+              <Link to={"/colecoes"}>Coleções</Link>
             </Nav.Link>
             <Nav.Link className="fs-5">
               <Link to={"/cardgames"}>Card Games</Link>

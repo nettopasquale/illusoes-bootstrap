@@ -34,7 +34,7 @@ export const criarEvento = async (req, res) => {
 // listar Evento ou Campeonato
 export const listarEventos = async (req, res) => {
     try {
-        const { tipo } = req.query; // Ex: ?tipo=evento
+        const { tipo } = req.params; // Ex: ?tipo=evento
 
         const filtro = tipo ? { tipo } : {};
 

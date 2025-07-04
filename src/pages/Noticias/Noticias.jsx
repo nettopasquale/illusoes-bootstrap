@@ -3,8 +3,8 @@ import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useConteudo } from "../../hooks/useConteudo";
 
 export default function Noticias() {
-  const {conteudo, erro } = useConteudo("http://localhost:8080/noticias");
-
+  const { id, conteudo, erro } = useConteudo(`http://localhost:8080/noticias`);
+  
   if (erro) {
     return <div className="text-center text-danger mt-5">{erro}</div>;
   }
@@ -13,9 +13,11 @@ export default function Noticias() {
     return <div className="text-center mt-5">Carregando...</div>;
   }
 
+  console.log(conteudo.imagem)
+
   return (
     <LayoutGeral>
-      <section id="artigo" className="block artigo-block">
+      <section id="conteudo" className="block conteudo-block">
         <Container fluid className="mt-3">
           <div className="text-start mt-5">
             <h1 className="fs-1 fw-bold">{conteudo.titulo}</h1>
@@ -31,9 +33,9 @@ export default function Noticias() {
         </Container>
         <Container>
           <Col>
-            {conteudo.imagem ?? (
+            {conteudo.imagem && (
               <Image
-                src={conteudo.imagem}
+                src={`http://localhost:8080${conteudo.imagem}`}
                 width={700}
                 height={200}
                 className="img-fluid rounded"

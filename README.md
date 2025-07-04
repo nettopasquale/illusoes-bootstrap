@@ -98,6 +98,15 @@ A plataforma deverá implementar as seguintes funcionalidades:
 user: teste0
 senha: @Teste000
 
+user: UsuarioX
+email:usuarioX@site.com
+senha: Usuario@123
+
 Admin:
 user: admin
+senha: Admin@123
+
+Admin:
+user: Admin
+email: admin0@site.com
 senha: Admin@123

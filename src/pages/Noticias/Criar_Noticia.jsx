@@ -6,7 +6,7 @@ import { schemaNoticia } from "../../schema/schema";
 export default function CriarNoticia() {
   const { mensagem, register, handleSubmit, errors, onSubmit } = useCriao(
     schemaNoticia,
-    "http://localhost:8080/noticias"
+    "http://localhost:8080/noticias/"
   );
 
   return (
@@ -100,10 +100,10 @@ export default function CriarNoticia() {
             className="fs-4 btn btn-primary"
             style={{ width: "150px" }}
             disabled={
-              !errors.titulo ||
-              !errors.subTitulo ||
-              !errors.conteudo ||
-              !errors.tipo
+              errors.titulo ||
+              errors.subTitulo ||
+              errors.conteudo ||
+              errors.tipo
                 ? true
                 : false
             }

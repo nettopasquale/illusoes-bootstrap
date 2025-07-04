@@ -8,6 +8,7 @@ export default function Eventos() {
   if (erro) return <div className="text-center text-danger mt-5">{erro}</div>;
   if (!conteudo) return <div className="text-center mt-5">Carregando...</div>;
 
+  console.log(conteudo.imagem)
   return (
     <LayoutGeral>
       <section id="artigo" className="block evento-block">
@@ -26,9 +27,9 @@ export default function Eventos() {
         </Container>
         <Container>
           <Col>
-            {conteudo.imagem ?? (
+            {conteudo.imagem && (
               <Image
-                src={conteudo.imagem}
+              src={`http://localhost:8080${conteudo.imagem}`}
                 width={700}
                 height={200}
                 className="img-fluid rounded"

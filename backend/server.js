@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
+import path from "path"; //imagens locais
+import { fileURLToPath } from "url"; //imagens locais
 import { upload } from "./uploads/upload.js";
 import userRouters from "./routes/user.routes.js";
 import noticiaRouters from "./routes/noticiaArtigo.routes.js";
@@ -15,6 +17,9 @@ console.log(process.env.PORT);
 let corsOptions = {
   origin: "http://localhost:5137"
 };
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 //middlewere
 app.use(cors(corsOptions));
@@ -40,7 +45,10 @@ app.use("/", eventoRouters);
 app.use("/", colecaoRouters);
 app.use("/", anuncioRouters);
 app.use("/", forumRouters);
-app.use('/uploads', express.static('uploads')); //rota estática das imagens
+//app.use('/uploads', express.static('uploads')); //rota estática das imagens
+
+// Para servir a pasta 'uploads' de forma pública:
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 //rota de upar imagem
 app.post('/upload', upload.single('imagem'), (req, res) => {
