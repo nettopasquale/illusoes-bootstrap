@@ -1,4 +1,5 @@
 import express from "express";
+import { upload } from '../uploads/upload.js';
 import {
     criarAnuncio,
     listarAnuncios,
@@ -14,8 +15,8 @@ const anuncioRouters = express.Router();
 //filtro por tipo
 anuncioRouters.get('/marketplace/anuncios', listarAnuncios); //?tipo=artigo ou ?tipo=noticia
 anuncioRouters.get('/marketplace/anuncios/:id', listarAnuncioPorID);
-anuncioRouters.post('/marketplace/anuncios', verificarToken, criarAnuncio);
-anuncioRouters.put('/marketplace/anuncios/:id', verificarToken, editarAnuncio);
+anuncioRouters.post('/marketplace/anuncios', verificarToken, upload.single('imagem'), criarAnuncio);
+anuncioRouters.put('/marketplace/anuncios/:id', verificarToken, upload.single('imagem'), editarAnuncio);
 anuncioRouters.delete('/marketplace/anuncios/:id', verificarToken, deletarAnuncio);
 
 export default anuncioRouters;

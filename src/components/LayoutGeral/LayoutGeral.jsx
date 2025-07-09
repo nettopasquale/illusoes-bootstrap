@@ -1,10 +1,10 @@
 import PropTypes from "prop-types";
-import Header from "../../components/Header/Header";
 import ModalLogin from "../ModalLogin/ModalLogin";
-import Footer from "../Footer/Footer";
 import { useState, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "../../context/useAuth";
+import Header from "../Header/Header";
+import Footer from "../Footer/Footer";
 
 LayoutGeral.propTypes = {
   children: PropTypes.node,
@@ -26,18 +26,19 @@ function LayoutGeral({ children }) {
     }
 
   return (
-    <div className="d-flex flex-column flex-grow-1 justify-content-center align-items-center w-100 bg-body-secondary px-3">
+    <div className="d-flex flex-column min-vh-100 bg-body-secondary">
       <div className="position-fixed top-0 w-100 z-3">
-              <Header onUserClick={handleUserClick} autenticado={autenticado} usuario={usuario} />
+        <Header onUserClick={handleUserClick} autenticado={autenticado} usuario={usuario}/>
+        
         <ModalLogin show={modalShow} onClose={handleModalClose} />
       </div>
 
       {/* Espaço reservado do header */}
       <div style={{ height: "70px" }} />
 
-      <main className="flex-grow-1 px-3">{children}</main>
+      <main className="flex-grow-1 w-100 px-3">{children}</main>
 
-      <footer className="container-fluid p-0 m-0">
+      <footer className="w-100 text-white mt-auto">
         <Footer></Footer>
       </footer>
     </div>

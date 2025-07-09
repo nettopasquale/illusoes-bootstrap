@@ -8,11 +8,13 @@ export const useConteudo = (baseURL)=> {
   const [conteudo, setConteudo] = useState(null);
   const [erro, setErro] = useState(null);
 
+  console.log("useConteudo", { baseURL, tipo, id });
+
+
   useEffect(() => {
     const buscarConteudo = async () => {
       try {
         const response = await axios.get(`${baseURL}/${tipo}/${id}`);
-        console.log(response);
         setConteudo(response.data);
       } catch (err) {
         setErro("Conteúdo não encontrado.");

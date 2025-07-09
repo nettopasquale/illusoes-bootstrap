@@ -1,115 +1,69 @@
-import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap'
+// Header.jsx (ajustado)
+import { Button, Container, Form, Nav, Navbar } from 'react-bootstrap';
 import { BsFillPersonFill, BsCart3, BsEnvelope } from "react-icons/bs";
 import { useNavigate } from 'react-router-dom';
-import ilusoes_logo from "../../assets/ilusoes_logo.png"
-import dk_profile from "../../assets/Do-key_kongo.jpg"
+import ilusoes_logo from "../../assets/ilusoes_logo.png";
+import dk_profile from "../../assets/Do-key_kongo.jpg";
 import { memo } from 'react';
 import MenuGaveta from '../MenuGaveta/MenuGaveta';
 import PropTypes from "prop-types";
 import { useAuth } from '../../context/useAuth';
 
-
 const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
-  
   const navigate = useNavigate();
   const { logout } = useAuth();
 
   const handleLogout = () => {
     logout();
     navigate("/");
-  }
+  };
 
   return (
-    <Navbar expand="lg" className="w-100  navbar fixed-top" bg='dark'>
+    <Navbar className=" bg-black py-3 px-4 w-100 shadow-sm" style={{ position: 'fixed', top: 0, left: 0, zIndex: 1000 }}>
       <Container fluid className="d-flex align-items-center justify-content-between">
-        <Navbar.Brand href="#" className='me-3'>
-          <img
-            alt=''
-            src={ilusoes_logo}
-            width="40"
-            height="40"
-            className="d-flex align-items-center" />
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="navbarScroll" />
-        <Navbar.Collapse id="navbarScroll" >
-          <Nav
-            className="d-flex justify-content-between align-items-center w-100 px-3"
-            style={{ maxHeight: '100px' }}
-            navbarScroll>
-            
-            <Form inline className="d-flex mx-auto" style={{ flexGrow: 1, maxWidth: '500px' }}>
-              <Form.Control
-                type="search"
-                placeholder="Buscar"
-                className="me-2"
-                aria-label="Search"
-              />
-              <Button variant="secondary">Buscar</Button>
-            </Form>
+        {/* Logo e Slogan */}
+        <div className="d-flex align-items-center gap-3">
+          <img src={ilusoes_logo} alt="Logo" width={50} height={50} />
+          <span className="text-white fs-4 fw-bold">Ilusões Industriais</span>
+        </div>
 
-            <div className='d-flex align-items-center gap-3'>
+        {/* Campo de busca */}
+        <Form className="d-flex mx-4" style={{ flex: 1, maxWidth: "600px" }}>
+          <Form.Control
+            type="search"
+            placeholder="Buscar"
+            className="me-2"
+          />
+          <Button variant="light">Buscar</Button>
+        </Form>
 
-              {autenticado ? (
-                <>
-                  <Nav.Link
-                  className='fw-bold text-white fs-5'
-                  disabled>
-                  <Navbar.Brand href="#" className='me-3'>
-                    <img
-                      alt=''
-                      src={dk_profile}
-                      width="40"
-                      height="40"
-                      className="d-flex align-items-center" />
-                    {usuario?.nome}
-                  </Navbar.Brand>
-                  </Nav.Link>
-                    <Nav.Link
-                      onClick={handleLogout}>
-                      Sair
-                  </Nav.Link>
-                </>
-              ) : (
-                <Nav.Link
-                  className='fw-bold text-white fs-5'
-                  onClick={onUserClick}>
-                <BsFillPersonFill
-                  size={20}
-                  style={{ cursor: 'pointer' }}
-                  role='button'
-                  title='Usuário' />
-                </Nav.Link>
-              )}
+        {/* Ações e menu */}
+        <div className="d-flex align-items-center gap-4">
+          {autenticado ? (
+            <>
+              <div className="d-flex align-items-center gap-2 text-white">
+                <img src={dk_profile} alt="profile" width={40} height={40} className="rounded-circle" />
+                <span className="fw-bold">{usuario?.nome}</span>
+              </div>
+              <Nav.Link onClick={handleLogout} className="text-white fw-bold">Sair</Nav.Link>
+            </>
+          ) : (
+            <Nav.Link onClick={onUserClick} className="text-white fw-bold">
+              <BsFillPersonFill size={24} />
+            </Nav.Link>
+          )}
+          <Nav.Link className="text-white"><BsEnvelope size={22} /></Nav.Link>
+          <Nav.Link className="text-white"><BsCart3 size={22} /></Nav.Link>
 
-              
-              <Nav.Link href="#action2" className='fw-bold text-white fs-5'>
-                <BsEnvelope
-                  size={20}
-                  style={{ cursor: 'pointer' }}
-                  role='button'
-                  title='Mail' />
-              </Nav.Link>
-
-              <Nav.Link href="#action3" disabled className='fw-bold text-white fs-5'>
-                <BsCart3
-                  size={24}
-                  style={{ cursor: 'pointer' }}
-                  role='button'
-                  title='Cart' />
-              </Nav.Link>
-            </div>
-
-            <MenuGaveta></MenuGaveta>
-            
-          </Nav>
-
-        </Navbar.Collapse>
+          {/* Menu lateral */}
+          <MenuGaveta />
+        </div>
       </Container>
     </Navbar>
-  )
+  );
 });
 
-export default Header
+export default Header;
 
 Header.propTypes = {
   onUserClick: PropTypes.func.isRequired,
@@ -119,4 +73,4 @@ Header.propTypes = {
     nome: PropTypes.string.isRequired,
     email: PropTypes.string.isRequired,
   })
-}
+};

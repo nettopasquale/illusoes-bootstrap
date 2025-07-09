@@ -6,7 +6,8 @@ import {
     updateUser,
     deleteUser,
     funcaoProtegida,
-    login
+    login,
+    getUserContent
 
 } from "../controllers/user.controller.js";
 import {verificarToken, verificarAdmin } from "../middleware/auth.middleware.js";
@@ -20,5 +21,6 @@ userRouters.post('/users', createUser);
 userRouters.post('/users/login', login);
 userRouters.put('/users/:id', updateUser);
 userRouters.delete('/users/:id', deleteUser);
+userRouters.get('users/conteudos', verificarToken, getUserContent);
 
 export default userRouters;

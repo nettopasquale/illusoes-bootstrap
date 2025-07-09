@@ -16,7 +16,7 @@ export const criarAnuncio = async (req, res) => {
             descricao,
             tipo,
             preco,
-            imagem,
+            imagem: req.file ? `/uploads/${req.file.filename}` : null,
             disponivel,
             vendedor: req.userId,
             dataPublicacao: new Date()
@@ -39,7 +39,7 @@ export const listarAnuncios = async (req, res) => {
 
         const filtro = tipo ? { tipo } : {};
 
-        const anuncios = await Anuncio.find(filtro).populate("vendedor", "anuncio");
+        const anuncios = await Anuncio.find(filtro).populate("vendedor", "usuario");
         res.json(anuncios);
     } catch (erro) {
         res.status(500).json({ error: erro.message });

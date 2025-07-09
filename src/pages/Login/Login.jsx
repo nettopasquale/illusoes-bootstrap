@@ -82,7 +82,7 @@ export default  function Login() {
       <Container
         fluid
         className="mt-5"
-        style={{ maxWidth: "2000px", width: "100%" }}
+        style={{ width: "100%" }}
       >
         {sucesso && (
           <Alert variant="success">Cadastro realizado com sucesso!</Alert>
@@ -137,9 +137,8 @@ export default  function Login() {
           </Form.Group>
 
           <Button
-            variant="dark"
             type="submit"
-            className="fs-4"
+            className="fs-4 bg-black"
             style={{ width: "150px" }}
             disabled={
               !formData.login || !formData.senha

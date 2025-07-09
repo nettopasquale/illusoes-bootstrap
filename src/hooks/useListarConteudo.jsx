@@ -1,14 +1,13 @@
-// src/hooks/useListarConteudo.js
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export const useListarConteudo =(baseURL, tipo)=>{
+export const useListarConteudo = (baseURL, tipo) => {
   const [conteudos, setConteudos] = useState([]);
   const [erro, setErro] = useState(null);
-    const [carregando, setCarregando] = useState(true);
-    
-      const navigate = useNavigate();
+  const [carregando, setCarregando] = useState(true);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const buscarConteudo = async () => {
@@ -26,5 +25,5 @@ export const useListarConteudo =(baseURL, tipo)=>{
     if (tipo) buscarConteudo();
   }, [baseURL, tipo]);
 
-  return { conteudos, erro, carregando, navigate };
-}
+  return {conteudos, erro, carregando, navigate };
+};

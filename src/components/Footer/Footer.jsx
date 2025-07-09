@@ -1,98 +1,102 @@
-import {Row, Col, Stack, Image, Nav, NavLink } from "react-bootstrap"
-import ilusoes_logo from "../../assets/ilusoes_logo.png"
-
+import {
+  Container,
+  Row,
+  Col,
+  Stack,
+  Image,
+  Nav,
+  NavLink,
+} from "react-bootstrap";
+import ilusoes_logo from "../../assets/ilusoes_logo.png";
 
 const Footer = () => {
   return (
-      <>
-        <Row className="bg-dark text-white p-4">
-          <Col className="mx-5">
-            <Stack>
+    <footer className="bg-black text-white pt-4 pb-2" style={{ width: "100%" }}>
+      <Container fluid className="py-4 px-5 text-white">
+        <Row className="px-5 gx-4 gy-3 justify-content-between">
+          <Col md={2} sm={6}>
+            <Stack className="align-items-start">
               <Image
                 src={ilusoes_logo}
-              alt=""
-              className="img-fluid"
+                alt="logo"
+                width={80}
+                height={80}
                 rounded
-                width={150}
-                height={150}/>
-                <h2 className="text-center">Projeto Ilusões Industriais</h2>
-              
+              />
+              <h5 className="mt-2">Ilusões Industriais</h5>
             </Stack>
           </Col>
 
-          <Col>
-            <Nav className="flex-column fs-5 text-start">
-              <span className="fw-bold fs-4">Como podemos ajudar ?</span>
-                <NavLink href="#" className="text-white">Contate o suporte ao consumidor</NavLink>
-                <NavLink href="#" className="text-white">Central de ajuda</NavLink>
-                <NavLink href="#" className="text-white">Acessibilidade</NavLink>
-                <NavLink href="#" className="text-white">Deixe um feedback</NavLink>
-                <NavLink href="#" className="text-white">Política de extorno e retorno</NavLink>
-            </Nav>
-          </Col>
-          <Col>
-            <Nav className="flex-column fs-5 text-start">
-              <span className="fw-bold fs-4">Artigos e Decks</span>
-                <NavLink href="#" className="text-white">Magic the Gathering</NavLink>
-                <NavLink href="#" className="text-white">Yu-Gi-Oh!</NavLink>
-                <NavLink href="#" className="text-white">Pokémon</NavLink>
-                <NavLink href="#" className="text-white">Digimon</NavLink>
-                <NavLink href="#" className="text-white">Flesh and Blood</NavLink>
-            </Nav>
-          </Col>
-          <Col>
-            <Nav className="flex-column fs-5 text-start">
-              <span className="fw-bold fs-4">Eventos e Campeonatos</span>
-                <NavLink href="#" className="text-white">Como criar e participar</NavLink>
-                <NavLink href="#" className="text-white">Regras e Condições</NavLink>
-                <NavLink href="#" className="text-white">Planos de Assinatura</NavLink>
-                <NavLink href="#" className="text-white">Central de Ajuda</NavLink>
-                <NavLink href="#" className="text-white">Política de Eventos</NavLink>
-            </Nav>
-          </Col>
-          <Col>
-            <Nav className="flex-column fs-5 text-start">
-              <span className="fw-bold fs-4">Forum e Comunidade</span>
-                <NavLink href="#" className="text-white">Como participar</NavLink>
-                <NavLink href="#" className="text-white">Central de Ajuda</NavLink>
-                <NavLink href="#" className="text-white">Política de Comunidade</NavLink>
-            </Nav>
-          </Col>
-          <Col>
-            <Nav className="flex-column fs-5 text-start">
-              <span className="fw-bold fs-4">Coleções e Leilões</span>
-                <NavLink href="#" className="text-white">Como vender</NavLink>
-                <NavLink href="#" className="text-white">Cadastro de Coleções</NavLink>
-                <NavLink href="#" className="text-white">Central de Ajuda</NavLink>
-                <NavLink href="#" className="text-white">Política de Vendas</NavLink>
-            </Nav>
-          </Col>
-          <Col>
-            <Nav className="flex-column fs-5 text-start w-100">
-              <span className="fw-bold fs-4">Sobre Nós</span>
-                <NavLink href="#" className="text-white">Contato</NavLink>
-                <NavLink href="#" className="text-white">Nossos valores</NavLink>
-                <NavLink href="#" className="text-white">Trabalhe Conosco</NavLink>
-                <NavLink href="#" className="text-white">Ética de Trabalho</NavLink>
-            </Nav>
-          </Col>
+          {[
+            {
+              title: "Como podemos ajudar ?",
+              links: [
+                "Contate o suporte",
+                "Central de ajuda",
+                "Acessibilidade",
+                "Feedback",
+                "Política de retorno",
+              ],
+            },
+            {
+              title: "Artigos e Decks",
+              links: [
+                "Magic",
+                "Yu-Gi-Oh!",
+                "Pokémon",
+                "Digimon",
+                "Flesh and Blood",
+              ],
+            },
+            {
+              title: "Eventos e Campeonatos",
+              links: [
+                "Criar e Participar",
+                "Regras",
+                "Planos",
+                "Ajuda",
+                "Política de Eventos",
+              ],
+            },
+            {
+              title: "Fórum e Comunidade",
+              links: ["Como participar", "Ajuda", "Política"],
+            },
+            {
+              title: "Coleções e Leilões",
+              links: ["Como vender", "Cadastro", "Ajuda", "Política de vendas"],
+            },
+            {
+              title: "Sobre Nós",
+              links: ["Contato", "Valores", "Trabalhe Conosco", "Ética"],
+            },
+          ].map((section, idx) => (
+            <Col key={idx} md="auto" sm={6}>
+              <Nav className="flex-column fs-5 text-start text-wrap">
+                <span className="fw-bold fs-4 mb-2">{section.title}</span>
+                {section.links.map((text, i) => (
+                  <NavLink href="#" key={i} className="text-white text-start">
+                    {text}
+                  </NavLink>
+                ))}
+              </Nav>
+            </Col>
+          ))}
         </Row>
 
-        <Row className="bg-dark text-white p-4">
+        <hr className="border-light my-3" />
+
+        <Row className="px-5 pb-2">
           <Col>
-            <span className="fw-bold fs-5">Siga nossas redes</span> 
+            <span className="fw-bold">Siga nossas redes sociais</span>
           </Col>
-          <Col>
-            <p>Projeto Ilusões Industriais</p>
-          </Col>
-          <Col>
-            <p>Projeto Ilusões Industriais</p>
+          <Col className="text-end">
+            <small>© {new Date().getFullYear()} Ilusões Industriais</small>
           </Col>
         </Row>
-      
-      </>
+      </Container>
+    </footer>
+  );
+};
 
-  )
-}
-
-export default Footer
+export default Footer;

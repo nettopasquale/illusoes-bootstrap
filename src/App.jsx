@@ -3,14 +3,20 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HomePage from "./pages/HomePage/HomePage";
 import Marketplace from "./pages/Marketplace/Marketplace";
 import Forum from "./pages/Forum/Forum";
-import Cadastro from "./pages/Cadastro/Cadastro";
+import CadastroUsuario from "./pages/CadastroUsuario/CadastroUsuario";
 import Login from "./pages/Login/Login";
-import { Component } from "react"; 
+import { Component } from "react";
 import { noticiasRoutes } from "./routes/routesNoticias";
 import { eventosRoutes } from "./routes/routesEventos";
 import { colecoesRoutes } from "./routes/routesColecoes";
 import { anunciosRoutes } from "./routes/routesAnuncios";
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { usuarioRoutes } from "./routes/routesUsuarios";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 class App extends Component {
   render() {
@@ -21,6 +27,9 @@ class App extends Component {
             {/* Home */}
             <Route path="/" element={<HomePage />} />
 
+            {/* DashBoard Usuário */}
+            {usuarioRoutes}
+
             {/* Noticias e Artigos */}
             {noticiasRoutes}
 
@@ -28,7 +37,7 @@ class App extends Component {
             {eventosRoutes}
 
             {/* Marketplace */}
-            <Route path="/marketplace" element={<Marketplace/>}/>
+            <Route path="/marketplace" element={<Marketplace />} />
             {anunciosRoutes}
 
             {/* Colecoes */}
@@ -36,20 +45,19 @@ class App extends Component {
 
             {/* Forum */}
             <Route path="/forums" element={<Forum />} />
-            
+
             {/* Cadastro */}
-            <Route path="/cadastro" element={<Cadastro />} />
-            
+            <Route path="/cadastro" element={<CadastroUsuario />} />
+
             {/* Login */}
             <Route path="/login" element={<Login />} />
 
             {/* Redrecionar para a Home */}
-            <Route path="*" element={<Navigate to="/"/>}/>
+            <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Router>
       </>
     );
-    
   }
 }
 

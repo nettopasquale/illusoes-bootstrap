@@ -1,6 +1,6 @@
 import { Route } from "react-router-dom";
 import Colecoes from "../pages/Colecoes/Colecoes";
-import CriarColecao from "../pages/Colecoes/Criar_Colecao";
+import CriarColecao from "../pages/Colecoes/CriarColecao";
 import PrivateRoute from "../context/PrivateRoute";
 
 export const colecoesRoutes = [

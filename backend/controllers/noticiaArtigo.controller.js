@@ -3,7 +3,8 @@ import NoticiaArtigo from "../models/noticiaArtigo.model.js";
 //Criar Noticia ou Artigo
 export const criarNoticia = async (req, res) => {
     try {
-        const { titulo, subTitulo, conteudo, imagem, tipo } = req.body;
+        const { titulo, subTitulo, conteudo, tags } = req.body;
+        const { tipo } = req.params;
 
         // Validação simples para evitar valores inválidos
         if (!["noticia", "artigo"].includes(tipo)) {
@@ -14,7 +15,8 @@ export const criarNoticia = async (req, res) => {
             titulo,
             subTitulo,
             conteudo,
-            imagem,
+            tags: JSON.parse(tags || '[]'),
+            imagem: req.file ? `/uploads/${req.file.filename}` : null,
             tipo,
             autor: req.userId,
             dataPublicacao: new Date()
@@ -25,8 +27,10 @@ export const criarNoticia = async (req, res) => {
             return res.status(400).json({ error: "Campos obrigatórios devem ser preenchidos!" });
         }
         await novaNoticia.save();
+        console.log("Body recebido:", req.body);
         res.status(201).json(novaNoticia);
     } catch (erro) {
+        console.error("Erro ao criar notícia:", erro);
         res.status(500).json({ error: erro.message });
     }
 };
@@ -37,7 +41,8 @@ export const listarNoticias = async (req, res) => {
         const { tipo } = req.params; // Ex: ?tipo=artigo
         const filtro = tipo ? { tipo } : {};
 
-        const noticias = await NoticiaArtigo.find(filtro).populate("autor", "nome");
+        const noticias = await NoticiaArtigo.find(filtro).populate("autor", "usuario").sort({ createdAt: -1 });
+        console.log("Noticia populado:", noticias);
         res.json(noticias);
     } catch (erro) {
         res.status(500).json({ error: erro.message });
@@ -48,7 +53,7 @@ export const listarNoticias = async (req, res) => {
 // listar Noticias ou Artigos por ID
 export const listarNoticiaPorID = async (req, res) => {
     try {
-        const noticia = await NoticiaArtigo.findById(req.params.id);
+        const noticia = await NoticiaArtigo.findById(req.params.id).populate("autor", "usuario");
         console.log("Conteúdo noticia");
         console.log(noticia);
 

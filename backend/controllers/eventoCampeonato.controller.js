@@ -3,7 +3,8 @@ import EventoCamp from "../models/eventoCamp.model.js";
 //Criar Evento ou Campeonato
 export const criarEvento = async (req, res) => {
     try {
-        const { titulo, subTitulo, conteudo, imagem, tipo } = req.body;
+        const { titulo, subTitulo, conteudo, tags, dataEvento, valorEntrada } = req.body;
+        const { tipo } = req.params;
 
         // Validação simples para evitar valores inválidos
         if (!["evento", "campeonato"].includes(tipo)) {
@@ -14,10 +15,13 @@ export const criarEvento = async (req, res) => {
             titulo,
             subTitulo,
             conteudo,
-            imagem,
+            imagem: req.file ? `/uploads/${req.file.filename}` : null,
             tipo,
             criador: req.userId,
-            dataPublicacao: new Date()
+            dataPublicacao: new Date(),
+            tags: JSON.parse(tags || '[]'),
+            dataEvento,
+            valorEntrada
 
         });
 
@@ -38,7 +42,8 @@ export const listarEventos = async (req, res) => {
 
         const filtro = tipo ? { tipo } : {};
 
-        const eventos = await EventoCamp.find(filtro).populate("criador", "evento");
+        const eventos = await EventoCamp.find(filtro).populate("criador", "usuario").sort({ createdAt: -1 });
+        console.log("Evento populado:", eventos);
         res.json(eventos);
     } catch (erro) {
         res.status(500).json({ error: erro.message });
@@ -49,7 +54,7 @@ export const listarEventos = async (req, res) => {
 // listar Evento ou Campeonato por ID
 export const listarEventoPorID = async (req, res) => {
     try {
-        const evento = await EventoCamp.findById(req.params.id);
+        const evento = await EventoCamp.findById(req.params.id).populate("criador", "usuario");
 
         if (!evento) return res.status(404).json({ error: "Evento não encontrado" });
 

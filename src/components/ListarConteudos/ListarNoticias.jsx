@@ -1,18 +1,25 @@
-import { useEffect, useState } from "react";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Container } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { useListarConteudo } from "../../hooks/useListarConteudo";
+import LayoutGeral from "../LayoutGeral/LayoutGeral";
+import { useParams } from "react-router-dom";
 
-const ListaNoticias = ({tipo}) => {
+export const ListarNoticias = ({
+  tipo: tipoProp,
+  modoListaCompleta = false,
+}) => {
+  //controle dos tipos da noticia para o carosel ou a Home
+  const { tipo: tipoParams } = useParams();
+  const tipo = tipoProp || tipoParams; // se tipo prop existir, vai ser modo carosel
   const {
     conteudos: noticias,
     erro,
     carregando,
     navigate,
   } = useListarConteudo("http://localhost:8080/noticias", tipo);
+
+  console.log(`http://localhost:8080/noticias tipo = ${tipo}`);
 
   const responsive = {
     desktop: {
@@ -35,8 +42,43 @@ const ListaNoticias = ({tipo}) => {
   if (carregando) return <p>Carregando...</p>;
   if (erro) return <p>{erro}</p>;
 
+  // PARA LISTAR TUDO!
+  if (modoListaCompleta) {
+    return (
+      <LayoutGeral>
+        <h2 className="mb-4 text-center">
+          {tipo === "artigo" ? "Todos os artigos" : "Todas as notícias"}
+        </h2>
+        <hr />
+        <Row xs={1} md={2} lg={3} className="g-4">
+          {noticias.map((noticia) => (
+            <Col key={noticia._id}>
+              <Card
+                onClick={() => navigate(`/noticias/${tipo}/${noticia._id}`)}
+                style={{ cursor: "pointer" }}
+              >
+                {noticia.imagem && (
+                  <Card.Img
+                    variant="top"
+                    src={`http://localhost:8080${noticia.imagem}`}
+                  />
+                )}
+                <Card.Body className="bg-white">
+                  <Card.Title>{noticia.titulo}</Card.Title>
+                  <Card.Text className="text-truncate">
+                    {noticia.subTitulo}
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Col>
+          ))}
+        </Row>
+      </LayoutGeral>
+    );
+  }
+  //HomePage
   return (
-    <Container fluid className="my-5">
+    <Container fluid className="my-4">
       {noticias.length > 0 ? (
         <div
           className="bg-opacity-80 rounded-5 p-4 mx-auto"
@@ -51,6 +93,7 @@ const ListaNoticias = ({tipo}) => {
             draggable
             swipeable
             showDots
+            dotListClass="mt-4 text-center"
             infinite={false}
             arrows
             keyBoardControl
@@ -108,5 +151,3 @@ const ListaNoticias = ({tipo}) => {
     </Container>
   );
 };
-
-export default ListaNoticias;

@@ -1,6 +1,6 @@
 import { Route } from "react-router-dom";
 import Anuncios from "../pages/Anuncios/Anuncios";
-import CriarAnuncio from "../pages/Anuncios/Criar_Anuncio";
+import CriarAnuncio from "../pages/Anuncios/CriarAnuncio";
 import PrivateRoute from "../context/PrivateRoute";
 
 export const anunciosRoutes = [
