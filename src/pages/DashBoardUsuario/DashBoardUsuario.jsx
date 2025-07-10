@@ -5,11 +5,12 @@ import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 
 const menuToRouteMap = {
-  "Minhas Notícias": "/noticias",
-  "Meus Artigos": "/noticias", 
-  "Meus Eventos": "/eventos",
-  "Meus Campeonatos": "/campeonatos",
+  "Minhas Notícias": "noticia",
+  "Meus Artigos": "artigo",
+  "Meus Eventos": "evento",
+  "Meus Campeonatos": "campeonato",
 };
+
 const DashboardUsuario = () => {
   const [submenus, setSubmenus] = useState({});
 
@@ -43,9 +44,18 @@ const DashboardUsuario = () => {
               {submenus[menu] ? <FaChevronUp /> : <FaChevronDown />}
             </Nav.Link>
 
+            {submenus[menu] == 0 && !menuToRouteMap[menu] &&(
+              <Nav.Link as={Link} to={`/userProfile`}>
+                Editar
+              </Nav.Link>
+            )}
+
             {submenus[menu] && menuToRouteMap[menu] && (
               <div className="ps-3">
-                <Nav.Link as={Link} to={`${menuToRouteMap[menu]}/conteudos`}>
+                <Nav.Link
+                  as={Link}
+                  to={`/user/conteudos?tipo=${menuToRouteMap[menu]}`}
+                >
                   Editar
                 </Nav.Link>
               </div>

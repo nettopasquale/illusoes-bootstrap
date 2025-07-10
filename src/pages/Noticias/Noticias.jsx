@@ -1,6 +1,7 @@
-import { Container, Col, Image } from "react-bootstrap";
+import { Container, Col, Row, Image } from "react-bootstrap";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useConteudo } from "../../hooks/useConteudo";
+import { Navegacao } from "../../components/Navegacao/Navegacao";
 
 export default function Noticias() {
   const { id, conteudo, erro } = useConteudo(`http://localhost:8080/noticias`);
@@ -20,38 +21,52 @@ export default function Noticias() {
   return (
     <LayoutGeral>
       <section id="conteudo" className="block conteudo-block">
-        <Container fluid className="mt-3">
-          <div className="text-start mt-5">
-            <h1 className="fs-1 fw-bold mb-5">{conteudo.titulo}</h1>
-            <p className="fs-4">{conteudo.subTitulo}</p>
-          </div>
-          <div className="text-start mt-3 mx-1">
-            <span>{conteudo.autor?.usuario || "Autor desconhecido "}</span>
-            <span>
-              {new Date(conteudo.dataPublicacao).toLocaleDateString()}
-            </span>
-          </div>
-        </Container>
-        <Container>
-          <Col>
-            <div className="my-3 text-muted text-start">
-              Tags: <strong>{conteudo.tipo}</strong>
-            </div>
-            {conteudo.imagem && (
-              <Image
-                src={`http://localhost:8080${conteudo.imagem}`}
-                width={700}
-                height={200}
-                className="img-fluid rounded mb-3"
-                alt="imagem da notícia"
+        <Container className="my-5">
+          <Row className="justify-content-center">
+            <Navegacao itens={[{ label: "Home", to: "/" } , { label: "Todas as Notícias", to: "/noticias/noticia" }, {label: "Notícia"}]} />
+            <Col md={10}>
+              <h1 className="fw-bold mb-2 text-start">{conteudo.titulo}</h1>
+              <h5 className="text-muted mb-4 text-start">
+                {conteudo.subTitulo}
+              </h5>
+              <div className="d-flex flex-wrap gap-3 align-items-center text-secondary mb-4">
+                <span>
+                  <strong>Autor:</strong>{" "}
+                  {conteudo.autor?.usuario ||
+                    conteudo.autor?.nome ||
+                    "Desconhecido"}
+                </span>
+                <span className="text-muted">•</span>
+                <span>
+                  <strong>Publicado em:</strong>{" "}
+                  {new Date(conteudo.dataPublicacao).toLocaleDateString(
+                    "pt-BR",
+                    {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    }
+                  )}
+                </span>
+              </div>
+              {conteudo.imagem && (
+                <div className="mb-4 text-center">
+                  <Image
+                    src={`http://localhost:8080${conteudo.imagem}`}
+                    width={700}
+                    height={200}
+                    className="img-fluid rounded shadow"
+                    alt="imagem da noticia"
+                  />
+                </div>
+              )}
+
+              <div
+                className="conteudo-html mt-3"
+                dangerouslySetInnerHTML={{ __html: conteudo.conteudo }}
               />
-            )}
-          </Col>
-          <Col>
-            <div className="lead" style={{ whiteSpace: "pre-line" }}>
-              {conteudo.conteudo}
-            </div>
-          </Col>
+            </Col>
+          </Row>
         </Container>
       </section>
     </LayoutGeral>

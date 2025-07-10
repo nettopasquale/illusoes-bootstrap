@@ -20,7 +20,7 @@ noticiaRouters.get('/noticias/:tipo/:id', listarNoticiaPorID);
 noticiaRouters.post('/noticias/:tipo', verificarToken, upload.single('imagem'), criarNoticia);
 noticiaRouters.put('/noticias/:tipo/:id', verificarToken, upload.single('imagem'), editarNoticia);
 noticiaRouters.patch('/noticias/:tipo/:id', verificarToken, upload.single('imagem'), editarNoticia);
-noticiaRouters.delete('/noticias/:tipo/:id', verificarToken, verificarAdmin, deletarNoticia);
+noticiaRouters.delete('/noticias/:tipo/:id', verificarToken, deletarNoticia);
 noticiaRouters.delete('/noticias', verificarToken, verificarAdmin, deletarNoticiasSemAutor);
 
 export default noticiaRouters;

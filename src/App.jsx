@@ -11,6 +11,7 @@ import { eventosRoutes } from "./routes/routesEventos";
 import { colecoesRoutes } from "./routes/routesColecoes";
 import { anunciosRoutes } from "./routes/routesAnuncios";
 import { usuarioRoutes } from "./routes/routesUsuarios";
+import { tokenExp } from "./context/tokenExp";
 import {
   BrowserRouter as Router,
   Routes,
@@ -18,8 +19,8 @@ import {
   Navigate,
 } from "react-router-dom";
 
-class App extends Component {
-  render() {
+export const App = ()=> {
+    tokenExp(); // vai deslogar quando a sessão expirar
     return (
       <>
         <Router>
@@ -59,6 +60,3 @@ class App extends Component {
       </>
     );
   }
-}
-
-export default App;

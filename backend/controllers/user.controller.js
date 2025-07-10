@@ -137,7 +137,11 @@ export const deleteUser = async (req, res) => {
 
 export const getUserContent = async (req, res) => {
     try {
-        const { tipo } = req.query;
+        console.log("Chegou na rota /user/conteudos");
+        console.log("Query tipo:", req.query.tipo);
+        console.log("UserID:", req.userId);
+
+        const tipo = req.query.tipo;
         const userId = req.userId;
 
         let resultados = [];
@@ -152,12 +156,15 @@ export const getUserContent = async (req, res) => {
                 ...noticias.map((item) => ({ ...item, tipo: item.tipo })), // noticia ou artigo
                 ...eventos.map((item) => ({ ...item, tipo: item.tipo })), // evento ou campeonato
             ];
+            console.log(resultados)
         } else if (["noticia", "artigo"].includes(tipo)) {
             const noticias = await NoticiaArtigo.find({ autor: userId, tipo }).lean();
             resultados = noticias.map((item) => ({ ...item, tipo }));
+            console.log(resultados)
         } else if (["evento", "campeonato"].includes(tipo)) {
             const eventos = await EventoCamp.find({ criador: userId, tipo }).lean();
             resultados = eventos.map((item) => ({ ...item, tipo }));
+            console.log(resultados)
         } else {
             return res.status(400).json({ error: "Tipo inválido" });
         }
@@ -168,6 +175,8 @@ export const getUserContent = async (req, res) => {
         res.json(resultados);
     } catch (err) {
         console.error("Erro ao buscar conteúdos do usuário:", err);
+        console.error(err.stack);
+
         res.status(500).json({ error: err.message });
     }
 }

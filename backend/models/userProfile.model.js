@@ -1,22 +1,18 @@
 import mongoose from "mongoose";
 
 const userProfileModel = new mongoose.Schema({
+    usuario: { type: mongoose.Schema.Types.ObjectId, ref: "User", unique: true},
     nome: {type: String},
     sobreNome: {type: String},
-    apelido: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    email: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    senha: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    tipo: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     imagemProfile: { type: String },
     cpf: { type: String },
+    rg: { type: String },
     endereco: { type: String },
-    idade: {type: Number}
-    
-
-
+    dataNascimento: { type: String },
+    telefone: {type: String}
 }, { timestamps: true });
 
-const UserProfile = mongoose.model("User", userProfileModel);
+const UserProfile = mongoose.model("UserProfile", userProfileModel);
 
 
 export default UserProfile;

@@ -2,9 +2,11 @@ import { Button, Form, Container, Alert, Nav } from "react-bootstrap";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import * as yup from "yup";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import { Navegacao } from "../../components/Navegacao/Navegacao";
 
 // schema do login
 const schema = yup.object().shape({
@@ -22,7 +24,7 @@ const schema = yup.object().shape({
     .required("Senha é obrigatória"),
 });
 
-export default  function Login() {
+export default function Login() {
   //validação form
   const [formData, setFormData] = useState({
     login: "",
@@ -32,6 +34,8 @@ export default  function Login() {
   const [erro, setErro] = useState({});
   const [sucesso, setSucesso] = useState(false);
   const [mensagem, setMensagem] = useState("");
+
+  const navigate = useNavigate();
 
   //controle de mudança dos inputs
   const handleChange = (e) => {
@@ -59,6 +63,11 @@ export default  function Login() {
       if (resposta.data.token) {
         login(resposta.data.token, resposta.data.usuario);
         setMensagem("Login realizado com sucesso!");
+
+        // Aguarda 2 segundos para mostrar mensagem e depois recarrega
+        setTimeout(() => {
+          navigate("/");
+        }, 2000);
       }
     } catch (error) {
       if (error.name === "ValidationError") {
@@ -79,83 +88,87 @@ export default  function Login() {
 
   return (
     <LayoutGeral>
-      <Container
-        fluid
-        className="mt-5"
-        style={{ width: "100%" }}
-      >
+      <Container fluid className="mt-5 py-5" style={{ width: "100%" }}>
+        <Navegacao itens={[{ label: "Home", to: "/" }, { label: "Login" }]} />
+        <h2 className="mb-4 fs-1 fw-bold">Faça seu Login</h2>
         {sucesso && (
-          <Alert variant="success">Cadastro realizado com sucesso!</Alert>
+          <Alert variant="success">Login realizado com sucesso!</Alert>
         )}
 
         {erro.global && <Alert variant="danger">{erro.global}</Alert>}
 
         {mensagem && <Alert variant="info">{mensagem}</Alert>}
 
-        <Form noValidate onSubmit={handleLogin}>
-          <Form.Group className="mb-3" controlId="formLogin">
-            <Form.Label className="mb-3 fs-4">Usuário ou Email</Form.Label>
-            <Form.Control
-              type="text"
-              name="login"
-              value={formData.login}
-              onChange={handleChange}
-              placeholder="Digite o usuário ou email"
-              required
-              isInvalid={!!erro.login}
-              aria-invalid={
-                formData.login ? "bordborder-success" : "border border-danger"
-              }
-              className="fs-5"
-              style={{ width: "300px" }}
-            />
-            <Form.Control.Feedback type="invalid">
-              {erro.login}
-            </Form.Control.Feedback>
+        <Form noValidate onSubmit={handleLogin} className="">
+          <Form.Group className="mb-4 px-5" controlId="formLogin">
+            <div className="text-center">
+              <Form.Label className="fs-3 fw-bold mt-5">
+                Usuário ou Email
+              </Form.Label>
+              <Form.Control
+                type="text"
+                name="login"
+                value={formData.login}
+                onChange={handleChange}
+                placeholder="Digite o usuário ou email"
+                required
+                isInvalid={!!erro.login}
+                aria-invalid={
+                  formData.login ? "bordborder-success" : "border border-danger"
+                }
+                className="w-25 mx-auto"
+                style={{ fontSize: "1.2rem" }}
+              />
+              <Form.Control.Feedback type="invalid">
+                {erro.login}
+              </Form.Control.Feedback>
+            </div>
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formPassword">
-            <Form.Label className="mb-3 fs-4">Senha</Form.Label>
-            <Form.Control
-              type="password"
-              name="senha"
-              value={formData.senha}
-              onChange={handleChange}
-              placeholder="Digite uma senha"
-              required
-              className="fs-5"
-              isInvalid={!!erro.senha}
-              aria-invalid={
-                formData.usuario
-                  ? "border border-success"
-                  : "border border-danger"
-              }
-            />
-            <Form.Control.Feedback type="invalid">
-              {erro.senha}
-            </Form.Control.Feedback>
+          <Form.Group className="mb-4 px-5" controlId="formPassword">
+            <div className="text-center">
+              <Form.Label className="fs-3 fw-bold mt-5">
+                Senha
+              </Form.Label>
+              <Form.Control
+                type="password"
+                name="senha"
+                value={formData.senha}
+                onChange={handleChange}
+                placeholder="Digite uma senha"
+                required
+                className="w-25 mx-auto"
+                isInvalid={!!erro.senha}
+                aria-invalid={
+                  formData.usuario
+                    ? "border border-success"
+                    : "border border-danger"
+                }
+                style={{ fontSize: "1.2rem" }}
+              />
+              <Form.Control.Feedback type="invalid">
+                {erro.senha}
+              </Form.Control.Feedback>
+            </div>
           </Form.Group>
 
           <Button
             type="submit"
-            className="fs-4 bg-black"
-            style={{ width: "150px" }}
-            disabled={
-              !formData.login || !formData.senha
-                ? true
-                : false
-            }
+            className="fs-4 bg-black w-25"
+            disabled={!formData.login || !formData.senha ? true : false}
           >
             Login
           </Button>
-          <Container className="d-flex flex-column mt-4 mb-4 justify-content-center g-4">
+
+          <Container className="text-center">
             <span className="fs-5">Ainda não é cadastrado?</span>
             <Nav>
-              <Nav.Link className="fs-5">
+              <Nav.Link className="fs-5 mx-auto">
                 <Link to={"/cadastro"}>Faça seu cadastro</Link>
               </Nav.Link>
             </Nav>
           </Container>
+
         </Form>
       </Container>
     </LayoutGeral>

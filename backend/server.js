@@ -10,6 +10,7 @@ import eventoRouters from "./routes/eventoCamp.routes.js";
 import colecaoRouters from "./routes/colecao.routes.js";
 import anuncioRouters from "./routes/anuncio.routes.js";
 import forumRouters from "./routes/forum.routes.js";
+import userProfileRouters from "./routes/userProfile.router.js";
 
 const app = express();
 console.log(process.env.PORT);
@@ -40,6 +41,7 @@ try {
 
 //rotas do app
 app.use("/", userRouters);
+app.use("/", userProfileRouters);
 app.use("/", noticiaRouters);
 app.use("/", eventoRouters);
 app.use("/", colecaoRouters);

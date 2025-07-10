@@ -4,6 +4,7 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 import { useListarConteudo } from "../../hooks/useListarConteudo";
 import LayoutGeral from "../LayoutGeral/LayoutGeral";
 import { useParams } from "react-router-dom";
+import { Navegacao } from "../Navegacao/Navegacao";
 
 export const ListarEventos = ({
   tipo: tipoProp,
@@ -44,33 +45,43 @@ export const ListarEventos = ({
   if (modoListaCompleta) {
     return (
       <LayoutGeral>
-        <h2 className="mb-4 text-start fw-bold ">
-          {tipo === "campeonato" ? "Todos os campeonatos" : "Todos os eventos"}
-        </h2>
-        <hr />
-        <Row xs={1} md={2} lg={3} className="g-4">
-          {eventos.map((evento) => (
-            <Col key={evento._id}>
-              <Card
-                onClick={() => navigate(`/eventos/${tipo}/${evento._id}`)}
-                style={{ cursor: "pointer" }}
-              >
-                {evento.imagem && (
-                  <Card.Img
-                    variant="top"
-                    src={`http://localhost:8080${evento.imagem}`}
-                  />
-                )}
-                <Card.Body className="bg-white">
-                  <Card.Title>{evento.titulo}</Card.Title>
-                  <Card.Text className="text-truncate">
-                    {evento.subTitulo}
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+        <Container fluid className="my-4">
+          <Navegacao
+            itens={[
+              { label: "Home", to: "/" },
+              { label: "Eventos e Campeonatos" },
+            ]}
+          />
+          <h2 className="mb-4 text-start fw-bold ">
+            {tipo === "campeonato"
+              ? "Todos os campeonatos"
+              : "Todos os eventos"}
+          </h2>
+          <hr />
+          <Row xs={1} md={2} lg={3} className="g-4">
+            {eventos.map((evento) => (
+              <Col key={evento._id}>
+                <Card
+                  onClick={() => navigate(`/eventos/${tipo}/${evento._id}`)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {evento.imagem && (
+                    <Card.Img
+                      variant="top"
+                      src={`http://localhost:8080${evento.imagem}`}
+                    />
+                  )}
+                  <Card.Body className="bg-white">
+                    <Card.Title>{evento.titulo}</Card.Title>
+                    <Card.Text className="text-truncate">
+                      {evento.subTitulo}
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Container>
       </LayoutGeral>
     );
   }

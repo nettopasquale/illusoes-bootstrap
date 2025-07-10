@@ -4,6 +4,7 @@ import DashboardUsuario from "../pages/DashBoardUsuario/DashBoardUsuario";
 import { Route } from "react-router-dom";
 import { EditarNoticia } from "../pages/Noticias/EditarNoticia";
 import { EditarEvento } from "../pages/Eventos/EditarEvento";
+import { PerfilUsuario } from "../pages/PerfilUsuario/PerfilUsuario";
 
 export const usuarioRoutes = [
   <Route
@@ -17,7 +18,17 @@ export const usuarioRoutes = [
     />,
     
   <Route
-    path="/conteudos"
+    path="/userProfile"
+    element={
+      <PrivateRoute>
+        <PerfilUsuario />
+      </PrivateRoute>
+    }
+    key="usuario-profile"
+    />,
+    
+  <Route
+    path="/user/conteudos"
     element={
       <PrivateRoute>
         <MeusConteudos />
@@ -26,22 +37,22 @@ export const usuarioRoutes = [
     key="usuario-conteudos"
   />,
   <Route
-    path="/noticias/:id/editar"
+    path="/noticias/:tipo/:id/editar"
     element={
       <PrivateRoute>
         <EditarNoticia />
       </PrivateRoute>
     }
-    key="usuario-editar"
+    key="usuario-editar-noticias"
   />,
   <Route
-    path="/eventos/:id/editar"
+    path="/eventos/:tipo/:id/editar"
     element={
       <PrivateRoute>
         <EditarEvento/>
       </PrivateRoute>
     }
-    key="usuario-editar"
+    key="usuario-editar-eventos"
   />,
 
 ];

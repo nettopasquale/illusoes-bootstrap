@@ -23,9 +23,8 @@ const Carrossel = () => {
       style={{ maxWidth: "1280px", maxHeight: "694px", margin: "0 auto" }}
       controls={true}
       indicators={true}
-      intervals={null}
     >
-      <Carousel.Item>
+      <Carousel.Item interval={500000}>
         <Image
           src={yug25}
           className="d-block w-100 object-fit-cover"
@@ -44,7 +43,7 @@ const Carrossel = () => {
           </p>
         </Carousel.Caption>
       </Carousel.Item>
-      <Carousel.Item>
+      <Carousel.Item interval={500000}>
         <Image
           src={SVPok}
           className="d-block w-100 object-fit-cover"
@@ -61,7 +60,7 @@ const Carrossel = () => {
           <p className="fw-bold text-white text-center">Para todas as idades</p>
         </Carousel.Caption>
       </Carousel.Item>
-      <Carousel.Item>
+      <Carousel.Item interval={500000}>
         <Image
           src={liliana}
           className="d-block w-100 object-fit-cover"

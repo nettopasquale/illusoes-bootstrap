@@ -4,6 +4,7 @@ import { Container, Row, Col, Card } from "react-bootstrap";
 import { useListarConteudo } from "../../hooks/useListarConteudo";
 import LayoutGeral from "../LayoutGeral/LayoutGeral";
 import { useParams } from "react-router-dom";
+import { Navegacao } from "../Navegacao/Navegacao";
 
 export const ListarNoticias = ({
   tipo: tipoProp,
@@ -46,33 +47,41 @@ export const ListarNoticias = ({
   if (modoListaCompleta) {
     return (
       <LayoutGeral>
-        <h2 className="mb-4 text-center">
-          {tipo === "artigo" ? "Todos os artigos" : "Todas as notícias"}
-        </h2>
-        <hr />
-        <Row xs={1} md={2} lg={3} className="g-4">
-          {noticias.map((noticia) => (
-            <Col key={noticia._id}>
-              <Card
-                onClick={() => navigate(`/noticias/${tipo}/${noticia._id}`)}
-                style={{ cursor: "pointer" }}
-              >
-                {noticia.imagem && (
-                  <Card.Img
-                    variant="top"
-                    src={`http://localhost:8080${noticia.imagem}`}
-                  />
-                )}
-                <Card.Body className="bg-white">
-                  <Card.Title>{noticia.titulo}</Card.Title>
-                  <Card.Text className="text-truncate">
-                    {noticia.subTitulo}
-                  </Card.Text>
-                </Card.Body>
-              </Card>
-            </Col>
-          ))}
-        </Row>
+        <Container fluid className="my-4">
+          <Navegacao
+            itens={[
+              { label: "Home", to: "/" },
+              { label: "Noticias e Artigos" },
+            ]}
+          />
+          <h2 className="mb-4 text-center">
+            {tipo === "artigo" ? "Todos os artigos" : "Todas as notícias"}
+          </h2>
+          <hr />
+          <Row xs={1} md={2} lg={3} className="g-4">
+            {noticias.map((noticia) => (
+              <Col key={noticia._id}>
+                <Card
+                  onClick={() => navigate(`/noticias/${tipo}/${noticia._id}`)}
+                  style={{ cursor: "pointer" }}
+                >
+                  {noticia.imagem && (
+                    <Card.Img
+                      variant="top"
+                      src={`http://localhost:8080${noticia.imagem}`}
+                    />
+                  )}
+                  <Card.Body className="bg-white">
+                    <Card.Title>{noticia.titulo}</Card.Title>
+                    <Card.Text className="text-truncate">
+                      {noticia.subTitulo}
+                    </Card.Text>
+                  </Card.Body>
+                </Card>
+              </Col>
+            ))}
+          </Row>
+        </Container>
       </LayoutGeral>
     );
   }

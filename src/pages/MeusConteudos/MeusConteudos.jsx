@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Modal, Button, Form } from "react-bootstrap";
-import LayoutGeral from '../../components/LayoutGeral/LayoutGeral'
+import {
+  Container,
+  Row,
+  Col,
+  Card,
+  Modal,
+  Button,
+  Form,
+} from "react-bootstrap";
+import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import CreatableSelect from "react-select/creatable";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Navegacao } from "../../components/Navegacao/Navegacao";
 
 const opcoesTipo = [
   { value: "todos", label: "Todos os Conteúdos" },
@@ -23,10 +32,16 @@ export const MeusConteudos = () => {
   const buscarConteudos = async () => {
     try {
       const token = localStorage.getItem("token");
-      const filtro = tipoSelecionado.value === "todos" ? "" : `?tipo=${tipoSelecionado.value}`;
-      const response = await axios.get(`http://localhost:8080/users/conteudos${filtro}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const filtro =
+        tipoSelecionado.value === "todos"
+          ? ""
+          : `?tipo=${tipoSelecionado.value}`;
+      const response = await axios.get(
+        `http://localhost:8080/user/conteudos${filtro}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setConteudos(response.data);
     } catch (err) {
       console.error("Erro ao buscar conteúdos:", err);
@@ -45,10 +60,17 @@ export const MeusConteudos = () => {
   const confirmarExclusao = async () => {
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:8080/${conteudoSelecionado.tipo}s/${conteudoSelecionado._id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setModalShow(false);
+      const tipo = conteudoSelecionado.tipo;
+      const basePath =
+        tipo === "noticia" || tipo === "artigo" ? "noticias" : "eventos";
+
+      await axios.delete(
+        `http://localhost:8080/${basePath}/${tipo}/${conteudoSelecionado._id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setModalShow(true);
       buscarConteudos();
     } catch (err) {
       console.error("Erro ao excluir conteúdo:", err);
@@ -56,12 +78,20 @@ export const MeusConteudos = () => {
   };
 
   const irParaEdicao = () => {
-    navigate(`/${conteudoSelecionado.tipo}s/${conteudoSelecionado.tipo}/editar/${conteudoSelecionado._id}`);
+    const tipo = conteudoSelecionado.tipo;
+    const basePath =
+      tipo === "noticia" || tipo === "artigo" ? "noticias" : "eventos";
+    navigate(`/${basePath}/${tipo}/${conteudoSelecionado._id}/editar`);
   };
 
   return (
     <LayoutGeral>
       <Container className="my-5">
+                <Navegacao itens={[
+                  {label: "Home", to: "/"},
+                  {label: "Meu Perfil", to: "/dashboard"},
+                  {label: "Meus Conteúdos",},
+                ]}/>
         <h2 className="fw-bold mb-4">Meus Conteúdos</h2>
 
         <Form.Group className="mb-4" style={{ maxWidth: "300px" }}>
@@ -77,7 +107,10 @@ export const MeusConteudos = () => {
         <Row xs={1} md={2} lg={3} className="g-4">
           {conteudos.map((item) => (
             <Col key={item._id}>
-              <Card onClick={() => abrirModal(item)} style={{ cursor: "pointer" }}>
+              <Card
+                onClick={() => abrirModal(item)}
+                style={{ cursor: "pointer" }}
+              >
                 {item.imagem && (
                   <Card.Img
                     variant="top"

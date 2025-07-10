@@ -2,11 +2,13 @@ import { useState, useEffect } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import CreatableSelect from "react-select/creatable";
 import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { ModalEditarConteudo } from "../../components/ModalEditarConteudo/ModalEditarConteudo";
+import DatePicker from "react-datepicker";
+import axios from "axios";
+import "react-quill/dist/quill.snow.css";
+import { Navegacao } from "../../components/Navegacao/Navegacao";
 
 export const EditarEvento = () => {
   const { id, tipo } = useParams();
@@ -41,7 +43,7 @@ export const EditarEvento = () => {
         setTipoSelecionado({ value: dados.tipo, label: dados.tipo });
         setConteudo(dados.conteudo);
         setDataEvento(dados.dataEvento);
-        setValorEntrada(dados.valorEntrada);
+        setValorEntrada(dados.valorEntrada.toString());
 
         setTags(dados.tags?.map((tag) => ({ value: tag, label: tag })) || []);
         //adaptar se estiver usando tag como objeto ou string
@@ -71,13 +73,13 @@ export const EditarEvento = () => {
       formData.append("dataEvento", dataEvento);
 
       //transformar String em Number
-      const valorLimpo = valorEntrada
-        .replace("R$", "")
-        .trim()
-        .replace(",", ".");
+      let valorLimpo =
+        typeof valorEntrada === "string"
+          ? valorEntrada.replace("R$", "").trim().replace(",", ".")
+          : valorEntrada;
+
       const valorNumerico = parseFloat(valorLimpo);
 
-      // depois no formData:
       formData.append("valorEntrada", isNaN(valorNumerico) ? 0 : valorNumerico);
 
       console.log(formData);
@@ -124,7 +126,15 @@ export const EditarEvento = () => {
   return (
     <LayoutGeral>
       <Container className="my-5 py-5">
-        <h2 className="mb-4 fw-bold">
+        <Navegacao
+          itens={[
+            { label: "Home", to: "/" },
+            { label: "Meu Perfil", to: "/dashboard" },
+            { label: "Meus Conteúdos", to:"/user/conteudos"  },
+            { label: "Editar" },
+          ]}
+        />
+        <h2 className="mb-4 fs-1 fw-bold mb-2">
           Editar {tipoSelecionado?.label || "conteúdo"}
         </h2>
         {mensagem && <Alert variant="success">{mensagem}</Alert>}
@@ -133,11 +143,13 @@ export const EditarEvento = () => {
           <Row>
             <Col md={6}>
               <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-5 fw-bold">Título</Form.Label>
+                <Form.Label className="fs-3 fw-bold text-start w-100">
+                  Título
+                </Form.Label>
                 <Form.Control
                   type="text"
-                  size="lg"
-                  style={{ width: "200px", fontSize: "1.2rem" }}
+                  className="w-100"
+                  style={{ fontSize: "1.2rem" }}
                   value={titulo}
                   onChange={(e) => setTitulo(e.target.value)}
                   placeholder="Título principal"
@@ -147,11 +159,13 @@ export const EditarEvento = () => {
             </Col>
             <Col md={6}>
               <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-5 fw-bold">Subtítulo</Form.Label>
+                <Form.Label className="fs-3 fw-bold text-start w-100">
+                  Subtítulo
+                </Form.Label>
                 <Form.Control
                   type="text"
-                  size="lg"
-                  style={{ width: "200px", fontSize: "1.2rem" }}
+                  className="w-100"
+                  style={{ fontSize: "1.2rem" }}
                   value={subTitulo}
                   onChange={(e) => setSubTitulo(e.target.value)}
                   required
@@ -163,15 +177,16 @@ export const EditarEvento = () => {
           <Row>
             <Col md={6}>
               <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-5 fw-bold">Tipo</Form.Label>
+                <Form.Label className="fs-3 fw-bold text-start w-100">
+                  Tipo
+                </Form.Label>
                 <CreatableSelect
                   options={[
                     { value: "noticia", label: "Notícia" },
                     { value: "artigo", label: "Artigo" },
                   ]}
                   onChange={setTipoSelecionado}
-                  size="lg"
-                  style={{ width: "250px" }}
+                  className="w-100"
                   value={tipoSelecionado}
                   placeholder="Escolha o tipo"
                 />
@@ -180,12 +195,14 @@ export const EditarEvento = () => {
 
             <Col md={6}>
               <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-5 fw-bold">Tags</Form.Label>
+                <Form.Label className="fs-3 fw-bold text-start w-100">
+                  Tags
+                </Form.Label>
                 <CreatableSelect
                   isMulti
                   onChange={setTags}
-                  size="lg"
-                  style={{ width: "250px", fontSize: "1.2rem" }}
+                  className="w-100"
+                  style={{ fontSize: "1.4rem" }}
                   value={tags}
                   placeholder="Adicione tags"
                 />
@@ -193,13 +210,52 @@ export const EditarEvento = () => {
             </Col>
           </Row>
 
-          <Form.Group className="mb-3 py-5">
-            <Form.Label className="fs-5 fw-bold">
+          <Row>
+            <Col md={6}>
+              <Form.Group className="my-4 px-5">
+                <Form.Label className="fs-3 fw-bold text-start w-100">
+                  Data do Evento
+                </Form.Label>
+                <div className="w-100">
+                  <DatePicker
+                    selected={dataEvento}
+                    onChange={setDataEvento}
+                    dateFormat="dd/MM/yyyy"
+                    className="form-control"
+                    showYearDropdown
+                    scrollableYearDropdown
+                    yearDropdownItemNumber={100}
+                    placeholderText="Selecione a data"
+                  />
+                </div>
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group className="mb-4 px-5">
+                <Form.Label className="fs-3 fw-bold text-start w-100">
+                  Valor da Entrada
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ex: R$ 0,00"
+                  className="w-100"
+                  style={{ fontSize: "1.2rem" }}
+                  value={valorEntrada}
+                  onChange={(e) => setValorEntrada(e.target.value)}
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Form.Group className="mb-4 px-5">
+            <Form.Label className="fs-3 fw-bold text-start w-100">
               Imagem da Thumbnail
             </Form.Label>
             <Form.Control
               type="file"
               accept="image/*"
+              className="w-100"
               style={{ height: "30px" }}
               onChange={handleImagem}
             />
@@ -209,10 +265,13 @@ export const EditarEvento = () => {
           </Form.Group>
 
           <Form.Group className="mb-4 p-5">
-            <Form.Label className="fs-5 fw-bold">Conteúdo</Form.Label>
+            <Form.Label className="fs-3 fw-bold text-start w-100">
+              Conteúdo
+            </Form.Label>
             <ReactQuill
               value={conteudo}
               onChange={setConteudo}
+              className="w-100"
               style={{
                 height: "300px",
                 fontSize: "1.1rem",
@@ -223,15 +282,15 @@ export const EditarEvento = () => {
             />
           </Form.Group>
 
-          <div className="d-flex justify-content-between mt-4">
+          <div className="d-flex justify-content-between mt-4 gap-5">
             <Button
-              className="p-5 fw-bold fs-5 bg-black"
+              className="p-5 fw-bold fs-3 bg-black w-50"
               type="button"
-              onClick={() => navigate("/conteudos")}
+              onClick={() => navigate("/user/conteudos")}
             >
               Cancelar
             </Button>
-            <Button className="p-5 fw-bold fs-5 bg-black" type="submit">
+            <Button className="p-5 fw-bold fs-3 bg-black w-50" type="submit">
               Salvar Alterações
             </Button>
           </div>
