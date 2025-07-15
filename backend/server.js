@@ -15,8 +15,23 @@ import userProfileRouters from "./routes/userProfile.router.js";
 const app = express();
 console.log(process.env.PORT);
 
+let corsPermitidos = [
+  "http://localhost:5173", //React FrontEnd
+  "http://localhost:8080", // Server local (teste)
+  "https://illusoes-bootstrap.vercel.app/" //Produção
+];
+
+
 let corsOptions = {
-  origin: "http://localhost:5137"
+   origin: function (origin, callback) {
+    if (!origin || corsPermitidos.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Não permitido pelo Cors"));
+    }
+  },
+  credentials:true
+  
 };
 
 const __filename = fileURLToPath(import.meta.url);
