@@ -18,7 +18,7 @@ export const ListarEventos = ({
     erro,
     carregando,
     navigate,
-  } = useListarConteudo("http://localhost:8080/eventos", tipo);
+  } = useListarConteudo("https://illusoes-bootstrap.onrender.com/eventos", tipo);
 
   const responsive = {
     desktop: {
@@ -68,7 +68,7 @@ export const ListarEventos = ({
                   {evento.imagem && (
                     <Card.Img
                       variant="top"
-                      src={`http://localhost:8080${evento.imagem}`}
+                      src={`https://illusoes-bootstrap.onrender.com${evento.imagem}`}
                     />
                   )}
                   <Card.Body className="bg-white">
@@ -123,7 +123,7 @@ export const ListarEventos = ({
               >
                 {evento.imagem && (
                   <img
-                    src={`http://localhost:8080${evento.imagem}`}
+                    src={`https://illusoes-bootstrap.onrender.com${evento.imagem}`}
                     alt={evento.titulo}
                     className="card-img-top"
                     style={{ height: "88px", objectFit: "cover" }}

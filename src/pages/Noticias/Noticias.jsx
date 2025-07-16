@@ -4,7 +4,7 @@ import { useConteudo } from "../../hooks/useConteudo";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 
 export default function Noticias() {
-  const { id, conteudo, erro } = useConteudo(`http://localhost:8080/noticias`);
+  const { id, conteudo, erro } = useConteudo(`https://illusoes-bootstrap.onrender.com/noticias`);
 
   console.log("Conteúdo pego: ", conteudo);
 
@@ -52,7 +52,7 @@ export default function Noticias() {
               {conteudo.imagem && (
                 <div className="mb-4 text-center">
                   <Image
-                    src={`http://localhost:8080${conteudo.imagem}`}
+                    src={`https://illusoes-bootstrap.onrender.com${conteudo.imagem}`}
                     width={700}
                     height={200}
                     className="img-fluid rounded shadow"

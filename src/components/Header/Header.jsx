@@ -50,7 +50,7 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
                 <img
                   src={
                     usuario?.imagemProfile
-                      ? `http://localhost:8080${usuario.imagemProfile}`
+                      ? `https://illusoes-bootstrap.onrender.com${usuario.imagemProfile}`
                       : dk_profile
                   }
                   alt="profile"

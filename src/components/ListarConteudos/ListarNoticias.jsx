@@ -18,9 +18,9 @@ export const ListarNoticias = ({
     erro,
     carregando,
     navigate,
-  } = useListarConteudo("http://localhost:8080/noticias", tipo);
+  } = useListarConteudo("https://illusoes-bootstrap.onrender.com/noticias", tipo);
 
-  console.log(`http://localhost:8080/noticias tipo = ${tipo}`);
+  console.log(`https://illusoes-bootstrap.onrender.com/noticias tipo = ${tipo}`);
 
   const responsive = {
     desktop: {
@@ -68,7 +68,7 @@ export const ListarNoticias = ({
                   {noticia.imagem && (
                     <Card.Img
                       variant="top"
-                      src={`http://localhost:8080${noticia.imagem}`}
+                      src={`https://illusoes-bootstrap.onrender.com${noticia.imagem}`}
                     />
                   )}
                   <Card.Body className="bg-white">
@@ -122,7 +122,7 @@ export const ListarNoticias = ({
               >
                 {noticia.imagem && (
                   <img
-                    src={`http://localhost:8080${noticia.imagem}`}
+                    src={`https://illusoes-bootstrap.onrender.com${noticia.imagem}`}
                     alt={noticia.titulo}
                     className="card-img-top"
                     style={{

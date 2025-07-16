@@ -4,7 +4,7 @@ import { useConteudo } from "../../hooks/useConteudo";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 
 export default function Eventos() {
-  const { conteudo, erro } = useConteudo("http://localhost:8080/eventos");
+  const { conteudo, erro } = useConteudo("https://illusoes-bootstrap.onrender.com/eventos");
   console.log("Conteúdo pego: ", conteudo);
 
   if (erro) return <div className="text-center text-danger mt-5">{erro}</div>;
@@ -78,7 +78,7 @@ export default function Eventos() {
               </div>
               {conteudo.imagem && (
                 <Image
-                  src={`http://localhost:8080${conteudo.imagem}`}
+                  src={`https://illusoes-bootstrap.onrender.com${conteudo.imagem}`}
                   width={700}
                   height={200}
                   className="img-fluid rounded mb-3"
