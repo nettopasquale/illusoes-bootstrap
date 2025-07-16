@@ -34,7 +34,7 @@ export const AuthProvider = ({ children }) => {
     const carregarPerfil = async () => {
       if (token && usuario && !usuario.imagemProfile) {
         try {
-          const res = await axios.get("http://localhost:8080/userProfile/me", {
+          const res = await axios.get("https://illusoes-bootstrap.onrender.com/userProfile/me", {
             headers: { Authorization: `Bearer ${token}` },
           });
 

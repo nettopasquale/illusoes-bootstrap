@@ -37,7 +37,7 @@ export const MeusConteudos = () => {
           ? ""
           : `?tipo=${tipoSelecionado.value}`;
       const response = await axios.get(
-        `http://localhost:8080/user/conteudos${filtro}`,
+        `https://illusoes-bootstrap.onrender.com/user/conteudos${filtro}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -65,7 +65,7 @@ export const MeusConteudos = () => {
         tipo === "noticia" || tipo === "artigo" ? "noticias" : "eventos";
 
       await axios.delete(
-        `http://localhost:8080/${basePath}/${tipo}/${conteudoSelecionado._id}`,
+        `https://illusoes-bootstrap.onrender.com/${basePath}/${tipo}/${conteudoSelecionado._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -114,7 +114,7 @@ export const MeusConteudos = () => {
                 {item.imagem && (
                   <Card.Img
                     variant="top"
-                    src={`http://localhost:8080${item.imagem}`}
+                    src={`https://illusoes-bootstrap.onrender.com${item.imagem}`}
                     style={{ height: "150px", objectFit: "cover" }}
                   />
                 )}

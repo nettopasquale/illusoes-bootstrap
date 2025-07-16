@@ -45,7 +45,7 @@ export const CriarNoticia = () => {
       const token = localStorage.getItem("token");
 
       await axios.post(
-        `http://localhost:8080/noticias/${tipo.value}`,
+        `https://illusoes-bootstrap.onrender.com/noticias/${tipo.value}`,
         formData,
         {
           headers: {

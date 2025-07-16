@@ -34,7 +34,7 @@ export const EditarEvento = () => {
     const carregarEvento = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/eventos/${tipo}/${id}`
+          `https://illusoes-bootstrap.onrender.com/eventos/${tipo}/${id}`
         );
         const dados = response.data;
 
@@ -86,7 +86,7 @@ export const EditarEvento = () => {
 
       const token = localStorage.getItem("token");
 
-      await axios.put(`http://localhost:8080/eventos/${tipo}/${id}`, formData, {
+      await axios.put(`https://illusoes-bootstrap.onrender.com/eventos/${tipo}/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
@@ -107,7 +107,7 @@ export const EditarEvento = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://localhost:8080/eventos/${tipo}/${id}`, {
+      await axios.delete(`https://illusoes-bootstrap.onrender.com/eventos/${tipo}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

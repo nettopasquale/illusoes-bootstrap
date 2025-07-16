@@ -30,7 +30,7 @@ export const useCadastroUsuario = () => {
       setSucesso(false);
 
       //enviar p o Backend
-      const resposta = await axios.post("http://localhost:8080/users", {
+      const resposta = await axios.post("https://illusoes-bootstrap.onrender.com/users", {
         usuario: formData.usuario,
         email: formData.email,
         senha: formData.senha,

@@ -22,9 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+*.txt
 
 # node modules
 node_modules/
+/backend/node_modules
 
 # env / process
 .env
+/backend/.env

@@ -31,7 +31,7 @@ export const EditarNoticia = () => {
     const carregarNoticia = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/noticias/${tipo}/${id}`
+          `https://illusoes-bootstrap.onrender.com/noticias/${tipo}/${id}`
         );
         const dados = response.data;
         console.log(dados);
@@ -72,7 +72,7 @@ export const EditarNoticia = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `http://localhost:8080/noticias/${tipo}/${id}`,
+        `https://illusoes-bootstrap.onrender.com/noticias/${tipo}/${id}`,
         formData,
         {
           headers: {
@@ -96,7 +96,7 @@ export const EditarNoticia = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`http://localhost:8080/noticias/${tipo}/${id}`, {
+      await axios.delete(`https://illusoes-bootstrap.onrender.com/noticias/${tipo}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

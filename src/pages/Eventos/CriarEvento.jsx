@@ -57,7 +57,7 @@ export const CriarEvento = () => {
       const token = localStorage.getItem("token");
 
       const result = await axios.post(
-        `http://localhost:8080/eventos/${tipo.value}`,
+        `https://illusoes-bootstrap.onrender.com/eventos/${tipo.value}`,
         formData,
         {
           headers: {

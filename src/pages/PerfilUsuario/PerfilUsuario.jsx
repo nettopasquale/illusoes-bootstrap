@@ -26,7 +26,7 @@ export const PerfilUsuario = () => {
 
   const carregarPerfil = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/userProfile/me", {
+      const response = await axios.get("https://illusoes-bootstrap.onrender.com/userProfile/me", {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -77,7 +77,7 @@ export const PerfilUsuario = () => {
         // Atualiza perfil existente
         console.log("PerfilID: ", perfilId);
         await axios.put(
-          `http://localhost:8080/userProfile/${perfilId}`,
+          `https://illusoes-bootstrap.onrender.com/userProfile/${perfilId}`,
           formData,
           config
         );
@@ -85,7 +85,7 @@ export const PerfilUsuario = () => {
       } else {
         // Cria novo perfil
         const response = await axios.post(
-          "http://localhost:8080/userProfile",
+          "https://illusoes-bootstrap.onrender.com/userProfile",
           formData,
           config
         );
@@ -111,7 +111,7 @@ export const PerfilUsuario = () => {
           <Row>
             {perfil.imagemProfile && (
               <img
-                src={`http://localhost:8080/imagens/${perfil.imagemProfile}`}
+                src={`https://illusoes-bootstrap.onrender.com/imagens/${perfil.imagemProfile}`}
                 alt="imagemProfile"
                 className="mb-3"
                 style={{ width: "150px", borderRadius: "50%" }}
