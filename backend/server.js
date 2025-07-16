@@ -18,7 +18,8 @@ console.log(process.env.PORT);
 let corsPermitidos = [
   "http://localhost:5173", //React FrontEnd
   "http://localhost:8080", // Server local (teste)
-  "https://illusoes-bootstrap.vercel.app/" //Produção
+  "https://illusoes-bootstrap.onrender.com", // server Render
+  "https://illusoes-bootstrap.vercel.app" //Produção
 ];
 
 
