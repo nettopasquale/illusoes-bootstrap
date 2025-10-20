@@ -2,7 +2,7 @@ import { Container, Col, Image } from "react-bootstrap";
 //import { useState } from "react"
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 
-export default function CriarTopico() {
+export default function ForumSecao() {
   return (
     <LayoutGeral>
       <section id="artigo" className="block artigo-block">

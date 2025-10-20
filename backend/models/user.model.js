@@ -8,7 +8,9 @@ const userModel = new mongoose.Schema({
         type: String, enum: ["admin", "usuario"],
         default: "usuario", required: true
     },
-    banido: { type: Boolean, default: false }
+    banido: { type: Boolean, default: false },
+    bio: { type: String },
+    reputacao:{type: Number}
 
 }, { timestamps: true });
 

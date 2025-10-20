@@ -2,13 +2,13 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HomePage from "./pages/HomePage/HomePage";
 import Marketplace from "./pages/Marketplace/Marketplace";
-import Forum from "./pages/Forum/Forum";
 import CadastroUsuario from "./pages/CadastroUsuario/CadastroUsuario";
 import Login from "./pages/Login/Login";
 import { Component } from "react";
 import { noticiasRoutes } from "./routes/routesNoticias";
 import { eventosRoutes } from "./routes/routesEventos";
 import { colecoesRoutes } from "./routes/routesColecoes";
+import { forumRoutes } from "./routes/routesForum";
 import { anunciosRoutes } from "./routes/routesAnuncios";
 import { usuarioRoutes } from "./routes/routesUsuarios";
 import { tokenExp } from "./context/tokenExp";
@@ -45,7 +45,7 @@ export const App = ()=> {
             {colecoesRoutes}
 
             {/* Forum */}
-            <Route path="/forums" element={<Forum />} />
+            {forumRoutes}
 
             {/* Cadastro */}
             <Route path="/cadastro" element={<CadastroUsuario />} />
