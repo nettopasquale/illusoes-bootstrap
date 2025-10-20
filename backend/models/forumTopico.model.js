@@ -1,24 +1,31 @@
 import mongoose from "mongoose";
 
 const forumTopicoSchema = new mongoose.Schema({
-    subForumId: {type: mongoose.Schema.Types.ObjectId, ref: "forumSubForum"},
-    titulo: { type: String, required: true },
+    categoriaId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumCategoria", required: true },
+    subForumId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumSubForum", default: null },
+    titulo: { type: String, required: true, trim: true },
     criador: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    secao: { type: mongoose.Schema.Types.ObjectId, ref: "ForumSecao", required: true },
-    dataCriacao: { type: Date, default: Date.now },
-    dataModificacao: { type: Date, default: Date.now },
+    dataCriacao: {type: Date.now()},
+    dataModificacao: {type: Date.now()},
+    primeiroPostId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumPost", }, // controle de contagem de posts
     visualizacoes: { type: Number, default: 0 },
-    respostas: { type: Number, default: 0 }, // atualizado com cada post
-    ultimaResposta: {
-        usuario: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        data: Date
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ForumPost' }],
+    totalPosts: {type: Number, default: 0},
+    ultimoPost: {
+        postId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumPost" },
+        usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        data: { type: Date }
     },
-    conteudo: {type: String, required: true},
-    trancado: { type: Boolean, default: false },
-    status: { type: String, enum: ["ativo", "removido"], default: "ativo" }, // útil para exclusão lógica
-
+    status: { type: String, enum: ["ativo", "trancado", "removido"], default: "ativo" }, // útil para exclusão lógica
+    fixado: { type: Boolean, default: false }, //opcional
+}, {
+    timestamps: true,
+    toJSON: { virtuals: true }
 });
 
-const ForumTopico = mongoose.model("ForumTopic", forumTopicoSchema);
+forumTopicoSchema.index({ titulo: "text" });
+forumTopicoSchema.index({ categoriaId: 1, subforumId: 1, ultimaPostagem:1 });
+
+const ForumTopico = mongoose.model("ForumTopico", forumTopicoSchema);
 
 export default ForumTopico;

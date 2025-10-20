@@ -1,160 +1,119 @@
-import ForumTopico from "../models/forumTopico.model.js";
-import ForumPost from "../models/forumPost.model.js";
+import ForumCategoria from "../models/forumCategoria.model.js";
+import forumSubForum from "../models/forumSubForum.model.js";
 
-//criar novo Tópico
-export const criarTopico = async (req, res) => {
+
+//Criar Categoria
+export const criarCategoria = async (req, res) => {
   try {
-    const novoTopico = new ForumTopico({
-      titulo: req.body.titulo,
-      criador: req.userId,
-      secao: req.body.secao
+    const { nome, descricao, restrito, ordem } = req.body;
+
+    const novaCategoria = new ForumCategoria({
+      nome,
+      descricao,
+      restrito: restrito || false,
+      ordem: ordem || 0,
     });
 
-    const salvo = await novoTopico.save();
+    await novaCategoria.save();
+    res.status(201).json(novaCategoria);
 
-    const primeiraPostagem = new ForumPost({
-      topico: salvo._id,
-      autor: req.userId,
-      conteudo: req.body.conteudo,
-      numeroPostagem: 1
-    });
-
-    await primeiraPostagem.save();
-    res.status(201).json({ topico: salvo, primeiraPostagem });
-  } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao criar categoria", error })
   }
 };
 
-//Responder Tópico
-export const responderTopico = async (req, res) => {
+//Editar Categoria
+export const editarCategoria = async (req, res) => {
   try {
-    const { topicoId, conteudo, citacoes } = req.body;
+    const categoriaAtualizada = await ForumCategoria.findByIdAndUpdate(req.params.id, req.body, { new: true }
+    );
 
-    const totalPosts = await ForumPost.countDocuments({ topico: topicoId });
+    if (!categoriaAtualizada) return res.status(404).json({ error: "Categoria não encontrada" });
 
-    const novaPostagem = new ForumPost({
-      topico: topicoId,
-      autor: req.userId,
-      conteudo,
-      numeroPostagem: totalPosts + 1,
-      citacoes
-    });
-
-    await novaPostagem.save();
-
-    await ForumTopico.findByIdAndUpdate(topicoId, {
-      $inc: { respostas: 1 },
-      ultimaResposta: { usuario: req.userId, data: new Date() }
-    });
-
-    res.status(201).json(novaPostagem);
-  } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+    res.json(categoriaAtualizada);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao atualizar categoria", error });
   }
 };
 
-// Buscar tópicos
-export const buscarTopicos = async (req, res) => {
+// Excluir Categoria
+export const excluirCategoria = async (req, res) => {
   try {
-    const { titulo, autorId, conteudo } = req.query;
-    const filtro = {};
+    const categoria = await ForumCategoria.findByIdAndDelete(req.params.id);
 
-    if (titulo) filtro.titulo = { $regex: titulo, $options: "i" };
-    if (autorId) filtro.criador = autorId;
+    if (!categoria) return res.status(404).json({ message: "Categoria não encontrada" });
 
-    // caso queira buscar tópicos com postagens que contenham tal conteúdo
-    if (conteudo) {
-      const posts = await ForumPost.find({ conteudo: { $regex: conteudo, $options: "i" } });
-      const idsTopicos = [...new Set(posts.map(p => p.topico.toString()))];
-      filtro._id = { $in: idsTopicos };
-    }
+    //deletar subforuns caso existam
 
-    const topicos = await ForumTopico.find(filtro).populate("criador").populate("secao");
-    res.json(topicos);
-  } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+    await forumSubForum.deleteMany({ categoriaId: req.params.id });
+    res.json({ message: "Categoria e subforums removidos com sucesso." })
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao excluir categoria", error });
   }
 };
 
-//Editar postagem
-export const editarPostagem = async (req, res) => {
+//Listar Categoria
+export const listarCategoria = async (req, res) => {
   try {
-    const post = await ForumPost.findById(req.params.id);
-
-    if (!post) return res.status(404).json({ erro: "Postagem não encontrada." });
-
-    const ehDono = post.autor.toString() === req.userId;
-    const ehAdmin = req.userRole === "admin";
-
-    if (!ehDono && !ehAdmin)
-      return res.status(403).json({ erro: "Permissão negada." });
-
-    post.conteudo = req.body.conteudo;
-    post.editado = {
-      data: new Date(),
-      porAdmin: ehAdmin
-    };
-
-    await post.save();
-    res.json(post);
-  } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+    const categorias = await ForumCategoria.find()
+      .sort({ ordem: 1 }) // ordem pode ser personalizada
+      .populate("subforums");
+    res.json(categorias);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao buscar categorias", error });
   }
 };
 
-// Excluir Postagem
-export const excluirPostagem = async (req, res) => {
+
+//Criar Subforum
+export const criarSubforum = async (req, res) => {
   try {
-    const post = await ForumPost.findById(req.params.id);
-    if (!post) return res.status(404).json({ erro: "Postagem não encontrada." });
+    const { nome, descricao, categoriaId } = req.body;
 
-    const ehDono = post.autor.toString() === req.userId;
-    const ehAdmin = req.userRole === "admin";
+    const categoria = await ForumCategoria.findById(categoriaId);
+    if (!categoria) return res.status(404).json({ message: "Categoria não encontrada" });
 
-    if (!ehDono && !ehAdmin)
-      return res.status(403).json({ erro: "Permissão negada." });
+    //atenção aqui
+    const novoSubForum = new forumSubForum({ nome, descricao, categoriaId: categoria });
+    await novoSubForum.save();
 
-    post.status = "removido"; // exclusão lógica
-    await post.save();
+    //vincular subforum à categoria
+    categoria.subforuns.push(novoSubForum._id);
+    await categoria.save();
 
-    res.json({ mensagem: "Postagem removida." });
-  } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+    res.status(201).json(novoSubForum);
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao criar subfórum", error });
   }
 };
 
-// Trancar tópicos - Apenas Admin
-export const trancarTopico = async (req, res) => {
+//Editar Subforum
+export const editarSubforum = async (req, res) => {
   try {
-    if (req.userRole !== "admin") return res.status(403).json({ erro: "Apenas administradores." });
+    const subForumAtualizado = await forumSubForum.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-    const topico = await ForumTopico.findById(req.params.id);
-    if (!topico) return res.status(404).json({ erro: "Tópico não encontrado." });
+    if (!subForumAtualizado) return res.status(404).json({ message: "Subfórum não encontrado" });
+    res.json(subForumAtualizado);
 
-    topico.trancado = !topico.trancado;
-    await topico.save();
-
-    res.json({ mensagem: `Tópico ${topico.trancado ? "trancado" : "destrancado"}` });
-  } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+  } catch (error) {
+    res.status(500).json({ message: "Erro ao atualizar subfórum", error });
   }
 };
 
-// Excluir Tópico - Apenas Admin
-export const excluirTopico = async (req, res) => {
+// Excluir Subforum
+export const excluirSubForum = async (req, res) => {
   try {
-    if (req.userRole !== "admin")
-      return res.status(403).json({ erro: "Apenas administradores podem excluir tópicos." });
+    const subForum = await forumSubForum.findByIdAndDelete(req.params.id);
+    if (!subForum) return res.status(404).json({ message: "Subfórum não encontrado" });
 
-    const topico = await ForumTopico.findById(req.params.id);
-    if (!topico) return res.status(404).json({ erro: "Tópico não encontrado." });
+    //remover referência na categoria
+    await ForumCategoria.updateOne(
+      { _id: subForum.categoriaId },
+      { $pull: { subforuns: subForum._id } }
+    );
+    res.json({ message: "Subfórum excluído com sucesso" });
 
-    topico.status = "removido"; // exclusão lógica
-    await topico.save();
-
-    res.json({ mensagem: "Tópico removido." });
   } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+    res.status(500).json({ message: "Erro ao excluir subfórum", erro });
   }
 };

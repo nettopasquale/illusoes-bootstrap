@@ -9,8 +9,10 @@ import noticiaRouters from "./routes/noticiaArtigo.routes.js";
 import eventoRouters from "./routes/eventoCamp.routes.js";
 import colecaoRouters from "./routes/colecao.routes.js";
 import anuncioRouters from "./routes/anuncio.routes.js";
-import forumRouters from "./routes/forum.routes.js";
 import userProfileRouters from "./routes/userProfile.router.js";
+import forumRouters from "./routes/forum.routes.js";
+import forumTopicoRouters from "./routes/forumTopico.routes.js";
+import forumPostRouters from "./routes/forumPost.routes.js";
 
 const app = express();
 console.log(process.env.PORT);
@@ -63,6 +65,8 @@ app.use("/", eventoRouters);
 app.use("/", colecaoRouters);
 app.use("/", anuncioRouters);
 app.use("/", forumRouters);
+app.use("/", forumTopicoRouters);
+app.use("/", forumPostRouters);
 //app.use('/uploads', express.static('uploads')); //rota estática das imagens
 
 // Para servir a pasta 'uploads' de forma pública:

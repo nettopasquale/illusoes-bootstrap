@@ -1,28 +1,29 @@
 import express from "express";
 import {
-    criarTopico,
-    buscarTopicos,
-    responderTopico,
-    editarPostagem,
-    trancarTopico,
-    excluirPostagem,
-    excluirTopico
+    criarCategoria,
+    listarCategoria,
+    editarCategoria,
+    excluirCategoria,
+    criarSubforum,
+    editarSubforum,
+    excluirSubForum
 } from "../controllers/forum.controller.js";
-import {verificarToken, verificarAdmin } from "../middleware/auth.middleware.js";
+import {verificarAdmin } from "../middleware/auth.middleware.js";
 
 const forumRouters = express.Router();
 
-//Buscar tópicos (com filtros)
-forumRouters.get('/forum', buscarTopicos);
 
-//Tópicos
-forumRouters.post('/forum', verificarToken, criarTopico);
-forumRouters.put('/forum/:id/trancar', verificarToken, verificarAdmin, trancarTopico);
-forumRouters.delete('/forum/:id', verificarToken, verificarAdmin, excluirTopico);
+//Categorias
+forumRouters.get('/forum/categorias', listarCategoria);
+forumRouters.post('/forum/categorias', verificarAdmin, criarCategoria);
+forumRouters.put('/forum/categorias/:id', verificarAdmin, editarCategoria);
+forumRouters.delete('/forum/categorias/:id', verificarAdmin, excluirCategoria);
 
-//Postagens
-forumRouters.post('/forum/:topicoId/responder', verificarToken, responderTopico);
-forumRouters.put('/postagens/:id', verificarToken, editarPostagem);
-forumRouters.delete('/postagens/:id', verificarToken, excluirPostagem);
+//subForums
+forumRouters.post('/forum/categorias/:categoriaId/subforums', verificarAdmin, criarSubforum);
+forumRouters.put('/forum/subforums/:id', verificarAdmin, editarSubforum);
+forumRouters.delete('/forum/subforums/:id', verificarAdmin, excluirSubForum);
+
+
 
 export default forumRouters;
