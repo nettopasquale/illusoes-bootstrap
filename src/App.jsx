@@ -4,7 +4,6 @@ import HomePage from "./pages/HomePage/HomePage";
 import Marketplace from "./pages/Marketplace/Marketplace";
 import CadastroUsuario from "./pages/CadastroUsuario/CadastroUsuario";
 import Login from "./pages/Login/Login";
-import { Component } from "react";
 import { noticiasRoutes } from "./routes/routesNoticias";
 import { eventosRoutes } from "./routes/routesEventos";
 import { colecoesRoutes } from "./routes/routesColecoes";

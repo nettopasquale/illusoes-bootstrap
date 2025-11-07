@@ -11,7 +11,7 @@ const AnexoSchema = new mongoose.Schema({
 const forumPostSchema = new mongoose.Schema({
     topicoId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumTopico", required: true },
     autor: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    dataModificacao: { type: Date.now() },
+    dataModificacao: {type: Date, default: Date.now, required: true},
     conteudo: { type: String, required: true },
     anexos: { type: [AnexoSchema], default: [] },
     curtidas: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],

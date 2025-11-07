@@ -1,26 +1,61 @@
 import { Route } from "react-router-dom";
 import PrivateRoute from "../context/PrivateRoute";
-import Forum from "../pages/Forum/Forum";
+import ForumHome from "../pages/Forum/ForumHome";
+import ForumCategoria from "../pages/Forum/ForumCategoria";
+import ForumTopico from "../pages/Forum/ForumTopico";
+import ForumLista from "../pages/Forum/ForumLista";
+import ForumCriarTopico from "../pages/Forum/ForumCriarTopico";
+import ForumSub from "../pages/Forum/ForumSub";
+import ForumTopicoView from "../pages/Forum/ForumTopicoView";
+import ForumUserProfile from "../pages/Forum/ForumUserProfile";
 
 export const forumRoutes = [
   // Home Forum
-  <Route path="/forum" element={<Forum />} key="forum-id" />,
+  <Route path="/forum" element={<ForumHome />} key="forum-id" />,
 
-  // id Secao
-  <Route path="/forum/:secao/:id" element={<Forum />} key="forum-secao-id" />,
+  // UserProfile
+  <Route
+    path="/forum/:user"
+    element={<ForumUserProfile />}
+    key="forum-user-profile"
+  />,
 
-  // Secoes
-  <Route path="/forum/:secao" element={<Forum />} key="listar-noticias" />,
+  // id Categoria
+  <Route
+    path="/forum/:secao/:id"
+    element={<ForumCategoria />}
+    key="forum-secao-id"
+  />,
+
+  // Categorias
+  <Route
+    path="/forum/:secao"
+    element={<ForumCategoria />}
+    key="listar-secoes"
+  />,
 
   //Subforuns
-  <Route path="/forum/:subforum" element={<Forum />} key="forum-subforum" />,
+  <Route path="/forum/:subforum" element={<ForumSub />} key="forum-subforum" />,
+
+  //ListaTopico
+  <Route path="/forum/topico" element={<ForumLista />} key="forum-lista" />,
+
+  //Topico
+  <Route path="/forum/:topico" element={<ForumTopico />} key="forum-topico" />,
+
+  //Ver Topico
+  <Route
+    path="/forum/:topico/:id"
+    element={<ForumTopicoView />}
+    key="forum-topico-view"
+  />,
 
   // criar Tópico
   <Route
     path="/forum/:secao/:subforum/criar"
     element={
       <PrivateRoute>
-        <Forum />
+        <ForumCriarTopico />
       </PrivateRoute>
     }
     key="criar-topico"
@@ -31,7 +66,7 @@ export const forumRoutes = [
     path="/forum/:secao/:subforum/postar"
     element={
       <PrivateRoute>
-        <Forum />
+        <ForumHome />
       </PrivateRoute>
     }
     key="postar-topico"

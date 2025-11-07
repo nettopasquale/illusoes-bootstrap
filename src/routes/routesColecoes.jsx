@@ -1,10 +1,17 @@
 import { Route } from "react-router-dom";
-import Colecoes from "../pages/Colecoes/Colecoes";
+import ColecoesHome from "../pages/Colecoes/ColecoesHome";
 import CriarColecao from "../pages/Colecoes/CriarColecao";
+import ColecaoView from "../pages/Colecoes/ColecaoView";
+import ColecaoEdicao from "../pages/Colecoes/ColecaoEdicao";
 import PrivateRoute from "../context/PrivateRoute";
 
 export const colecoesRoutes = [
-  <Route path="/colecoes/:id" element={<Colecoes />} key="colecoes-id" />,
+  <Route path="/colecoes" element={<ColecoesHome />} key="colecoes-home" />,
+
+  <Route path="/colecoes/:id" element={<ColecaoView />} key="colecoes-id" />,
+
+  <Route path="/colecoes/editar/:id" element={<ColecaoEdicao />} key="colecoes-id-editar" />,
+  
   <Route path="/colecoes/:id/new" element={
     <PrivateRoute>
       <CriarColecao />
