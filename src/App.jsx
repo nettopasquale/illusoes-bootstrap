@@ -1,7 +1,7 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import HomePage from "./pages/HomePage/HomePage";
-import Marketplace from "./pages/Marketplace/Marketplace";
+import MarketplaceHome from "./pages/Marketplace/MarketplaceHome";
 import CadastroUsuario from "./pages/CadastroUsuario/CadastroUsuario";
 import Login from "./pages/Login/Login";
 import { noticiasRoutes } from "./routes/routesNoticias";
@@ -37,7 +37,7 @@ export const App = ()=> {
             {eventosRoutes}
 
             {/* Marketplace */}
-            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/marketplace" element={<MarketplaceHome />} />
             {anunciosRoutes}
 
             {/* Colecoes */}

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
-import { useEffect } from "react";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral"
 
 
