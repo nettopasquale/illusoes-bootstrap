@@ -1,6 +1,7 @@
-import { Container, Row, Col, Card, Button } from "react-bootstrap";
+import { Container, Row, Col, Card } from "react-bootstrap";
 import { ChatLeftText, ChatDots, PlusCircle } from "react-bootstrap-icons";
 import { useEffect, useState } from "react";
+import { Link, useParams } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 
@@ -60,8 +61,9 @@ export default function ForumSub() {
               itens={[
                 { label: "Home", to: "/" },
                 { label: "Forum", to: "/forum" },
-                { label: "Forum Categoria", to: "/forum/categorias" },
-                { label: "Forum SubCategoria", to: "/forum/categorias/subcategorias" },
+                { label: "Forum Categoria", to: "/forum/categoria" },
+                { label: "Forum Categoria Item", to: "/forum/categoria/:categoriaId" },
+                { label: "Forum SubForum", to: "/forum/categoria/subForum/:subForumId" },
               ]}
             />
             <Col>
@@ -75,7 +77,7 @@ export default function ForumSub() {
           <Row className="mb-3">
             <Col className="text-end">
               <Link
-                to={`/forum/subforum/${subForumId}/criar-topico`}
+                to={`/forum/categoria/:categoriaId/subforum/${subForumId}/criar-topico`}
                 className="btn btn-primary d-flex align-items-center justify-content-center"
                 style={{ gap: "0.5rem", width: "fit-content", float: "right" }}
               >

@@ -17,7 +17,7 @@ export default function useForum() {
   // const data = await response.json();
 
   // 🔧 MOCK TEMPORÁRIO
-  const forumSecao = {
+  const forumCategoria = {
     nome: "Dúvidas e Tutoriais",
     descricao: "Espaço para trocar dicas e aprender com outros jogadores",
     topicos: [
@@ -37,6 +37,6 @@ export default function useForum() {
 
   return {
       forum,
-      forumSecao,
+      forumCategoria,
   };
 }

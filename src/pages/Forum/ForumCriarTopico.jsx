@@ -10,6 +10,7 @@ import {
 import { useState } from "react";
 import { ChatDots, PlusCircle } from "react-bootstrap-icons";
 import { useParams, useNavigate } from "react-router-dom";
+import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 
 export default function ForumCriarTopico() {
@@ -55,6 +56,25 @@ export default function ForumCriarTopico() {
       <section id="artigo" className="block artigo-block">
         <Container className="my-5">
           <Row className="justify-content-center">
+            <Navegacao
+              itens={[
+                { label: "Home", to: "/" },
+                { label: "Forum", to: "/forum" },
+                { label: "Forum Categoria", to: "/forum/categoria" },
+                {
+                  label: "Forum Categoria Item",
+                  to: "/forum/categoria/:categoriaId",
+                },
+                {
+                  label: "Forum SubForum ",
+                  to: "/forum/categoria/subForum/:subForumId",
+                },
+                {
+                  label: "Criar Tópico",
+                  to: "/forum/categoria/subForum/:subForumId/criar-topico",
+                },
+              ]}
+            />
             <Col xs={12} md={8} lg={7}>
               <Card className="shadow-sm border-0 rounded-3">
                 <Card.Header className="bg-light border-0 py-3">

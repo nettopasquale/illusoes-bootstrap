@@ -97,23 +97,23 @@ export default function ForumHome() {
                   {categoria.subforuns.length > 0 ? (
                     <Card.Body className="py-2">
                       {categoria.subforuns.map((sub) => (
-                        <div
-                          key={sub._id}
-                          className="d-flex justify-content-between align-items-start border-bottom py-3"
+                        <Link
+                          to={`/forum/categoria/:categoriaId/subforum/${sub._id}`}
+                          className="flex-grow-1"
+                          style={{ textDecoration: "none", color: "inherit" }}
                         >
-                          <div>
-                            <h6 className="fw-bold mb-1">{sub.nome}</h6>
-                            <p className="mb-0 text-muted small">
-                              {sub.descricao}
-                            </p>
-                          </div>
-                          <Link
-                            to={`/forum/subforum/${sub._id}`}
-                            className="btn btn-outline-primary btn-sm"
+                          <div
+                            key={sub._id}
+                            className="d-flex justify-content-between align-items-start border-bottom py-3"
                           >
-                            Entrar
-                          </Link>
-                        </div>
+                            <div>
+                              <h6 className="fw-bold mb-1">{sub.nome}</h6>
+                              <p className="mb-0 text-muted small">
+                                {sub.descricao}
+                              </p>
+                            </div>
+                          </div>
+                        </Link>
                       ))}
                     </Card.Body>
                   ) : (

@@ -17,7 +17,7 @@ export default function ForumCategoria() {
   const { categoriaId } = useParams();
   const navigate = useNavigate();
 
-  const { categoriaAtual, carregarCategoria, loading, forum, forumSecao } = useForum();
+  const { categoriaAtual, carregarCategoria, loading, forum, forumCategoria } = useForum();
 
   useEffect(() => {
     if (categoriaId) carregarCategoria(categoriaId);
@@ -55,7 +55,7 @@ export default function ForumCategoria() {
                   itens={[
                     { label: "Home", to: "/" },
                     { label: "Forum", to: "/forum" },
-                    { label: "Forum Categoria", to: "/forum/categorias" },
+                    { label: "Forum Categoria", to: "/forum/categoria" },
                   ]}
                 />
                 <Col>
@@ -70,8 +70,8 @@ export default function ForumCategoria() {
               </Row>
 
               <Row className="g-3">
-                {forumSecao.topicos.length > 0 ? (
-                  forumSecao.topicos.map((topico) => (
+                {forumCategoria.topicos.length > 0 ? (
+                  forumCategoria.topicos.map((topico) => (
                     <Col key={topico._id} md={12}>
                       <ForumTopicoCard
                         title={topico.titulo}

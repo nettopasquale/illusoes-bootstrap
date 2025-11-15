@@ -1,10 +1,15 @@
 import React, { useState } from "react";
 import { Card, Button } from "react-bootstrap";
+import { useAuth }  from "../../context/useAuth";
 import ForumPostEditor from "./ForumPostEditor";
 
-export default function ForumPost({ post, user, onEdit, onDelete, onReply }) {
+
+
+export default function ForumPost({ post, onEdit, onDelete, onReply }) {
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
+
+  const { user } = useAuth();
 
   const isAuthor = user && post.authorId === user.id;
 
