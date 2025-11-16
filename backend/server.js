@@ -5,10 +5,11 @@ import path from "path"; //imagens locais
 import { fileURLToPath } from "url"; //imagens locais
 import { upload } from "./uploads/upload.js";
 import userRouters from "./routes/user.routes.js";
-import noticiaRouters from "./routes/noticiaArtigo.routes.js";
-import eventoRouters from "./routes/eventoCamp.routes.js";
+// import noticiaRouters from "./routes/noticiaArtigo.routes.js";
+// import eventoRouters from "./routes/eventoCamp.routes.js";
+import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
-import anuncioRouters from "./routes/anuncio.routes.js";
+import marketplaceRouters from "./routes/marketplace.routes.js";
 import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
 import forumTopicoRouters from "./routes/forumTopico.routes.js";
@@ -58,12 +59,11 @@ try {
 }
 
 //rotas do app
+app.use("/", conteudoRouters);
 app.use("/", userRouters);
 app.use("/", userProfileRouters);
-app.use("/", noticiaRouters);
-app.use("/", eventoRouters);
 app.use("/", colecaoRouters);
-app.use("/", anuncioRouters);
+app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
 app.use("/", forumTopicoRouters);
 app.use("/", forumPostRouters);

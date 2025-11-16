@@ -73,7 +73,7 @@ const DashboardUsuario = () => {
         <Col md={6}>
           <Button
             as={Link}
-            to="/noticias/noticia/criar"
+            to="/conteudos/noticia"
             variant="secondary"
             className="w-100 py-3 fs-5 fw-bold"
           >
@@ -83,7 +83,7 @@ const DashboardUsuario = () => {
         <Col md={6}>
           <Button
             as={Link}
-            to="/noticias/artigo/criar"
+            to="/conteudos/artigo"
             variant="secondary"
             className="w-100 py-3 fs-5 fw-bold bg-black"
           >
@@ -93,7 +93,7 @@ const DashboardUsuario = () => {
         <Col md={6}>
           <Button
             as={Link}
-            to="/eventos/evento/criar"
+            to="/conteudos/evento"
             variant="secondary"
             className="w-100 py-3 fs-5 fw-bold bg-black"
           >
@@ -103,7 +103,7 @@ const DashboardUsuario = () => {
         <Col md={6}>
           <Button
             as={Link}
-            to="/eventos/campeonato/criar"
+            to="/conteudos/campeonato"
             variant="secondary"
             className="w-100 py-3 fs-5 fw-bold bg-black"
           >

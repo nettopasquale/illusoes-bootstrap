@@ -61,6 +61,8 @@ export function ModalEditarConteudo({
               options={[
                 { value: "noticia", label: "Notícia" },
                 { value: "artigo", label: "Artigo" },
+                { value: "evento", label: "Evento" },
+                { value: "campeonato", label: "Campeonato" },
               ]}
             />
           </Form.Group>

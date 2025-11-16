@@ -61,11 +61,10 @@ export const MeusConteudos = () => {
     try {
       const token = localStorage.getItem("token");
       const tipo = conteudoSelecionado.tipo;
-      const basePath =
-        tipo === "noticia" || tipo === "artigo" ? "noticias" : "eventos";
+      const id = conteudoSelecionado._id;
 
       await axios.delete(
-        `https://illusoes-bootstrap.onrender.com/${basePath}/${tipo}/${conteudoSelecionado._id}`,
+        `https://illusoes-bootstrap.onrender.com/conteudos/${tipo}/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -79,9 +78,8 @@ export const MeusConteudos = () => {
 
   const irParaEdicao = () => {
     const tipo = conteudoSelecionado.tipo;
-    const basePath =
-      tipo === "noticia" || tipo === "artigo" ? "noticias" : "eventos";
-    navigate(`/${basePath}/${tipo}/${conteudoSelecionado._id}/editar`);
+    const id = conteudoSelecionado._id;
+    navigate(`/conteudos/${tipo}/${id}/editar`);
   };
 
   return (

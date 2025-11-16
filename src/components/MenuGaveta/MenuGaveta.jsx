@@ -63,12 +63,12 @@ function MenuGaveta({ autenticado }) {
             </Nav.Link>
             {submenuAberto.noticias && (
               <>
-                <Nav.Link as={Link} to="/noticias/noticia" className="ps-4">
+                <Nav.Link as={Link} to="/conteudos/noticia" className="ps-4">
                   Todas as Notícias
                 </Nav.Link>
                 <Nav.Link
                   as={Link}
-                  to={`/noticias/noticia/criar`}
+                  to={`/conteudos/noticia/criar`}
                   className="ps-4"
                 >
                   Publicar Notícia
@@ -87,12 +87,12 @@ function MenuGaveta({ autenticado }) {
             </Nav.Link>
             {submenuAberto.artigos && (
               <>
-                <Nav.Link as={Link} to="/noticias/artigo" className="ps-4">
+                <Nav.Link as={Link} to="/conteudos/artigo" className="ps-4">
                   Todos os Artigos
                 </Nav.Link>
                 <Nav.Link
                   as={Link}
-                  to={`/noticias/artigo/criar`}
+                  to={`/conteudos/artigo/criar`}
                   className="ps-4"
                 >
                   Publicar Artigo
@@ -111,12 +111,12 @@ function MenuGaveta({ autenticado }) {
             </Nav.Link>
             {submenuAberto.eventos && (
               <>
-                <Nav.Link as={Link} to="/eventos/evento" className="ps-4">
+                <Nav.Link as={Link} to="/conteudos/evento" className="ps-4">
                   Todos os Eventos
                 </Nav.Link>
                 <Nav.Link
                   as={Link}
-                  to={`/eventos/evento/criar`}
+                  to={`/conteudos/evento/criar`}
                   className="ps-4"
                 >
                   Criar Evento
@@ -135,12 +135,12 @@ function MenuGaveta({ autenticado }) {
             </Nav.Link>
             {submenuAberto.campeonatos && (
               <>
-                <Nav.Link as={Link} to="/eventos/campeonato" className="ps-4">
+                <Nav.Link as={Link} to="/conteudos/campeonato" className="ps-4">
                   Todos os Campeonatos
                 </Nav.Link>
                 <Nav.Link
                   as={Link}
-                  to={`/eventos/campeonato/criar`}
+                  to={`/conteudos/campeonato/criar`}
                   className="ps-4"
                 >
                   Criar Campeonato

@@ -5,6 +5,7 @@ import CadastroUsuario from "./pages/CadastroUsuario/CadastroUsuario";
 import Login from "./pages/Login/Login";
 import { noticiasRoutes } from "./routes/routesNoticias";
 import { eventosRoutes } from "./routes/routesEventos";
+import { conteudosRoutes } from "./routes/routesConteudos";
 import { colecoesRoutes } from "./routes/routesColecoes";
 import { forumRoutes } from "./routes/routesForum";
 import { MarketplaceRoutes } from "./routes/routesMarketplace";
@@ -28,6 +29,9 @@ export const App = ()=> {
 
             {/* DashBoard Usuário */}
             {usuarioRoutes}
+
+            {/* Conteúdos */}
+            {conteudosRoutes}
 
             {/* Noticias e Artigos */}
             {noticiasRoutes}
