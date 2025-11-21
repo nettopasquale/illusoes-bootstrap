@@ -1,14 +1,50 @@
 import { Container, Col, Row, Image } from "react-bootstrap";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useConteudo } from "../../hooks/useConteudo";
+import { useParams } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 
-export default function Eventos() {
-  const { conteudo, erro } = useConteudo("https://illusoes-bootstrap.onrender.com/eventos");
+export default function ConteudoView() {
+  const { conteudo, erro } = useConteudo(
+    `http://localhost:8080/conteudos`
+  );
   console.log("Conteúdo pego: ", conteudo);
 
-  if (erro) return <div className="text-center text-danger mt-5">{erro}</div>;
-  if (!conteudo) return <div className="text-center mt-5">Carregando...</div>;
+  if (erro) return (
+      <LayoutGeral>
+        <section id="conteudo" className="block evento-block">
+          <Container className="my-5">
+            <Row className="justify-content-center">
+              <Navegacao
+                itens={[
+                  { label: "Home", to: "/" },
+                  { label: "Todos os Conteudos", to: `/conteudos` },
+                  { label: "Conteudo" },
+                ]}
+              />
+              <div className="text-center text-danger mt-5">{erro}</div>
+            </Row>
+          </Container>
+        </section>
+      </LayoutGeral>
+    );
+  if (!conteudo) return (
+          <LayoutGeral>
+        <section id="conteudo" className="block evento-block">
+          <Container className="my-5">
+            <Row className="justify-content-center">
+              <Navegacao
+                itens={[
+                  { label: "Home", to: "/" },
+                  { label: "Todos os Conteudos", to: `/conteudo` },
+                  { label: "Conteudo" },
+                ]}
+              />
+              <div className="text-center mt-5">Carregando...</div>
+            </Row>
+          </Container>
+        </section>
+      </LayoutGeral>);
 
   return (
     <LayoutGeral>
@@ -18,8 +54,8 @@ export default function Eventos() {
             <Navegacao
               itens={[
                 { label: "Home", to: "/" },
-                { label: "Todos os Eventos", to: "/eventos/evento" },
-                { label: "Evento" },
+                { label: "Todos os Conteudos", to:`/conteudos`},
+                { label: "Conteudo" },
               ]}
             />
             <Col md={10}>
@@ -76,18 +112,28 @@ export default function Eventos() {
               <div className="my-3 text-muted text-start">
                 Tags: <strong>{conteudo.tipo}</strong>
               </div>
-              {conteudo.imagem && (
+              {conteudo.thumb && (
                 <Image
-                  src={`https://illusoes-bootstrap.onrender.com${conteudo.imagem}`}
+                  src={`http://localhost:8080${conteudo.thumb}`}
                   width={700}
                   height={200}
                   className="img-fluid rounded mb-3"
-                  alt="imagem do evento"
+                  alt="imagem do conteudo"
+                />
+              )}
+              {/* ALTERAR AQUI */}
+              {conteudo.imagem && (
+                <Image
+                  src={`http://localhost:8080${conteudo.imagem}`}
+                  width={700}
+                  height={200}
+                  className="img-fluid rounded mb-3"
+                  alt="imagens do conteudo"
                 />
               )}
 
               <div
-                className="lead conteudo-html"
+                className="lead conteudo-html text-muted"
                 style={{ whiteSpace: "pre-line" }}
                 dangerouslySetInnerHTML={{ __html: conteudo.conteudo }}
               ></div>

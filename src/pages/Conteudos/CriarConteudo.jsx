@@ -1,32 +1,43 @@
 import { useState } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
-import CreatableSelect from "react-select/creatable";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import CreatableSelect from "react-select/creatable";
+import { useNavigate } from "react-router-dom";
+import ReactQuill from "react-quill";
+import axios from "axios";
+import DatePicker from "react-datepicker";
+import "react-quill/dist/quill.snow.css";
+import "react-datepicker/dist/react-datepicker.css";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 
 const tipoOptions = [
   { value: "noticia", label: "Notícia" },
   { value: "artigo", label: "Artigo" },
+  { value: "evento", label: "Evento" },
+  { value: "campeonato", label: "Campeonato" },
 ];
 
-export const CriarNoticia = () => {
+export const CriarConteudo = () => {
   const navigate = useNavigate();
 
   const [titulo, setTitulo] = useState("");
   const [subTitulo, setSubTitulo] = useState("");
   const [tipo, setTipo] = useState(null);
   const [tags, setTags] = useState([]);
-  const [imagem, setImagem] = useState(null);
+  const [thumb, setThumb] = useState(null);
+  const [imagens, setImagens] = useState(null);
   const [conteudo, setConteudo] = useState("");
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
+  const [dataEvento, setDataEvento] = useState(null);
+  const [valorEntrada, setValorEntrada] = useState("");
 
-  const handleImagem = (e) => {
-    setImagem(e.target.files[0]);
+  const handleThumb = (e) => {
+    setThumb(e.target.files[0]);
+  };
+
+  const handleImagens = (e) => {
+    setImagens(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -36,16 +47,25 @@ export const CriarNoticia = () => {
       const formData = new FormData();
       formData.append("titulo", titulo);
       formData.append("subTitulo", subTitulo);
-      formData.append("tags", JSON.stringify(tags.map((tag) => tag.value)));
-      formData.append("imagem", imagem);
+      formData.append("tags", JSON.stringify(tags.length ? tags.map(t => t.value) : []));
+      if(thumb) formData.append("thumb", thumb);
+      if(imagens) formData.append("imagem", JSON.stringify(imagens.length ? imagens.map(img => img.value) : []));
       formData.append("conteudo", conteudo);
+      formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
 
-      console.log(formData);
+      //transformar String em Number
+      const valorLimpo = valorEntrada
+        .replace("R$", "")
+        .trim()
+        .replace(",", ".");
+      const valorNumerico = parseFloat(valorLimpo);
 
+      // depois no formData:
+      formData.append("valorEntrada", isNaN(valorNumerico) ? 0 : valorNumerico);
       const token = localStorage.getItem("token");
 
-      await axios.post(
-        `https://illusoes-bootstrap.onrender.com/noticias/${tipo.value}`,
+      const result = await axios.post(
+        `http://localhost:8080/conteudos/${tipo.value}`,
         formData,
         {
           headers: {
@@ -55,11 +75,12 @@ export const CriarNoticia = () => {
         }
       );
 
-      setMensagem(`Publicação realizada com sucesso!`);
+      setMensagem(`Publicação realizada com sucesso! ${result.data}`);
       setErro(null);
-      setTimeout(() => navigate("/"), 3000);
+      setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       console.error(err);
+      console.log(`Erro: ${err.data}`);
       setErro("Erro ao publicar conteúdo");
     }
   };
@@ -67,26 +88,28 @@ export const CriarNoticia = () => {
   return (
     <LayoutGeral>
       <Container className="my-5 py-5">
-        <Navegacao itens={[
-          {label: "Home", to: "/"},
-          {label: "Meu Perfil", to: "/dashboard"},
-          {label: "Publicar",},
-        ]}/>
-        <h2 className="mb-4 fs-1 fw-bold">Publicar Notícia ou Artigo</h2>
+        <Navegacao
+          itens={[
+            { label: "Home", to: "/" },
+            { label: "Meu Perfil", to: "/dashboard" },
+            { label: "Publicar" },
+          ]}
+        />
+        <h2 className="mb-4 fs-1 fw-bold">Publicar Conteúdo</h2>
         {mensagem && <Alert variant="success">{mensagem}</Alert>}
         {erro && <Alert variant="danger">{erro}</Alert>}
         <Form onSubmit={handleSubmit}>
           <Row>
             <Col md={6}>
-              <Form.Group className="mb-4 px-5">
+              <Form.Group className="mb-4 px-5 justify-content-center align-items-center">
                 <Form.Label className="fs-3 fw-bold text-start w-100">
                   Título
                 </Form.Label>
                 <Form.Control
                   type="text"
+                  value={titulo}
                   className="w-100"
                   style={{ fontSize: "1.2rem" }}
-                  value={titulo}
                   onChange={(e) => setTitulo(e.target.value)}
                   required
                 />
@@ -99,9 +122,9 @@ export const CriarNoticia = () => {
                 </Form.Label>
                 <Form.Control
                   type="text"
-                  className="w-100"
-                  style={{ fontSize: "1.2rem" }}
                   value={subTitulo}
+                  className="w-100"
+                  style={{ width: "200px", fontSize: "1.2rem" }}
                   onChange={(e) => setSubTitulo(e.target.value)}
                   required
                 />
@@ -118,9 +141,9 @@ export const CriarNoticia = () => {
                 <CreatableSelect
                   options={tipoOptions}
                   onChange={setTipo}
-                  className="w-100"
-                  style={{ fontSize: "1.2rem" }}
                   value={tipo}
+                  className="w-100"
+                  style={{ width: "250px" }}
                   placeholder="Escolha o tipo"
                 />
               </Form.Group>
@@ -135,9 +158,47 @@ export const CriarNoticia = () => {
                   isMulti
                   onChange={setTags}
                   className="w-100"
-                  style={{ fontSize: "1.2rem" }}
+                  style={{ width: "250px", fontSize: "1.2rem" }}
                   value={tags}
                   placeholder="Adicione tags"
+                />
+              </Form.Group>
+            </Col>
+          </Row>
+
+          <Row>
+            <Col md={6}>
+              <Form.Group className="my-4 px-5">
+                <Form.Label className="fs-3 fw-bold text-start w-100">
+                  Data do Evento
+                </Form.Label>
+                <div className="w-100">
+                  <DatePicker
+                    selected={dataEvento}
+                    onChange={(date) => setDataEvento(date)}
+                    dateFormat="dd/MM/yyyy"
+                    className="form-control"
+                    showYearDropdown
+                    scrollableYearDropdown
+                    yearDropdownItemNumber={100}
+                    placeholderText="Selecione a data"
+                  />
+                </div>
+              </Form.Group>
+            </Col>
+
+            <Col md={6}>
+              <Form.Group className="mb-4 px-5">
+                <Form.Label className="fs-3 fw-bold text-start w-100">
+                  Valor da Entrada
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Ex: R$ 0,00"
+                  className="w-100"
+                  style={{ fontSize: "1.2rem" }}
+                  value={valorEntrada}
+                  onChange={(e) => setValorEntrada(e.target.value)}
                 />
               </Form.Group>
             </Col>
@@ -150,8 +211,23 @@ export const CriarNoticia = () => {
             <Form.Control
               type="file"
               accept="image/*"
+              className="w-100"
               style={{ height: "30px" }}
-              onChange={handleImagem}
+              onChange={handleThumb}
+            />
+          </Form.Group>
+
+          {/* REVER AQUI */}
+          <Form.Group className="mb-4 px-5">
+            <Form.Label className="fs-3 fw-bold text-start w-100">
+              Imagens da Galeria do Conteúdo
+            </Form.Label>
+            <Form.Control
+              type="files"
+              accept="image/*"
+              className="w-100"
+              style={{ height: "30px" }}
+              onChange={handleImagens}
             />
           </Form.Group>
 

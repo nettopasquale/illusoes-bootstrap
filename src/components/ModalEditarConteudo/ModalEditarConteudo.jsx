@@ -19,8 +19,8 @@ export function ModalEditarConteudo({
   setTags,
   conteudo,
   setConteudo,
-  imagem,
-  setImagem,
+  thumb,
+  setThumb,
   erro,
   mensagem,
   handleDelete
@@ -61,6 +61,8 @@ export function ModalEditarConteudo({
               options={[
                 { value: "noticia", label: "Notícia" },
                 { value: "artigo", label: "Artigo" },
+                { value: "evento", label: "Evento" },
+                { value: "campeonato", label: "Campeonato" },
               ]}
             />
           </Form.Group>
@@ -80,7 +82,7 @@ export function ModalEditarConteudo({
             <Form.Control
               type="file"
               accept="image/*"
-              onChange={(e) => setImagem(e.target.files[0])}
+              onChange={(e) => setThumb(e.target.files[0])}
             />
           </Form.Group>
 

@@ -70,8 +70,8 @@ export default function ForumUserProfile() {
             <Navegacao
               itens={[
                 { label: "Home", to: "/" },
-                { label: "Forum", to: "/forum" },
-                { label: "Forum User Profile", to: "/forum/userprofile" },
+                { label: "Perfil", to: "/perfil" },
+                { label: "Forum User Profile", to: "/perfil/:userId" },
               ]}
             />
             <Col xs={12} md={8} lg={7}>

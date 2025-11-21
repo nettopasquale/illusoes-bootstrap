@@ -5,10 +5,9 @@ import path from "path"; //imagens locais
 import { fileURLToPath } from "url"; //imagens locais
 import { upload } from "./uploads/upload.js";
 import userRouters from "./routes/user.routes.js";
-import noticiaRouters from "./routes/noticiaArtigo.routes.js";
-import eventoRouters from "./routes/eventoCamp.routes.js";
+import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
-import anuncioRouters from "./routes/anuncio.routes.js";
+import marketplaceRouters from "./routes/marketplace.routes.js";
 import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
 import forumTopicoRouters from "./routes/forumTopico.routes.js";
@@ -58,12 +57,11 @@ try {
 }
 
 //rotas do app
+app.use("/", conteudoRouters);
 app.use("/", userRouters);
 app.use("/", userProfileRouters);
-app.use("/", noticiaRouters);
-app.use("/", eventoRouters);
 app.use("/", colecaoRouters);
-app.use("/", anuncioRouters);
+app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
 app.use("/", forumTopicoRouters);
 app.use("/", forumPostRouters);
@@ -72,10 +70,23 @@ app.use("/", forumPostRouters);
 // Para servir a pasta 'uploads' de forma pública:
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-//rota de upar imagem
-app.post('/upload', upload.single('imagem'), (req, res) => {
+app.use("/uploads-multi", express.static(path.join(__dirname, "uploads-multi")));
+
+//rota de upar thumb
+app.post('/upload', upload.single('thumb'), (req, res) => {
   console.log(req.file); // aqui estará o arquivo enviado
   res.send('Imagem recebida com sucesso!');
+});
+
+//rota de upar imagens
+app.post('/uploads-multi', upload.array('imagem', 10), (req, res) => {
+
+  const filenames = req.files
+
+  if (!filenames) {
+    return res.status(400).send('Nenhum arquivo enviado.');
+  }
+  return res.status(200).send({message: "Arquivos enviados com sucesso!", files: filenames});
 });
 
 app.use((req, res, next) => {

@@ -14,7 +14,7 @@ import {verificarToken, verificarAdmin } from "../middleware/auth.middleware.js"
 const eventoRouters = express.Router();
 
 //filtro por tipo
-eventoRouters.get('/eventos/:tipo', listarEventos); //?tipo=artigo ou ?tipo=noticia
+eventoRouters.get('/eventos/:tipo', listarEventos); 
 eventoRouters.get('/eventos/:tipo/:id', listarEventoPorID);
 eventoRouters.post('/eventos/:tipo', verificarToken, upload.single('imagem'), criarEvento);
 eventoRouters.put('/eventos/:tipo/:id', verificarToken,upload.single('imagem'), editarEvento);

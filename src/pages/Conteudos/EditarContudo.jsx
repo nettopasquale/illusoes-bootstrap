@@ -10,14 +10,15 @@ import axios from "axios";
 import "react-quill/dist/quill.snow.css";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 
-export const EditarEvento = () => {
+export const EditarConteudo = () => {
   const { id, tipo } = useParams();
   const navigate = useNavigate();
 
   const [titulo, setTitulo] = useState("");
   const [subTitulo, setSubTitulo] = useState("");
   const [tags, setTags] = useState([]);
-  const [imagem, setImagem] = useState(null);
+  const [thumb, setThumb] = useState(null);
+  const [imagems, setImagens] = useState(null);
   const [conteudo, setConteudo] = useState("");
   const [tipoSelecionado, setTipoSelecionado] = useState({
     value: tipo,
@@ -34,7 +35,7 @@ export const EditarEvento = () => {
     const carregarEvento = async () => {
       try {
         const response = await axios.get(
-          `https://illusoes-bootstrap.onrender.com/eventos/${tipo}/${id}`
+          `http://localhost:8080/conteudos/${tipo}/${id}`
         );
         const dados = response.data;
 
@@ -42,8 +43,8 @@ export const EditarEvento = () => {
         setSubTitulo(dados.subTitulo);
         setTipoSelecionado({ value: dados.tipo, label: dados.tipo });
         setConteudo(dados.conteudo);
-        setDataEvento(dados.dataEvento);
-        setValorEntrada(dados.valorEntrada.toString());
+        setDataEvento(dados.dataEvento ? new Date(dados.dataEvento) : null);
+        setValorEntrada(dados.valorEntrada != null ? dados.valorEntrada.toString() : "");
 
         setTags(dados.tags?.map((tag) => ({ value: tag, label: tag })) || []);
         //adaptar se estiver usando tag como objeto ou string
@@ -54,12 +55,17 @@ export const EditarEvento = () => {
     };
 
     carregarEvento();
-  }, [id, tipo]);
+  }, [id]);
 
-  const handleImagem = (e) => {
-    setImagem(e.target.files[0]);
+  const handleThumb = (e) => {
+    setThumb(e.target.files[0]);
   };
 
+  const handleImagens = (e) => {
+    setImagens(e.target.files[0]);
+  };
+
+  //edição de conteúdo
   const handleSalvarAlteracoes = async (e) => {
     e.preventDefault();
     if (!tipoSelecionado) return setErro("Escolha um tipo de conteúdo");
@@ -67,10 +73,10 @@ export const EditarEvento = () => {
       const formData = new FormData();
       formData.append("titulo", titulo);
       formData.append("subTitulo", subTitulo);
-      formData.append("tags", JSON.stringify(tags.map((tag) => tag.value)));
+      formData.append("tags", JSON.stringify(tags.length ? tags.map((tag) => tag.value) : []));
       if (imagem) formData.append("imagem", imagem);
       formData.append("conteudo", conteudo);
-      formData.append("dataEvento", dataEvento);
+      formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
 
       //transformar String em Number
       let valorLimpo =
@@ -86,16 +92,20 @@ export const EditarEvento = () => {
 
       const token = localStorage.getItem("token");
 
-      await axios.put(`https://illusoes-bootstrap.onrender.com/eventos/${tipo}/${id}`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.put(
+        `http://localhost:8080/conteudos/${tipoSelecionado.value}/${id}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setMensagem(`Alterações realizadas com sucesso!`);
       setErro("");
-      setTimeout(() => navigate("/dashboard"), 3000);
+      setTimeout(() => navigate("/dashboard"), 2000);
     } catch (err) {
       console.error(err);
       setErro("Erro ao publicar conteúdo");
@@ -107,11 +117,14 @@ export const EditarEvento = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(`https://illusoes-bootstrap.onrender.com/eventos/${tipo}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.delete(
+        `http://localhost:8080/conteudos/${tipoSelecionado.value}/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       setMensagem("Conteúdo excluído com sucesso!");
       setErro(null);
@@ -130,7 +143,7 @@ export const EditarEvento = () => {
           itens={[
             { label: "Home", to: "/" },
             { label: "Meu Perfil", to: "/dashboard" },
-            { label: "Meus Conteúdos", to:"/user/conteudos"  },
+            { label: "Meus Conteúdos", to: "/user/conteudos" },
             { label: "Editar" },
           ]}
         />
@@ -184,6 +197,8 @@ export const EditarEvento = () => {
                   options={[
                     { value: "noticia", label: "Notícia" },
                     { value: "artigo", label: "Artigo" },
+                    { value: "evento", label: "Evento" },
+                    { value: "campeonato", label: "Campeonato" },
                   ]}
                   onChange={setTipoSelecionado}
                   className="w-100"
@@ -210,43 +225,45 @@ export const EditarEvento = () => {
             </Col>
           </Row>
 
-          <Row>
-            <Col md={6}>
-              <Form.Group className="my-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  Data do Evento
-                </Form.Label>
-                <div className="w-100">
-                  <DatePicker
-                    selected={dataEvento}
-                    onChange={setDataEvento}
-                    dateFormat="dd/MM/yyyy"
-                    className="form-control"
-                    showYearDropdown
-                    scrollableYearDropdown
-                    yearDropdownItemNumber={100}
-                    placeholderText="Selecione a data"
-                  />
-                </div>
-              </Form.Group>
-            </Col>
+          {["evento", "campeonato"].includes(tipoSelecionado?.value) &&(
+                <Row>
+                  <Col md={6}>
+                    <Form.Group className="my-4 px-5">
+                      <Form.Label className="fs-3 fw-bold text-start w-100">
+                        Data do Evento
+                      </Form.Label>
+                      <div className="w-100">
+                        <DatePicker
+                          selected={dataEvento}
+                          onChange={setDataEvento}
+                          dateFormat="dd/MM/yyyy"
+                          className="form-control"
+                          showYearDropdown
+                          scrollableYearDropdown
+                          yearDropdownItemNumber={100}
+                          placeholderText="Selecione a data"
+                        />
+                      </div>
+                    </Form.Group>
+                  </Col>
 
-            <Col md={6}>
-              <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  Valor da Entrada
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ex: R$ 0,00"
-                  className="w-100"
-                  style={{ fontSize: "1.2rem" }}
-                  value={valorEntrada}
-                  onChange={(e) => setValorEntrada(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
+                  <Col md={6}>
+                    <Form.Group className="mb-4 px-5">
+                      <Form.Label className="fs-3 fw-bold text-start w-100">
+                        Valor da Entrada
+                      </Form.Label>
+                      <Form.Control
+                        type="text"
+                        placeholder="Ex: R$ 0,00"
+                        className="w-100"
+                        style={{ fontSize: "1.2rem" }}
+                        value={valorEntrada}
+                        onChange={(e) => setValorEntrada(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                </Row>
+              )}
 
           <Form.Group className="mb-4 px-5">
             <Form.Label className="fs-3 fw-bold text-start w-100">
@@ -257,7 +274,24 @@ export const EditarEvento = () => {
               accept="image/*"
               className="w-100"
               style={{ height: "30px" }}
-              onChange={handleImagem}
+              onChange={handleThumb}
+            />
+            <Form.Text className="text-muted">
+              Você pode substituir a imagem atual.
+            </Form.Text>
+          </Form.Group>
+
+          {/* REVER AQUI GALERIA */}
+          <Form.Group className="mb-4 px-5">
+            <Form.Label className="fs-3 fw-bold text-start w-100">
+              Imagens da Galeria
+            </Form.Label>
+            <Form.Control
+              type="files"
+              accept="image/*"
+              className="w-100"
+              style={{ height: "30px" }}
+              onChange={handleImagens}
             />
             <Form.Text className="text-muted">
               Você pode substituir a imagem atual.
@@ -312,8 +346,8 @@ export const EditarEvento = () => {
         setSubTitulo={setSubTitulo}
         tags={tags}
         setTags={setTags}
-        imagem={imagem}
-        setImagem={setImagem}
+        thumb={thumb}
+        setThumb={setThumb}
         conteudo={conteudo}
         setConteudo={setConteudo}
       />

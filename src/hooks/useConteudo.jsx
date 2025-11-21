@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-export const useConteudo = (baseURL)=> {
-  const { tipo, id } = useParams();
+export const useConteudo = (baseURL) => {
+  const { id, tipo } = useParams(); 
+
   const [conteudo, setConteudo] = useState(null);
   const [erro, setErro] = useState(null);
 
   console.log("useConteudo", { baseURL, tipo, id });
-
 
   useEffect(() => {
     const buscarConteudo = async () => {
@@ -25,4 +25,4 @@ export const useConteudo = (baseURL)=> {
   }, [baseURL, id]);
 
   return { tipo, id, conteudo, erro };
-}
+};

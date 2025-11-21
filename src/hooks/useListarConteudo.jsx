@@ -22,8 +22,10 @@ export const useListarConteudo = (baseURL, tipo) => {
       }
     };
 
-    if (tipo) buscarConteudo();
+    if (tipo) {
+      buscarConteudo();
+    }
   }, [baseURL, tipo]);
 
-  return {conteudos, erro, carregando, navigate };
+  return { conteudos, erro, carregando, navigate };
 };

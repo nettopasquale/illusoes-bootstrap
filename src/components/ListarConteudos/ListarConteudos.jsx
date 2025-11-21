@@ -6,7 +6,7 @@ import LayoutGeral from "../LayoutGeral/LayoutGeral";
 import { useParams } from "react-router-dom";
 import { Navegacao } from "../Navegacao/Navegacao";
 
-export const ListarEventos = ({
+export const ListarConteudos = ({
   tipo: tipoProp,
   modoListaCompleta = false,
 }) => {
@@ -14,11 +14,12 @@ export const ListarEventos = ({
   const { tipo: tipoParams } = useParams();
   const tipo = tipoProp || tipoParams; // se tipo prop existir, vai ser modo carosel
   const {
-    conteudos: eventos,
+    conteudos: conteudos,
     erro,
     carregando,
     navigate,
-  } = useListarConteudo("https://illusoes-bootstrap.onrender.com/eventos", tipo);
+  } = useListarConteudo(
+    `http://localhost:8080/conteudos`,tipo);
 
   const responsive = {
     desktop: {
@@ -38,6 +39,20 @@ export const ListarEventos = ({
     },
   };
 
+  const TITULOS = {
+    noticia: "Todas as notícias",
+    artigo: "Todos os artigos",
+    evento: "Todos os eventos",
+    campeonato: "Todos os campeonatos",
+  };
+
+  const TITULOS_HOME = {
+    noticia: "Notícias Recentes",
+    artigo: "Artigos Recentes",
+    evento: "Eventos Recentes",
+    campeonato: "Campeonatos Recentes",
+  };
+
   if (carregando) return <p>Carregando...</p>;
   if (erro) return <p>{erro}</p>;
 
@@ -47,34 +62,29 @@ export const ListarEventos = ({
       <LayoutGeral>
         <Container fluid className="my-4">
           <Navegacao
-            itens={[
-              { label: "Home", to: "/" },
-              { label: "Eventos e Campeonatos" },
-            ]}
+            itens={[{ label: "Home", to: "/" }, { label: "Conteúdos" }]}
           />
           <h2 className="mb-4 text-start fw-bold ">
-            {tipo === "campeonato"
-              ? "Todos os campeonatos"
-              : "Todos os eventos"}
+            {TITULOS[tipo] || "Todos os conteúdos"}
           </h2>
           <hr />
           <Row xs={1} md={2} lg={3} className="g-4">
-            {eventos.map((evento) => (
-              <Col key={evento._id}>
+            {conteudos.map((conteudo) => (
+              <Col key={conteudo._id}>
                 <Card
-                  onClick={() => navigate(`/eventos/${tipo}/${evento._id}`)}
+                  onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
                   style={{ cursor: "pointer" }}
                 >
-                  {evento.imagem && (
+                  {conteudo.imagem && (
                     <Card.Img
                       variant="top"
-                      src={`https://illusoes-bootstrap.onrender.com${evento.imagem}`}
+                      src={`http://localhost:8080${conteudo.imagem}`}
                     />
                   )}
                   <Card.Body className="bg-white">
-                    <Card.Title>{evento.titulo}</Card.Title>
+                    <Card.Title>{conteudo.titulo}</Card.Title>
                     <Card.Text className="text-truncate">
-                      {evento.subTitulo}
+                      {conteudo.subTitulo}
                     </Card.Text>
                   </Card.Body>
                 </Card>
@@ -89,13 +99,13 @@ export const ListarEventos = ({
   //HomePage
   return (
     <Container fluid className="my-4">
-      {eventos.length > 0 ? (
+      {conteudos.length > 0 ? (
         <div
           className="bg-opacity-80 rounded-5 p-4 mx-auto"
           style={{ maxWidth: "1200px" }}
         >
           <h2 className="text fw-bold text-start fs-3 mb-4">
-            {tipo === "campeonato" ? "Campeonatos" : "Eventos"} Recentes
+            {TITULOS_HOME[tipo] || "Conteúdos Recentes"} 
           </h2>
           <hr></hr>
           <Carousel
@@ -111,34 +121,34 @@ export const ListarEventos = ({
             itemClass="px-3" // padding lateral por card
             removeArrowOnDeviceType={["mobile"]}
           >
-            {eventos.map((evento) => (
+            {conteudos.map((conteudo) => (
               <div
-                key={evento._id}
+                key={conteudo._id}
                 className="rounded overflow-hidden cursor-pointer hover:shadow-xl transition duration-300"
                 style={{
                   maxWidth: "300px",
                   cursor: "pointer",
                 }}
-                onClick={() => navigate(`/eventos/${tipo}/${evento._id}`)}
+                onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
               >
-                {evento.imagem && (
+                {conteudo.thumb && (
                   <img
-                    src={`https://illusoes-bootstrap.onrender.com${evento.imagem}`}
-                    alt={evento.titulo}
+                    src={`http://localhost:8080${conteudo.thumb}`}
+                    alt={conteudo.titulo}
                     className="card-img-top"
                     style={{ height: "88px", objectFit: "cover" }}
                   />
                 )}
                 <div className="card-body bg-white p-3 rounded-bottom-3 ">
                   <h5 className="card-title fw-bold text-start">
-                    {evento.titulo}
+                    {conteudo.titulo}
                   </h5>
                   <p className="card-text text-multiline-truncate">
-                    {evento.subTitulo}
+                    {conteudo.subTitulo}
                   </p>
                   <small className="text-muted">
                     Publicado em:{" "}
-                    {new Date(evento.dataPublicacao).toLocaleDateString(
+                    {new Date(conteudo.dataPublicacao).toLocaleDateString(
                       "pt-BR"
                     )}
                   </small>
@@ -149,9 +159,7 @@ export const ListarEventos = ({
         </div>
       ) : (
         <p className="text-center text fw-bold">
-          {tipo === "campeonato"
-            ? "Nenhum Campeonato cadastrado ainda."
-            : " Nenhum Evento cadastrado ainda."}
+          {TITULOS[tipo] || "Conteúdos não cadastrados ainda."}
         </p>
       )}
     </Container>

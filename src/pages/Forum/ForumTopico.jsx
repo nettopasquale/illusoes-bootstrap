@@ -59,6 +59,56 @@ export default function ForumTopico() {
     // ==================================================================
   };
 
+  const handleEditPost = (e) => {
+    e.preventDefault();
+    if (!newPost.trim()) return;
+
+    // ========================= MOCK TEMPORÁRIO =========================
+    // Aqui será um PUT para o backend: axios.post(`/api/forum/topicos/${id}/posts`, {...})
+    const mockNewPost = {
+      id: posts.length + 1,
+      autor: "UsuárioLogado",
+      data: new Date().toISOString(),
+      conteudo: newPost,
+    };
+    setPosts([...posts, mockNewPost]);
+    setNewPost("");
+    // ==================================================================
+  };
+
+  const handleReplyPost = (e) => {
+    e.preventDefault();
+    if (!newPost.trim()) return;
+
+    // ========================= MOCK TEMPORÁRIO =========================
+    // Aqui será um DELETE para o backend: axios.post(`/api/forum/topicos/${id}/posts`, {...})
+    const mockNewPost = {
+      id: posts.length + 1,
+      autor: "UsuárioLogado",
+      data: new Date().toISOString(),
+      conteudo: newPost,
+    };
+    setPosts([...posts, mockNewPost]);
+    setNewPost("");
+    // ==================================================================
+  };
+  const handleDeletePost = (e) => {
+    e.preventDefault();
+    if (!newPost.trim()) return;
+
+    // ========================= MOCK TEMPORÁRIO =========================
+    // Aqui será um DELETE para o backend: axios.post(`/api/forum/topicos/${id}/posts`, {...})
+    const mockNewPost = {
+      id: posts.length + 1,
+      autor: "UsuárioLogado",
+      data: new Date().toISOString(),
+      conteudo: newPost,
+    };
+    setPosts([...posts, mockNewPost]);
+    setNewPost("");
+    // ==================================================================
+  };
+
   if (!topic) return <p className="text-center mt-5">Carregando tópico...</p>;
   return (
     <LayoutGeral>
@@ -70,8 +120,10 @@ export default function ForumTopico() {
               itens={[
                 { label: "Home", to: "/" },
                 { label: "Forum", to: "/forum" },
-                { label: "Forum Categoria", to: "/forum/categorias" },
-                { label: "Forum Tópico", to: "/forum/categorias/topico" },
+                { label: "Forum Categoria", to: "/forum/categoria" },
+                { label: "Forum Categoria Item", to: "/forum/categoria/:categoriaId" },
+                { label: "Forum SubForum ", to: "/forum/categoria/subForum/:subForumId" },
+                { label: "Forum Topicos", to: "/forum/topico/:topicoId" },
               ]}
             />
             <Col>
@@ -95,7 +147,6 @@ export default function ForumTopico() {
               <ForumPost
                 key={post.id}
                 post={post}
-                user={user}
                 onEdit={handleEditPost}
                 onDelete={handleDeletePost}
                 onReply={handleReplyPost}
