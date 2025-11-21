@@ -4,7 +4,7 @@ import path from "path";
 // Configuração do destino e nome do arquivo
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/'); // pasta onde os arquivos serão salvos
+    cb(null, 'uploads/'); // pasta onde os arquivos thumb serão salvos
   },
   filename: (req, file, cb) => {
     // nome único: data-hora + nome original

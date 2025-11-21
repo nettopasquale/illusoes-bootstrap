@@ -78,7 +78,7 @@ export const ListarConteudos = ({
                   {conteudo.imagem && (
                     <Card.Img
                       variant="top"
-                      src={`https://illusoes-bootstrap.onrender.com${conteudo.imagem}`}
+                      src={`http://localhost:8080${conteudo.imagem}`}
                     />
                   )}
                   <Card.Body className="bg-white">
@@ -131,9 +131,9 @@ export const ListarConteudos = ({
                 }}
                 onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
               >
-                {conteudo.imagem && (
+                {conteudo.thumb && (
                   <img
-                    src={`https://illusoes-bootstrap.onrender.com${conteudo.imagem}`}
+                    src={`http://localhost:8080${conteudo.thumb}`}
                     alt={conteudo.titulo}
                     className="card-img-top"
                     style={{ height: "88px", objectFit: "cover" }}

@@ -2,8 +2,7 @@ import User from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { key } from "../config.js";
-import NoticiaArtigo from "../models/noticiaArtigo.model.js";
-import EventoCamp from "../models/eventoCamp.model.js";
+import Conteudo from "../models/conteudo.model.js";
 // rota do Login
 
 export const login = async (req, res) => {
@@ -144,39 +143,19 @@ export const getUserContent = async (req, res) => {
         const tipo = req.query.tipo;
         const userId = req.userId;
 
-        let resultados = [];
+        const filtroBase = { autor: userId };
 
-        if (!tipo || tipo === "todos") {
-            const [noticias, eventos] = await Promise.all([
-                NoticiaArtigo.find({ autor: userId }).lean(),
-                EventoCamp.find({ criador: userId }).lean(),
-            ]);
-
-            resultados = [
-                ...noticias.map((item) => ({ ...item, tipo: item.tipo })), // noticia ou artigo
-                ...eventos.map((item) => ({ ...item, tipo: item.tipo })), // evento ou campeonato
-            ];
-            console.log(resultados)
-        } else if (["noticia", "artigo"].includes(tipo)) {
-            const noticias = await NoticiaArtigo.find({ autor: userId, tipo }).lean();
-            resultados = noticias.map((item) => ({ ...item, tipo }));
-            console.log(resultados)
-        } else if (["evento", "campeonato"].includes(tipo)) {
-            const eventos = await EventoCamp.find({ criador: userId, tipo }).lean();
-            resultados = eventos.map((item) => ({ ...item, tipo }));
-            console.log(resultados)
-        } else {
-            return res.status(400).json({ error: "Tipo inválido" });
+        if (tipo && tipo !== "todos") {
+            filtroBase.tipo = tipo;
         }
 
-        // Ordena por data de publicação decrescente
-        resultados.sort((a, b) => new Date(b.dataPublicacao).getTime() - new Date(a.dataPublicacao).getTime());
+        const conteudos = await Conteudo.find(filtroBase)
+            .sort({ dataPublicacao: -1 })
+            .lean();
 
-        res.json(resultados);
+        res.status(200).json(conteudos);
     } catch (err) {
         console.error("Erro ao buscar conteúdos do usuário:", err);
-        console.error(err.stack);
-
         res.status(500).json({ error: err.message });
     }
 }

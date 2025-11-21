@@ -6,6 +6,11 @@ export const criarConteudo = async (req, res) => {
         const { titulo, subTitulo, conteudo, tags, dataEvento, valorEntrada } = req.body;
         const { tipo } = req.params;
 
+        const thumb = req.files?.thumb?.[0]?.filename || null;
+        const imagens = req.files?.imagem
+            ? req.files.imagem.map(img => img.filename)
+            : [];
+
         // Validação simples para evitar valores inválidos
         if (!["noticia", "artigo", "evento", "campeonato"].includes(tipo)) {
             return res.status(400).json({ error: "Tipo inválido: deve ser 'noticia', 'artigo','evento' ou 'campeonato'" });
@@ -30,7 +35,8 @@ export const criarConteudo = async (req, res) => {
             titulo,
             subTitulo,
             conteudo,
-            imagem: req.file ? `/uploads/${req.file.filename}` : null,
+            thumb,
+            imagens,
             tipo,
             autor: req.userId,
             dataPublicacao: new Date(),
@@ -39,6 +45,7 @@ export const criarConteudo = async (req, res) => {
             valorEntrada
 
         });
+        
 
         await novoConteudo.save();
         return res.status(201).json(novoConteudo);
@@ -90,11 +97,18 @@ export const editarConteudo = async (req, res) => {
             return res.status(403).json({ error: "Não autorizado" });
         }
 
-        //imagem
-        if (req.file) {
-            req.body.imagem = `/uploads/${req.file.filename}`;
+        //thumb
+        if (req.files?.thumb?.length) {
+            req.body.thumb = `/uploads/${req.files.thumb[0].filename}`;
+        }
+        //imagens
+        if (req.files?.imagem?.length) {
+            const novasImgs = req.files.imagem.map(img => `/uploads/${img.filename}`);
+            conteudo.imagem.push(...novasImgs);
         }
 
+        //remover imagens individualmente
+        
         // Atualiza com os novos dados
         const conteudoAtualizado = await Conteudo.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
 

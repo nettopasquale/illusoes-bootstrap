@@ -3,8 +3,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import HomePage from "./pages/HomePage/HomePage";
 import CadastroUsuario from "./pages/CadastroUsuario/CadastroUsuario";
 import Login from "./pages/Login/Login";
-import { noticiasRoutes } from "./routes/routesNoticias";
-import { eventosRoutes } from "./routes/routesEventos";
 import { conteudosRoutes } from "./routes/routesConteudos";
 import { colecoesRoutes } from "./routes/routesColecoes";
 import { forumRoutes } from "./routes/routesForum";
@@ -32,12 +30,6 @@ export const App = ()=> {
 
             {/* Conteúdos */}
             {conteudosRoutes}
-
-            {/* Noticias e Artigos */}
-            {noticiasRoutes}
-
-            {/* Eventos e Campeonatos */}
-            {eventosRoutes}
 
             {/* Marketplace */}
             {MarketplaceRoutes}

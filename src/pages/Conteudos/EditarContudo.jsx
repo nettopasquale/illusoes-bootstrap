@@ -17,7 +17,8 @@ export const EditarConteudo = () => {
   const [titulo, setTitulo] = useState("");
   const [subTitulo, setSubTitulo] = useState("");
   const [tags, setTags] = useState([]);
-  const [imagem, setImagem] = useState(null);
+  const [thumb, setThumb] = useState(null);
+  const [imagems, setImagens] = useState(null);
   const [conteudo, setConteudo] = useState("");
   const [tipoSelecionado, setTipoSelecionado] = useState({
     value: tipo,
@@ -56,8 +57,12 @@ export const EditarConteudo = () => {
     carregarEvento();
   }, [id]);
 
-  const handleImagem = (e) => {
-    setImagem(e.target.files[0]);
+  const handleThumb = (e) => {
+    setThumb(e.target.files[0]);
+  };
+
+  const handleImagens = (e) => {
+    setImagens(e.target.files[0]);
   };
 
   //edição de conteúdo
@@ -259,43 +264,6 @@ export const EditarConteudo = () => {
                   </Col>
                 </Row>
               )}
-          {/* <Row>
-            <Col md={6}>
-              <Form.Group className="my-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  Data do Evento
-                </Form.Label>
-                <div className="w-100">
-                  <DatePicker
-                    selected={dataEvento}
-                    onChange={setDataEvento}
-                    dateFormat="dd/MM/yyyy"
-                    className="form-control"
-                    showYearDropdown
-                    scrollableYearDropdown
-                    yearDropdownItemNumber={100}
-                    placeholderText="Selecione a data"
-                  />
-                </div>
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  Valor da Entrada
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ex: R$ 0,00"
-                  className="w-100"
-                  style={{ fontSize: "1.2rem" }}
-                  value={valorEntrada}
-                  onChange={(e) => setValorEntrada(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
-          </Row> */}
 
           <Form.Group className="mb-4 px-5">
             <Form.Label className="fs-3 fw-bold text-start w-100">
@@ -306,7 +274,24 @@ export const EditarConteudo = () => {
               accept="image/*"
               className="w-100"
               style={{ height: "30px" }}
-              onChange={handleImagem}
+              onChange={handleThumb}
+            />
+            <Form.Text className="text-muted">
+              Você pode substituir a imagem atual.
+            </Form.Text>
+          </Form.Group>
+
+          {/* REVER AQUI GALERIA */}
+          <Form.Group className="mb-4 px-5">
+            <Form.Label className="fs-3 fw-bold text-start w-100">
+              Imagens da Galeria
+            </Form.Label>
+            <Form.Control
+              type="files"
+              accept="image/*"
+              className="w-100"
+              style={{ height: "30px" }}
+              onChange={handleImagens}
             />
             <Form.Text className="text-muted">
               Você pode substituir a imagem atual.
@@ -361,8 +346,8 @@ export const EditarConteudo = () => {
         setSubTitulo={setSubTitulo}
         tags={tags}
         setTags={setTags}
-        imagem={imagem}
-        setImagem={setImagem}
+        thumb={thumb}
+        setThumb={setThumb}
         conteudo={conteudo}
         setConteudo={setConteudo}
       />

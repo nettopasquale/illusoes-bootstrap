@@ -37,7 +37,7 @@ export const MeusConteudos = () => {
           ? ""
           : `?tipo=${tipoSelecionado.value}`;
       const response = await axios.get(
-        `https://illusoes-bootstrap.onrender.com/user/conteudos${filtro}`,
+        `http://localhost:8080/user/conteudos?tipo=${filtro}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -64,7 +64,7 @@ export const MeusConteudos = () => {
       const id = conteudoSelecionado._id;
 
       await axios.delete(
-        `https://illusoes-bootstrap.onrender.com/conteudos/${tipo}/${id}`,
+        `http://localhost:8080/user/conteudos?tipo=${tipo}/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -109,10 +109,10 @@ export const MeusConteudos = () => {
                 onClick={() => abrirModal(item)}
                 style={{ cursor: "pointer" }}
               >
-                {item.imagem && (
+                {item.thumb && (
                   <Card.Img
                     variant="top"
-                    src={`https://illusoes-bootstrap.onrender.com${item.imagem}`}
+                    src={`http://localhost:8080${item.thumb}`}
                     style={{ height: "150px", objectFit: "cover" }}
                   />
                 )}

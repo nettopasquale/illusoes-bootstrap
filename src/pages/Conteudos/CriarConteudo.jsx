@@ -24,15 +24,20 @@ export const CriarConteudo = () => {
   const [subTitulo, setSubTitulo] = useState("");
   const [tipo, setTipo] = useState(null);
   const [tags, setTags] = useState([]);
-  const [imagem, setImagem] = useState(null);
+  const [thumb, setThumb] = useState(null);
+  const [imagens, setImagens] = useState(null);
   const [conteudo, setConteudo] = useState("");
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
   const [dataEvento, setDataEvento] = useState(null);
   const [valorEntrada, setValorEntrada] = useState("");
 
-  const handleImagem = (e) => {
-    setImagem(e.target.files[0]);
+  const handleThumb = (e) => {
+    setThumb(e.target.files[0]);
+  };
+
+  const handleImagens = (e) => {
+    setImagens(e.target.files[0]);
   };
 
   const handleSubmit = async (e) => {
@@ -43,7 +48,8 @@ export const CriarConteudo = () => {
       formData.append("titulo", titulo);
       formData.append("subTitulo", subTitulo);
       formData.append("tags", JSON.stringify(tags.length ? tags.map(t => t.value) : []));
-      if(imagem) formData.append("imagem", imagem);
+      if(thumb) formData.append("thumb", thumb);
+      if(imagens) formData.append("imagem", JSON.stringify(imagens.length ? imagens.map(img => img.value) : []));
       formData.append("conteudo", conteudo);
       formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
 
@@ -207,7 +213,21 @@ export const CriarConteudo = () => {
               accept="image/*"
               className="w-100"
               style={{ height: "30px" }}
-              onChange={handleImagem}
+              onChange={handleThumb}
+            />
+          </Form.Group>
+
+          {/* REVER AQUI */}
+          <Form.Group className="mb-4 px-5">
+            <Form.Label className="fs-3 fw-bold text-start w-100">
+              Imagens da Galeria do Conteúdo
+            </Form.Label>
+            <Form.Control
+              type="files"
+              accept="image/*"
+              className="w-100"
+              style={{ height: "30px" }}
+              onChange={handleImagens}
             />
           </Form.Group>
 

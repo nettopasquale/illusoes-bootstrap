@@ -112,18 +112,28 @@ export default function ConteudoView() {
               <div className="my-3 text-muted text-start">
                 Tags: <strong>{conteudo.tipo}</strong>
               </div>
-              {conteudo.imagem && (
+              {conteudo.thumb && (
                 <Image
-                  src={`https://illusoes-bootstrap.onrender.com${conteudo.imagem}`}
+                  src={`http://localhost:8080${conteudo.thumb}`}
                   width={700}
                   height={200}
                   className="img-fluid rounded mb-3"
-                  alt="imagem do evento"
+                  alt="imagem do conteudo"
+                />
+              )}
+              {/* ALTERAR AQUI */}
+              {conteudo.imagem && (
+                <Image
+                  src={`http://localhost:8080${conteudo.imagem}`}
+                  width={700}
+                  height={200}
+                  className="img-fluid rounded mb-3"
+                  alt="imagens do conteudo"
                 />
               )}
 
               <div
-                className="lead conteudo-html"
+                className="lead conteudo-html text-muted"
                 style={{ whiteSpace: "pre-line" }}
                 dangerouslySetInnerHTML={{ __html: conteudo.conteudo }}
               ></div>
