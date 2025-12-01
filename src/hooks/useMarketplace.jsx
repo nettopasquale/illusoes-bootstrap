@@ -1,5 +1,7 @@
 // src/hooks/useMarketplace.js
 import { useState } from "react";
+import flareon from "../assets/imgs/Pokemon/flareon_tcg.jpg";
+import knight from "../assets/imgs/Digimon/1BT2-020__sasasi_jpg.jpg";
 
 /**
  * Hook para centralizar operações do marketplace.
@@ -20,28 +22,32 @@ export default function useMarketplace() {
     const data = [
       {
         id: "m1",
-        title: "Deck Starter - 60 cartas (bom estado)",
-        price: 120.0,
-        currency: "BRL",
-        seller: "user123",
-        sellerName: "Pasquale",
-        location: "São Paulo, SP",
-        cover: "https://images.unsplash.com/photo-1602524208024-9b4f0d1f6f6a?w=800",
-        condition: "Usado - Bom",
-        description: "Deck completo de início com cartas sinérgicas.",
+        titulo: "Deck Starter - 60 cartas (bom estado)",
+        preco: 120.0,
+        frete: 0.0,
+        tipo: "venda",
+        categoria: "deck",
+        vendedor: "Usuário X",
+        localizacao: "São Paulo, SP",
+        capa: knight,
+        condicao: "Usado",
+        descricao: "Deck completo de início com cartas sinérgicas.",
+        imagem: [""],
         createdAt: "2025-10-01T12:00:00Z",
       },
       {
         id: "m2",
-        title: "Carta rara - Dragão de Fogo Supremo",
-        price: 350.0,
-        currency: "BRL",
-        seller: "user999",
-        sellerName: "ColecionadorArcano",
-        location: "Rio de Janeiro, RJ",
-        cover: "https://images.unsplash.com/photo-1580910051070-1c6b2b3f8b2d?w=800",
-        condition: "Novo",
-        description: "Carta rara em perfeito estado, com proteção.",
+        titulo: "Carta rara - Dragão de Fogo Supremo",
+        preco: 350.0,
+        frete: 0.0,
+        tipo: "venda",
+        categoria: "deck",
+        vendedor: "user999",
+        localizacao: "Rio de Janeiro, RJ",
+        capa: flareon,
+        condicao: "Novo",
+        descricao: "Carta rara em perfeito estado, com proteção.",
+        imagem:[""],
         createdAt: "2025-11-02T09:10:00Z",
       },
     ];
@@ -62,18 +68,17 @@ export default function useMarketplace() {
 
     const mock = {
       id,
-      title: "Carta rara - Dragão de Fogo Supremo",
-      price: 350,
-      currency: "BRL",
-      sellerId: "user123", // dono mockado
-      sellerName: "Pasquale",
-      location: "São Paulo, SP",
-      condition: "Novo",
-      images: [
-        "https://images.unsplash.com/photo-1580910051070-1c6b2b3f8b2d?w=1000",
-        "https://images.unsplash.com/photo-1602524208024-9b4f0d1f6f6a?w=1000",
-      ],
-      description:
+      titulo: "Carta rara - Flareon Fogo Supremo",
+      preco: 350,
+      frete: 0.0,
+      tipo: "venda",
+      categoria: "deck",
+      vendedor: "Pasquale",
+      localizacao: "São Paulo, SP",
+      capa: flareon,
+      condicao: "Novo",
+      imagem: [""],
+      descricao:
         "Carta rara em perfeito estado. Inclui sleeve premium. Envio por PAC/SEDEX.",
       createdAt: "2025-11-02T09:10:00Z",
     };

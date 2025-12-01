@@ -8,16 +8,16 @@ import MarketplaceEdit from "../pages/Marketplace/MarketplaceEdit";
 
 export const MarketplaceRoutes = [
   // MarketPlace Home
-  <Route path="/marketplace" element={<MarketplaceHome />} key="marketplace-id" />,
+  <Route path="/marketplace/anuncios" element={<MarketplaceHome />} key="marketplace-id" />,
 
-  // MarketPlace Produto
+  // MarketPlace Produto - Ver produto por tipo e id
   <Route
-    path="/marketplace/:id"
+    path="/marketplace/anuncios/:tipo/:id"
     element={<MarketplaceItem />}
     key="marketplace-item-id"
   />,
 
-// MarkeplaceCreate
+// MarkeplaceCreate - Criar novo anuncio
   <Route
     path="/marketplace/anunciar"
     element={
@@ -28,9 +28,9 @@ export const MarketplaceRoutes = [
     key="criar-anuncio"
     />,
   
-// Edit
+// Edita Anuncio
   <Route
-    path="/marketplace/:id/editar"
+    path="/marketplace/anuncios/:tipo/:id/editar"
     element={
       <PrivateRoute>
         <MarketplaceEdit />

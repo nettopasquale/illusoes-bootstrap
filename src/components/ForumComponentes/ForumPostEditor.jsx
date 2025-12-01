@@ -29,7 +29,7 @@ export default function ForumPostEditor({
     console.log("Enviando post:", {
       content,
       replyingTo,
-      author: user?.username || "UsuárioTeste",
+      autor: user?.username || "UsuárioTeste",
     });
 
     onSubmit?.(content);

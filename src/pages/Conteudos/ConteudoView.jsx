@@ -1,8 +1,8 @@
 import { Container, Col, Row, Image } from "react-bootstrap";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useConteudo } from "../../hooks/useConteudo";
-import { useParams } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+import eldlich from "../../assets/imgs/Yugioh/eldlich_the_golden_lord.jpg"
 
 export default function ConteudoView() {
   const { conteudo, erro } = useConteudo(
@@ -112,26 +112,22 @@ export default function ConteudoView() {
               <div className="my-3 text-muted text-start">
                 Tags: <strong>{conteudo.tipo}</strong>
               </div>
-              {conteudo.thumb && (
+              {/* {conteudo.thumbs && (
                 <Image
-                  src={`http://localhost:8080${conteudo.thumb}`}
+                  src={`http://localhost:8080${conteudo.thumbs}`}
                   width={700}
                   height={200}
                   className="img-fluid rounded mb-3"
                   alt="imagem do conteudo"
                 />
-              )}
-              {/* ALTERAR AQUI */}
-              {conteudo.imagem && (
+              )} */}
                 <Image
-                  src={`http://localhost:8080${conteudo.imagem}`}
+                  src={eldlich}
                   width={700}
                   height={200}
                   className="img-fluid rounded mb-3"
-                  alt="imagens do conteudo"
+                  alt="imagem do conteudo"
                 />
-              )}
-
               <div
                 className="lead conteudo-html text-muted"
                 style={{ whiteSpace: "pre-line" }}

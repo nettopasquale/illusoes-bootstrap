@@ -20,23 +20,40 @@ export default function ForumTopico() {
       id,
       titulo: "Estratégias avançadas de decks",
       autor: "MestreDasCartas",
-      bloqueado: false,
+      dataCriacao: "",
+      dataModificacao: "",
+      visualizacoes: "",
+      posts: [""],
+      totalPosts: 0,
+      ultimoPost: { usuario: autor, data: "" },
+      status: ativo,
+      fixado: true,
     });
 
     setPosts([
       {
         id: 1,
         autor: "MestreDasCartas",
-        data: "2025-11-05T13:42:00Z",
+        data: "05-11-2025",
         conteudo:
-          "Bem-vindo ao tópico! Aqui discutiremos as melhores estratégias para montar decks competitivos.",
+          "Bem-vindo ao tópico! Aqui discutiremos as melhores estratégias para montar decks competitivos. Alguém poderia explicar como otimizar o uso de cartas de suporte? Ainda estou aprendendo.",
+        anexos: "",
+        cutidas: 0,
+        curtidasTotais: 0,
+        visualizacoes: 0,
+        editado: false,
       },
       {
         id: 2,
-        autor: "Novato123",
-        data: "2025-11-05T14:03:00Z",
+        autor: "Novato",
+        data: "05-11-2025",
         conteudo:
           "Alguém poderia explicar como otimizar o uso de cartas de suporte? Ainda estou aprendendo.",
+        anexos: "",
+        cutidas: 0,
+        curtidasTotais: 0,
+        visualizacoes: 0,
+        editado: false,
       },
     ]);
     // ==================================================================
@@ -53,6 +70,11 @@ export default function ForumTopico() {
       autor: "UsuárioLogado",
       data: new Date().toISOString(),
       conteudo: newPost,
+      anexos,
+      curtidas,
+      curtidasTotais,
+      visualizacoes,
+      editado,
     };
     setPosts([...posts, mockNewPost]);
     setNewPost("");
@@ -70,6 +92,11 @@ export default function ForumTopico() {
       autor: "UsuárioLogado",
       data: new Date().toISOString(),
       conteudo: newPost,
+      anexos,
+      curtidas,
+      curtidasTotais,
+      visualizacoes,
+      editado,
     };
     setPosts([...posts, mockNewPost]);
     setNewPost("");
@@ -87,6 +114,11 @@ export default function ForumTopico() {
       autor: "UsuárioLogado",
       data: new Date().toISOString(),
       conteudo: newPost,
+      anexos,
+      curtidas,
+      curtidasTotais,
+      visualizacoes,
+      editado,
     };
     setPosts([...posts, mockNewPost]);
     setNewPost("");
@@ -103,6 +135,11 @@ export default function ForumTopico() {
       autor: "UsuárioLogado",
       data: new Date().toISOString(),
       conteudo: newPost,
+      anexos,
+      curtidas,
+      curtidasTotais,
+      visualizacoes,
+      editado,
     };
     setPosts([...posts, mockNewPost]);
     setNewPost("");
@@ -121,8 +158,14 @@ export default function ForumTopico() {
                 { label: "Home", to: "/" },
                 { label: "Forum", to: "/forum" },
                 { label: "Forum Categoria", to: "/forum/categoria" },
-                { label: "Forum Categoria Item", to: "/forum/categoria/:categoriaId" },
-                { label: "Forum SubForum ", to: "/forum/categoria/subForum/:subForumId" },
+                {
+                  label: "Forum Categoria Item",
+                  to: "/forum/categoria/:categoriaId",
+                },
+                {
+                  label: "Forum SubForum ",
+                  to: "/forum/categoria/:categoriaId/subforum/:subforumId",
+                },
                 { label: "Forum Topicos", to: "/forum/topico/:topicoId" },
               ]}
             />

@@ -22,7 +22,7 @@ export default function ForumUserProfile() {
       bio: "Jogador competitivo e colecionador de cartas raras desde 2018.",
       totalTopicos: 15,
       totalPosts: 67,
-      dataCadastro: "2022-09-12T00:00:00Z",
+      dataCadastro: "12-09-2022",
     });
 
     // axios.get(`/api/forum/usuario/${userId}/topicos`)
@@ -30,13 +30,13 @@ export default function ForumUserProfile() {
       {
         _id: "t1",
         titulo: "Como montar um deck competitivo em 2025",
-        dataCriacao: "2025-11-01T14:00:00Z",
+        dataCriacao: "01-11-2025",
         respostas: 8,
       },
       {
         _id: "t2",
         titulo: "Cartas raras que valem o investimento",
-        dataCriacao: "2025-10-22T09:30:00Z",
+        dataCriacao: "22-10-2025",
         respostas: 3,
       },
     ]);

@@ -24,11 +24,11 @@ export default function ForumCategoria() {
   }, [categoriaId]);
 
   const handleNovoTopico = () => {
-    navigate(`/forum/novo/${categoriaId}`);
+    navigate(`/forum/categorias/${categoriaId}/topicos`);
   };
 
   const handleAbrirTopico = (id) => {
-    navigate(`/forum/topico/${id}`);
+    navigate(`/forum/topicos/${id}`);
   };
 
   return (
@@ -75,9 +75,9 @@ export default function ForumCategoria() {
                     <Col key={topico._id} md={12}>
                       <ForumTopicoCard
                         title={topico.titulo}
-                        author={topico.autor?.nome || "Usuário"}
-                        posts={topico.totalPosts}
-                        views={topico.totalVisualizacoes}
+                        author={topico.autor || "Usuário"}
+                        posts={topico.posts}
+                        views={topico.visualizacoes}
                         lastPost={topico.ultimoPost}
                         onClick={() => handleAbrirTopico(topico._id)}
                       />

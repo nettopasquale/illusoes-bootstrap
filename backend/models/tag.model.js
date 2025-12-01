@@ -9,8 +9,8 @@ const TagSchema = new mongoose.Schema({
     },
     tipo: {
         type: String,
-        enum: ['noticia', 'artigo', 'evento', 'campeonato'],
         required: true,
+        default: [''],
     },
 },
     {

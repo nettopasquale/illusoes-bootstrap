@@ -9,6 +9,8 @@ import DatePicker from "react-datepicker";
 import "react-quill/dist/quill.snow.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+import { useReactQuillFirebase } from "../../hooks/useReactQuillFireBase";
+import { uploadToFirebase } from "../../utils/uploadFirebase";
 
 const tipoOptions = [
   { value: "noticia", label: "Notícia" },
@@ -19,21 +21,23 @@ const tipoOptions = [
 
 export const CriarConteudo = () => {
   const navigate = useNavigate();
+  // const quillRef = useRef(null);
 
   const [titulo, setTitulo] = useState("");
   const [subTitulo, setSubTitulo] = useState("");
   const [tipo, setTipo] = useState(null);
   const [tags, setTags] = useState([]);
-  const [thumb, setThumb] = useState(null);
+  const [thumbs, setThumbs] = useState(null);
   const [imagens, setImagens] = useState(null);
   const [conteudo, setConteudo] = useState("");
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
   const [dataEvento, setDataEvento] = useState(null);
   const [valorEntrada, setValorEntrada] = useState("");
+  // const { handleImageUpload } = useReactQuillFirebase();
 
   const handleThumb = (e) => {
-    setThumb(e.target.files[0]);
+    setThumbs(e.target.files);
   };
 
   const handleImagens = (e) => {
@@ -47,10 +51,17 @@ export const CriarConteudo = () => {
       const formData = new FormData();
       formData.append("titulo", titulo);
       formData.append("subTitulo", subTitulo);
-      formData.append("tags", JSON.stringify(tags.length ? tags.map(t => t.value) : []));
-      if(thumb) formData.append("thumb", thumb);
-      if(imagens) formData.append("imagem", JSON.stringify(imagens.length ? imagens.map(img => img.value) : []));
       formData.append("conteudo", conteudo);
+      if (thumbs) formData.append("thumbs", thumbs);
+      if (imagens)
+        formData.append(
+          "imagem",
+          JSON.stringify(imagens.length ? imagens.map((img) => img.value) : [])
+        );
+      formData.append(
+        "tags",
+        JSON.stringify(tags.length ? tags.map((t) => t.value) : [])
+      );
       formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
 
       //transformar String em Number
@@ -64,6 +75,8 @@ export const CriarConteudo = () => {
       formData.append("valorEntrada", isNaN(valorNumerico) ? 0 : valorNumerico);
       const token = localStorage.getItem("token");
 
+      console.log("Enviando dados:", formData);
+
       const result = await axios.post(
         `http://localhost:8080/conteudos/${tipo.value}`,
         formData,
@@ -75,6 +88,8 @@ export const CriarConteudo = () => {
         }
       );
 
+      console.log("Resposta do servidor:", result.data);
+
       setMensagem(`Publicação realizada com sucesso! ${result.data}`);
       setErro(null);
       setTimeout(() => navigate("/"), 2000);
@@ -84,6 +99,27 @@ export const CriarConteudo = () => {
       setErro("Erro ao publicar conteúdo");
     }
   };
+
+  // TOOLBAR CUSTOMIZADA DO QUILL
+  // const modules = useMemo(
+  //   () => ({
+  //     toolbar: {
+  //       container: [
+  //         [{ header: [1, 2, 3, false] }],
+  //         ["bold", "italic", "underline", "strike"],
+  //         [{ align: [] }],
+  //         [{ list: "ordered" }, { list: "bullet" }],
+  //         ["link"],
+  //         ["image"], // Vamos interceptar este botão
+  //         ["clean"],
+  //       ],
+  //       handlers: {
+  //         image: handleImageUpload, // chama o upload
+  //       },
+  //     },
+  //   }),
+  //   [handleImageUpload]
+  // );
 
   return (
     <LayoutGeral>
@@ -98,7 +134,7 @@ export const CriarConteudo = () => {
         <h2 className="mb-4 fs-1 fw-bold">Publicar Conteúdo</h2>
         {mensagem && <Alert variant="success">{mensagem}</Alert>}
         {erro && <Alert variant="danger">{erro}</Alert>}
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} encType="multipart/form-data">
           <Row>
             <Col md={6}>
               <Form.Group className="mb-4 px-5 justify-content-center align-items-center">
@@ -165,44 +201,45 @@ export const CriarConteudo = () => {
               </Form.Group>
             </Col>
           </Row>
+          {["evento", "campeonato"].includes(tipo?.value) && (
+            <Row>
+              <Col md={6}>
+                <Form.Group className="my-4 px-5">
+                  <Form.Label className="fs-3 fw-bold text-start w-100">
+                    Data do Evento
+                  </Form.Label>
+                  <div className="w-100">
+                    <DatePicker
+                      selected={dataEvento}
+                      onChange={(date) => setDataEvento(date)}
+                      dateFormat="dd/MM/yyyy"
+                      className="form-control"
+                      showYearDropdown
+                      scrollableYearDropdown
+                      yearDropdownItemNumber={100}
+                      placeholderText="Selecione a data"
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
 
-          <Row>
-            <Col md={6}>
-              <Form.Group className="my-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  Data do Evento
-                </Form.Label>
-                <div className="w-100">
-                  <DatePicker
-                    selected={dataEvento}
-                    onChange={(date) => setDataEvento(date)}
-                    dateFormat="dd/MM/yyyy"
-                    className="form-control"
-                    showYearDropdown
-                    scrollableYearDropdown
-                    yearDropdownItemNumber={100}
-                    placeholderText="Selecione a data"
+              <Col md={6}>
+                <Form.Group className="mb-4 px-5">
+                  <Form.Label className="fs-3 fw-bold text-start w-100">
+                    Valor da Entrada
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ex: R$ 0,00"
+                    className="w-100"
+                    style={{ fontSize: "1.2rem" }}
+                    value={valorEntrada}
+                    onChange={(e) => setValorEntrada(e.target.value)}
                   />
-                </div>
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  Valor da Entrada
-                </Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Ex: R$ 0,00"
-                  className="w-100"
-                  style={{ fontSize: "1.2rem" }}
-                  value={valorEntrada}
-                  onChange={(e) => setValorEntrada(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
+                </Form.Group>
+              </Col>
+            </Row>
+          )}
 
           <Form.Group className="mb-4 px-5">
             <Form.Label className="fs-3 fw-bold text-start w-100">
@@ -211,33 +248,34 @@ export const CriarConteudo = () => {
             <Form.Control
               type="file"
               accept="image/*"
+              name="thumbs"
               className="w-100"
               style={{ height: "30px" }}
               onChange={handleThumb}
             />
+            <div className="mt-2 d-flex flex-wrap gap-2">
+              {thumbs.map((src, idx) => (
+                <Image
+                  key={idx}
+                  src={src}
+                  thumbnail
+                  style={{ width: 100, height: 70, objectFit: "cover" }}
+                />
+              ))}
+            </div>
           </Form.Group>
 
           {/* REVER AQUI */}
-          <Form.Group className="mb-4 px-5">
-            <Form.Label className="fs-3 fw-bold text-start w-100">
-              Imagens da Galeria do Conteúdo
-            </Form.Label>
-            <Form.Control
-              type="files"
-              accept="image/*"
-              className="w-100"
-              style={{ height: "30px" }}
-              onChange={handleImagens}
-            />
-          </Form.Group>
 
           <Form.Group className="mb-4 p-5">
             <Form.Label className="fs-3 fw-bold text-start w-100">
               Conteúdo
             </Form.Label>
             <ReactQuill
+              // ref={quillRef}
               value={conteudo}
               onChange={setConteudo}
+              // modules={modules}
               style={{
                 height: "300px",
                 fontSize: "1.1rem",
