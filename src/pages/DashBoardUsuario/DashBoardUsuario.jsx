@@ -47,7 +47,7 @@ const DashboardUsuario = () => {
   const buscarConteudos = async (tipo) => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/user/conteudos?tipo=${tipo}`,
+        `https://illusoes-bootstrap.onrender.com/user/conteudos?tipo=${tipo}`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setConteudos(response.data);

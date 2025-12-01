@@ -78,7 +78,7 @@ export const CriarConteudo = () => {
       console.log("Enviando dados:", formData);
 
       const result = await axios.post(
-        `http://localhost:8080/conteudos/${tipo.value}`,
+        `https://illusoes-bootstrap.onrender.com/conteudos/${tipo.value}`,
         formData,
         {
           headers: {

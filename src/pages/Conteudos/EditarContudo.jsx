@@ -37,7 +37,7 @@ export const EditarConteudo = () => {
     const carregarEvento = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/conteudos/${tipo}/${id}`
+          `https://illusoes-bootstrap.onrender.com/conteudos/${tipo}/${id}`
         );
         const dados = response.data;
 
@@ -91,7 +91,7 @@ export const EditarConteudo = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `http://localhost:8080/conteudos/${tipoSelecionado.value}/${id}`,
+        `https://illusoes-bootstrap.onrender.com/conteudos/${tipoSelecionado.value}/${id}`,
         formData,
         {
           headers: {
@@ -116,7 +116,7 @@ export const EditarConteudo = () => {
       const token = localStorage.getItem("token");
 
       await axios.delete(
-        `http://localhost:8080/conteudos/${tipoSelecionado.value}/${id}`,
+        `https://illusoes-bootstrap.onrender.com/conteudos/${tipoSelecionado.value}/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
