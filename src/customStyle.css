@@ -1,0 +1,12 @@
+.carousel-image {
+  width: 100%;
+  height: auto;              /* altura automática */
+  max-height: 70vh;          /* ocupa no máximo 70% da tela */
+  object-fit: cover;         /* mantém proporção e preenche */
+}
+
+@media (max-width: 768px) {
+  .carousel-image {
+    max-height: 45vh;        /* telas menores: ocupa menos */
+  }
+}

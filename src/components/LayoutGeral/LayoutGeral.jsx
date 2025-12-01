@@ -36,7 +36,7 @@ function LayoutGeral({ children }) {
       {/* Espaço reservado do header */}
       <div style={{ height: "70px" }} />
 
-      <main className="flex-grow-1 w-100 px-3">{children}</main>
+      <main className="flex-grow-1 w-100 px-3 align-content-center">{children}</main>
 
       <footer className="w-100 text-white mt-auto">
         <Footer></Footer>

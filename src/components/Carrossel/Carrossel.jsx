@@ -4,6 +4,8 @@ import { Carousel, Image } from "react-bootstrap";
 import liliana from "../../assets/imgs/Magic/liliana-vess-1920_jpg.jpg";
 import yug25 from "../../assets/imgs/Yugioh/25thniv.jpg";
 import SVPok from "../../assets/imgs/Pokemon/Scarlet-Violet-English-1.jpg";
+import "../../customStyle.css";
+
 
 const Carrossel = () => {
   //controle do carossel
@@ -27,9 +29,8 @@ const Carrossel = () => {
       <Carousel.Item interval={500000}>
         <Image
           src={yug25}
-          className="d-block w-100 object-fit-cover"
+          className="d-block w-100 carousel-image"
           fluid
-          style={{ height: "694px", objectFit: "cover" }}
         />
         <Carousel.Caption
           className="bg-dark bg-opacity-50 rounded"
@@ -46,9 +47,8 @@ const Carrossel = () => {
       <Carousel.Item interval={500000}>
         <Image
           src={SVPok}
-          className="d-block w-100 object-fit-cover"
+          className="d-block w-100 carousel-image"
           fluid
-          style={{ height: "694px", objectFit: "cover" }}
         />
         <Carousel.Caption
           className="bg-dark bg-opacity-50 rounded p-3 mx-auto"
@@ -63,9 +63,8 @@ const Carrossel = () => {
       <Carousel.Item interval={500000}>
         <Image
           src={liliana}
-          className="d-block w-100 object-fit-cover"
+          className="d-block w-100 carousel-image"
           fluid
-          style={{ height: "694px", objectFit: "cover" }}
         />
         <Carousel.Caption
           className="bg-dark bg-opacity-50 rounded p-3 mx-auto"
