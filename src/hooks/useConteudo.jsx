@@ -5,7 +5,6 @@ import axios from "axios";
 
 export const useConteudo = (baseURL) => {
   const { id, tipo } = useParams(); 
-
   const [conteudo, setConteudo] = useState(null);
   const [erro, setErro] = useState(null);
 

@@ -10,6 +10,9 @@ import {
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 
+//MOCKUP TEMPORÁRIO - substituir futuramente por: GET IMAGENS
+import agido  from "../../assets/imgs/Yugioh/agido.jpg";
+
 export default function ColecaoView() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -30,25 +33,25 @@ export default function ColecaoView() {
           _id: "c1",
           nome: "Dragão de Fogo Supremo",
           tipo: "Lendária",
-          imagem: "/cards/dragao.jpg",
+          imagem: {agido},
         },
         {
           _id: "c2",
           nome: "Feiticeiro das Sombras",
           tipo: "Épica",
-          imagem: "/cards/feiticeiro.jpg",
+          imagem: {agido},
         },
         {
           _id: "c3",
           nome: "Guardião Elemental",
           tipo: "Rara",
-          imagem: "/cards/guardiao.jpg",
+          imagem: {agido},
         },
         {
           _id: "c4",
           nome: "Arqueiro Élfico",
           tipo: "Comum",
-          imagem: "/cards/arqueiro.jpg",
+          imagem: {agido},
         },
       ],
     });
@@ -75,8 +78,8 @@ export default function ColecaoView() {
             <Navegacao
               itens={[
                 { label: "Home", to: "/" },
-                { label: "Todoas as coleções", to: "/colecoes/colecao" },
-                { label: "Colecao" },
+                { label: "Todoas as coleções", to: "/colecoes" },
+                { label: "Colecao", to: `/colecoes/${colecao._id}` },
               ]}
             />
             <Col>
@@ -98,7 +101,7 @@ export default function ColecaoView() {
                 <ArrowLeft className="me-1" /> Voltar
               </Button>
               <Link
-                to={`/colecoes/editar/${colecao._id}`}
+                to={`/colecoes/${colecao._id}/editar`}
                 className="btn btn-outline-primary me-2"
               >
                 <PencilSquare className="me-1" /> Editar
@@ -117,7 +120,8 @@ export default function ColecaoView() {
                     <div className="carta-imagem-wrapper">
                       <Card.Img
                         variant="top"
-                        src={carta.imagem || "/cards/placeholder.jpg"}
+                        // src={carta.imagem || "/cards/placeholder.jpg"}
+                        src={agido}
                         alt={carta.nome}
                       />
                     </div>

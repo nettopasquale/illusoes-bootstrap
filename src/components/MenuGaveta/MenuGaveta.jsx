@@ -157,7 +157,7 @@ function MenuGaveta({ autenticado }) {
               Card Games
             </Nav.Link>
             <hr />
-            <Nav.Link as={Link} to="/marketplace" className="fs-5">
+            <Nav.Link as={Link} to="/marketplace/anuncios" className="fs-5">
               Marketplace
             </Nav.Link>
             <hr />

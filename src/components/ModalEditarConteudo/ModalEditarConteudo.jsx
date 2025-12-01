@@ -78,11 +78,12 @@ export function ModalEditarConteudo({
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>Imagem</Form.Label>
+            <Form.Label>Thumb</Form.Label>
             <Form.Control
               type="file"
               accept="image/*"
-              onChange={(e) => setThumb(e.target.files[0])}
+              name="thumbs"
+              onChange={(e) => setThumb(e.target.files)}
             />
           </Form.Group>
 

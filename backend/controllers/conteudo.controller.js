@@ -6,10 +6,14 @@ export const criarConteudo = async (req, res) => {
         const { titulo, subTitulo, conteudo, tags, dataEvento, valorEntrada } = req.body;
         const { tipo } = req.params;
 
-        const thumb = req.files?.thumb?.[0]?.filename || null;
+        const thumbs = req.file ? `/uploads/thumbs/${req.file.filename}` : null;
+
+        console.log("THUMBS RECEBIDO:", thumbs);
+
         const imagens = req.files?.imagem
             ? req.files.imagem.map(img => img.filename)
             : [];
+
 
         // Validação simples para evitar valores inválidos
         if (!["noticia", "artigo", "evento", "campeonato"].includes(tipo)) {
@@ -20,32 +24,22 @@ export const criarConteudo = async (req, res) => {
             return res.status(400).json({ error: "Campos obrigatórios devem ser preenchidos!" });
         }
 
-        let parsedTags = [];
-        try {
-            if (typeof tags === "string") {
-                parsedTags = JSON.parse(tags);
-            } else if (Array.isArray(tags)) {
-                parsedTags = tags;
-            }
-        } catch {
-            parsedTags = [];
-        }
 
         const novoConteudo = new Conteudo({
             titulo,
             subTitulo,
             conteudo,
-            thumb,
+            thumbs,
             imagens,
             tipo,
             autor: req.userId,
             dataPublicacao: new Date(),
-            tags: parsedTags,
+            tags: JSON.parse(tags || "[]"),
             dataEvento,
             valorEntrada
-
         });
-        
+
+        console.log("NOVA THUMB ENVIADA:", novoConteudo.thumbs);
 
         await novoConteudo.save();
         return res.status(201).json(novoConteudo);
@@ -98,19 +92,13 @@ export const editarConteudo = async (req, res) => {
         }
 
         //thumb
-        if (req.files?.thumb?.length) {
-            req.body.thumb = `/uploads/${req.files.thumb[0].filename}`;
-        }
-        //imagens
-        if (req.files?.imagem?.length) {
-            const novasImgs = req.files.imagem.map(img => `/uploads/${img.filename}`);
-            conteudo.imagem.push(...novasImgs);
+        if (req.file?.thumbs?.length) {
+            req.body.thumbs = `/uploads/thumbs/${req.file.filename}`;
         }
 
-        //remover imagens individualmente
-        
+
         // Atualiza com os novos dados
-        const conteudoAtualizado = await Conteudo.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+        const conteudoAtualizado = await Conteudo.findByIdAndUpdate(req.params.id, req.body, { $set: req.body, new: true, runValidators: true });
 
         return res.status(200).json(conteudoAtualizado);
     } catch (erro) {

@@ -10,9 +10,9 @@ export const colecoesRoutes = [
 
   <Route path="/colecoes/:id" element={<ColecaoView />} key="colecoes-id" />,
 
-  <Route path="/colecoes/editar/:id" element={<ColecaoEdicao />} key="colecoes-id-editar" />,
+  <Route path="/colecoes/:id/editar" element={<ColecaoEdicao />} key="colecoes-id-editar" />,
   
-  <Route path="/colecoes/:id/new" element={
+  <Route path="/colecoes/criar" element={
     <PrivateRoute>
       <CriarColecao />
     </PrivateRoute>

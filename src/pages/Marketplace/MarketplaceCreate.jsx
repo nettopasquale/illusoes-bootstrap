@@ -8,45 +8,82 @@ import {
   Form,
   Button,
   Image,
+  Alert,
 } from "react-bootstrap";
+import CreatableSelect from "react-select/creatable";
 import { useNavigate } from "react-router-dom";
 import useMarketplace from "../../hooks/useMarketplace";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 
+const tipoOptions = [
+  { value: "venda", label: "Venda" },
+  { value: "troca", label: "Troca" },
+];
+
 export default function MarketplaceCreate() {
   const navigate = useNavigate();
   const { createListing } = useMarketplace();
 
-  const [form, setForm] = useState({
-    title: "",
-    price: "",
-    currency: "BRL",
-    condition: "Usado",
-    location: "",
-    description: "",
-    images: [],
-  });
-  const [saving, setSaving] = useState(false);
-
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const [titulo, setTitulo] = useState("");
+  const [preco, setPreco] = useState("");
+  const [categoria, setCategoria] = useState(null);
+  const [tipo, setTipo] = useState(null);
+  const [condicao, setCondicao] = useState([]);
+  const [capa, setCapa] = useState(null);
+  const [imagem, setImagem] = useState([""]);
+  const [descricao, setDescricao] = useState("");
+  const [localizacao, setLocalizacao] = useState(null);
+  const [frete, setFrete] = useState("");
+  const [mensagem, setMensagem] = useState(null);
+  const [erro, setErro] = useState(null);
 
   const handleFile = (e) => {
-    const files = Array.from(e.target.files);
-    // Nesta versão mock, usamos URLs locais via URL.createObjectURL
-    const images = files.map((f) => URL.createObjectURL(f));
-    setForm((p) => ({ ...p, images: [...p.images, ...images] }));
+    // const files = Array.from(e.target.files);
+    // // Nesta versão mock, usamos URLs locais via URL.createObjectURL
+    // const imagens = files.map((f) => URL.createObjectURL(f));
+    // setImagem((p) => ({ ...p, imagem: [...p.imagem, ...imagem] }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setSaving(true);
+    if (!tipo) return setErro("Escolha o tipo do anuncio");
     // TODO: integrar upload de imagens e POST /api/marketplace
-    const payload = { ...form, price: parseFloat(form.price) };
-    await createListing(payload);
-    setSaving(false);
-    navigate("/marketplace");
+    try {
+      const formData = new FormData();
+      formData.append("titulo", titulo);
+      formData.append("categoria", categoria);
+      formData.append("condicao", condicao);
+      formData.append("capa", capa);
+      formData.append("descricao", descricao);
+      formData.append("localizacao", localizacao);
+      formData.append("frete", frete);
+      if (imagem)
+        formData.append(
+          "imagem",
+          JSON.stringify(imagem.length ? imagem.map((img) => img.value) : [])
+        );
+
+      //transformar String em Number
+      const valorLimpo = preco.replace("R$", "").trim().replace(",", ".");
+      const valorNumerico = parseFloat(valorLimpo);
+
+      //transformar String em Number
+      const valorLimpoF = frete.replace("R$", "").trim().replace(",", ".");
+      const valorNumericoF = parseFloat(valorLimpoF);
+
+      // depois no formData:
+      formData.append("preco", isNaN(valorNumerico) ? 0 : valorNumerico);
+      formData.append("frete", isNaN(valorNumericoF) ? 0 : valorNumericoF);
+
+      setMensagem(`Publicação realizada com sucesso!`);
+      setErro(null);
+      setTimeout(() => navigate("/marketplace/anuncios"), 2000);
+    } catch (error) {
+      console.error(error);
+      console.log(`Erro: ${error.data}`);
+      setErro("Erro ao publicar anúncio");
+    }
   };
 
   return (
@@ -56,25 +93,26 @@ export default function MarketplaceCreate() {
           <Navegacao
             itens={[
               { label: "Home", to: "/" },
-              { label: "Marketplace", to: "/marketplace" },
+              { label: "Marketplace", to: "/marketplace/anuncios" },
               { label: "Marketplace Criar", to: "/marketplace/criar" },
             ]}
           />
           <Col>
             <h3 className="fw-bold text-primary">Criar anúncio</h3>
+            {mensagem && <Alert variant="success">{mensagem}</Alert>}
+            {erro && <Alert variant="danger">{erro}</Alert>}
           </Col>
         </Row>
-
-        <Row>
-          <Col md={8}>
-            <Card className="p-3 shadow-sm">
-              <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} encType="multipart/form-data">
+          <Row>
+            <Col md={8}>
+              <Card className="p-3 shadow-sm">
                 <Form.Group className="mb-3">
                   <Form.Label>Título</Form.Label>
                   <Form.Control
-                    name="title"
-                    value={form.title}
-                    onChange={handleChange}
+                    name="titulo"
+                    value={titulo}
+                    onChange={(e)=> setTitulo(e.target.value)}
                     required
                   />
                 </Form.Group>
@@ -83,19 +121,62 @@ export default function MarketplaceCreate() {
                   <Form.Label>Preço (R$)</Form.Label>
                   <Form.Control
                     type="number"
-                    name="price"
-                    value={form.price}
-                    onChange={handleChange}
+                    name="preco"
+                    placeholder="Ex: R$ 0,00"
+                    value={preco}
+                    onChange={(e)=> setPreco(e.target.value)}
                     required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Frete (R$)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="frete"
+                    placeholder="Ex: R$ 0,00"
+                    value={frete}
+                    onChange={(e)=> setFrete(e.target.value)}
+                    required
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Tipo</Form.Label>
+                  <CreatableSelect
+                    options={tipoOptions}
+                    onChange={setTipo}
+                    value={tipo}
+                    className="w-100"
+                    style={{ width: "250px" }}
+                    placeholder="Escolha o tipo"
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Categoria</Form.Label>
+                  <Form.Control
+                    name="categoria"
+                    value={categoria}
+                    onChange={(e)=> setCategoria(e.target.value)}
+                  />
+                </Form.Group>
+
+                <Form.Group className="mb-3">
+                  <Form.Label>Condição</Form.Label>
+                  <Form.Control
+                    name="condicao"
+                    value={condicao}
+                    onChange={(e)=> setCondicao(e.target.value)}
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
                   <Form.Label>Local</Form.Label>
                   <Form.Control
-                    name="location"
-                    value={form.location}
-                    onChange={handleChange}
+                    name="localizacao"
+                    value={localizacao}
+                    onChange={(e)=> setLocalizacao(e.target.value)}
                   />
                 </Form.Group>
 
@@ -103,10 +184,10 @@ export default function MarketplaceCreate() {
                   <Form.Label>Descrição</Form.Label>
                   <Form.Control
                     as="textarea"
-                    name="description"
+                    name="descricao"
                     rows={6}
-                    value={form.description}
-                    onChange={handleChange}
+                    value={descricao}
+                    onChange={(e)=> setDescricao(e.target.value)}
                   />
                 </Form.Group>
 
@@ -119,7 +200,7 @@ export default function MarketplaceCreate() {
                     onChange={handleFile}
                   />
                   <div className="mt-2 d-flex flex-wrap gap-2">
-                    {form.images.map((src, idx) => (
+                    {imagem.map((src, idx) => (
                       <Image
                         key={idx}
                         src={src}
@@ -134,18 +215,18 @@ export default function MarketplaceCreate() {
                   <Button
                     variant="secondary"
                     className="me-2"
-                    onClick={() => navigate("/marketplace")}
+                    onClick={() => navigate("/marketplace/anuncios")}
                   >
                     Cancelar
                   </Button>
-                  <Button variant="primary" type="submit" disabled={saving}>
-                    {saving ? "Anunciando..." : "Publicar anúncio"}
+                  <Button variant="primary" type="submit">
+                    Publicar anúncio
                   </Button>
                 </div>
-              </Form>
-            </Card>
-          </Col>
-        </Row>
+              </Card>
+            </Col>
+          </Row>
+        </Form>
       </Container>
     </LayoutGeral>
   );

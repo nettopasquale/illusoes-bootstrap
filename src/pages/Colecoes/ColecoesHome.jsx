@@ -4,6 +4,9 @@ import { PlusCircle, Collection, Search } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import agido from "../../assets/imgs/Yugioh/agido.jpg";
+import charizard from "../../assets/imgs/Pokemon/Charizard-Base-SEt-art-pkmn-900x900.jpg";
+import liliana from "../../assets/imgs/Magic/liliana-vess-1920_jpg.jpg";
 
 export default function ColecoesHome() {
   const [colecoes, setColecoes] = useState([]);
@@ -18,24 +21,30 @@ export default function ColecoesHome() {
         _id: "c1",
         nome: "Coleção Raras 2025",
         descricao: "Cartas raras coletadas nos últimos campeonatos.",
+        cartas: ["", false],
         totalCartas: 52,
-        criador: "Pasquale",
+        dono: "Pasquale",
+        capa: agido,
         dataCriacao: "2025-10-22",
       },
       {
         _id: "c2",
         nome: "Decks Estratégicos",
         descricao: "Cartas com alta sinergia para decks de controle.",
+        cartas: ["", false],
         totalCartas: 37,
-        criador: "Pasquale",
+        dono: "Pasquale",
+        capa: charizard,
         dataCriacao: "2025-09-15",
       },
       {
         _id: "c3",
         nome: "Coleção Elementais",
         descricao: "Coleção temática de cartas baseadas em elementos mágicos.",
+        cartas: ["", false],
         totalCartas: 64,
-        criador: "Pasquale",
+        dono: "Pasquale",
+        capa: liliana,
         dataCriacao: "2025-07-10",
       },
     ]);
@@ -53,7 +62,7 @@ export default function ColecoesHome() {
             <Navegacao
               itens={[
                 { label: "Home", to: "/" },
-                { label: "Todoas as coleções", to: "/colecoes/colecao" },
+                { label: "Todoas as coleções", to: "/colecoes" },
               ]}
             />
             <Col xs={12} md={8}>
@@ -95,6 +104,10 @@ export default function ColecoesHome() {
                       <Card.Text className="text-muted small mb-2">
                         {colecao.descricao}
                       </Card.Text>
+                      <Card.Img
+                        variant="top"
+                        src={colecao.capa}
+                      />
                       <Card.Text className="text-muted small mb-3">
                         <strong>{colecao.totalCartas}</strong> cartas • Criada
                         em{" "}

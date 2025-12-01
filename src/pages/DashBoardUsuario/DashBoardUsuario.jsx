@@ -10,6 +10,15 @@ const menuToRouteMap = {
   "Meus Artigos": "artigo",
   "Meus Eventos": "evento",
   "Meus Campeonatos": "campeonato",
+  "Meus Comentários": "comentario",
+  "Minhas Curtidas": "curtida",
+  "Minhas Coleções": "colecao",
+  "Meus Anúncios": "anuncio",
+  "Minhas Vendas": "venda",
+  "Minhas Compras": "compra",
+  "Minhas Trocas": "troca",
+  "Meus topicos": "topico",
+  "Meus posts": "post",
 };
 
 const DashboardUsuario = () => {
@@ -47,63 +56,43 @@ const DashboardUsuario = () => {
     }
   };
 
-  // const MenuLateral = () => (
-  //   <Card className="p-3 shadow">
-  //     <Nav className="flex-column">
-  //       {[
-  //         "Meu Perfil",
-  //         "Minhas Compras",
-  //         "Minhas Vendas",
-  //         "Meus Anúncios",
-  //         "Minhas Coleções",
-  //         "Minhas Notícias",
-  //         "Meus Artigos",
-  //         "Meus Eventos",
-  //         "Meus Campeonatos",
-  //       ].map((menu) => (
-  //         <div key={menu}>
-  //           <Nav.Link
-  //             onClick={() => toggleSubmenu(menu)}
-  //             className="d-flex justify-content-between fw-bold"
-  //           >
-  //             {menu}
-  //             {submenus[menu] ? <FaChevronUp /> : <FaChevronDown />}
-  //           </Nav.Link>
-
-  //           {/* Submenu que lista os conteúdos */}
-  //           {submenus[menu] && menuToRouteMap[menu] && (
-  //             <div className="ps-3">
-  //               {conteudos.length === 0 && (
-  //                 <p className="text-muted">Nenhum conteúdo criado.</p>
-  //               )}
-
-  //               {conteudos.map((c) => (
-  //                 <Nav.Link
-  //                   key={c._id}
-  //                   as={Link}
-  //                   to={`/conteudos/${c.tipo}/${c._id}`}
-  //                   className="text-primary"
-  //                 >
-  //                   ✏️ {c.titulo}
-  //                 </Nav.Link>
-  //               ))}
-  //             </div>
-  //           )}
-  //         </div>
-  //       ))}
-  //     </Nav>
-  //   </Card>
-  // );
-
   const MenuLateral = () => (
     <Card className="p-3 shadow">
       <Nav className="flex-column">
         {[
           "Meu Perfil",
-          "Minhas Compras",
-          "Minhas Vendas",
-          "Meus Anúncios",
-          "Minhas Coleções",
+          "Meu Perfil do Forum"
+        ].map((menu) => (
+          <div key={menu}>
+            <Nav.Link
+              onClick={() => toggleSubmenu(menu)}
+              className="d-flex justify-content-between align-items-center fw-bold"
+            >
+              {menu}
+              {submenus[menu] ? <FaChevronUp /> : <FaChevronDown />}
+            </Nav.Link>
+
+            {submenus[menu] == 0 && !menuToRouteMap[menu] && (
+              <Nav.Link as={Link} to={`/userProfile`}>
+                Editar
+              </Nav.Link>
+            )}
+
+            {submenus[menu] && menuToRouteMap[menu] && (
+              <div className="ps-3">
+                <Nav.Link
+                  as={Link}
+                  to={`/userForumProfile`}
+                >
+                  Editar
+                </Nav.Link>
+              </div>
+            )}
+          </div>
+        ))}
+      </Nav>
+      <Nav className="flex-column">
+        {[
           "Minhas Notícias",
           "Meus Artigos",
           "Meus Eventos",
@@ -128,7 +117,102 @@ const DashboardUsuario = () => {
               <div className="ps-3">
                 <Nav.Link
                   as={Link}
-                  to={`/user/conteudos?tipo=${menuToRouteMap[menu]}`}
+                  to={`/user/conteudos/tipo=${menuToRouteMap[menu]}`}
+                >
+                  Editar
+                </Nav.Link>
+              </div>
+            )}
+          </div>
+        ))}
+      </Nav>
+
+      <Nav className="flex-column">
+        {["Minhas Coleções"].map((menu) => (
+          <div key={menu}>
+            <Nav.Link
+              onClick={() => toggleSubmenu(menu)}
+              className="d-flex justify-content-between align-items-center fw-bold"
+            >
+              {menu}
+              {submenus[menu] ? <FaChevronUp /> : <FaChevronDown />}
+            </Nav.Link>
+
+            {submenus[menu] == 0 && !menuToRouteMap[menu] && (
+              <Nav.Link as={Link} to={`/userProfile`}>
+                Editar
+              </Nav.Link>
+            )}
+
+            {submenus[menu] && menuToRouteMap[menu] && (
+              <div className="ps-3">
+                <Nav.Link as={Link} to={`/user/colecoes`}>
+                  Editar
+                </Nav.Link>
+              </div>
+            )}
+          </div>
+        ))}
+      </Nav>
+
+      <Nav className="flex-column">
+        {[
+          "Meus Anúncios",
+          "Minhas Compras",
+          "Minhas Vendas",
+          "Minhas Trocas",
+        ].map((menu) => (
+          <div key={menu}>
+            <Nav.Link
+              onClick={() => toggleSubmenu(menu)}
+              className="d-flex justify-content-between align-items-center fw-bold"
+            >
+              {menu}
+              {submenus[menu] ? <FaChevronUp /> : <FaChevronDown />}
+            </Nav.Link>
+
+            {submenus[menu] == 0 && !menuToRouteMap[menu] && (
+              <Nav.Link as={Link} to={`/userProfile`}>
+                Editar
+              </Nav.Link>
+            )}
+
+            {submenus[menu] && menuToRouteMap[menu] && (
+              <div className="ps-3">
+                <Nav.Link
+                  as={Link}
+                  to={`/user/marketplace/meus-anuncios`}
+                >
+                  Editar
+                </Nav.Link>
+              </div>
+            )}
+          </div>
+        ))}
+      </Nav>
+
+      <Nav className="flex-column">
+        {["Meus topicos", "Meus posts"].map((menu) => (
+          <div key={menu}>
+            <Nav.Link
+              onClick={() => toggleSubmenu(menu)}
+              className="d-flex justify-content-between align-items-center fw-bold"
+            >
+              {menu}
+              {submenus[menu] ? <FaChevronUp /> : <FaChevronDown />}
+            </Nav.Link>
+
+            {submenus[menu] == 0 && !menuToRouteMap[menu] && (
+              <Nav.Link as={Link} to={`/userProfile`}>
+                Editar
+              </Nav.Link>
+            )}
+
+            {submenus[menu] && menuToRouteMap[menu] && (
+              <div className="ps-3">
+                <Nav.Link
+                  as={Link}
+                  to={`/user/forum?tipo=${menuToRouteMap[menu]}`}
                 >
                   Editar
                 </Nav.Link>
@@ -218,7 +302,7 @@ const DashboardUsuario = () => {
   // );
   return (
     <LayoutGeral>
- <Container fluid className="py-4">
+      <Container fluid className="py-4">
         <Row>
           <Col md={3}>
             <MenuLateral />

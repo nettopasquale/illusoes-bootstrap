@@ -11,7 +11,7 @@ export default function ForumPost({ post, onEdit, onDelete, onReply }) {
 
   const { user } = useAuth();
 
-  const isAuthor = user && post.authorId === user.id;
+  const isAuthor = user && post.autorId === user.id;
 
   const handleSaveEdit = (newContent) => {
     // MOCK - Atualiza localmente
@@ -32,7 +32,7 @@ export default function ForumPost({ post, onEdit, onDelete, onReply }) {
     <Card className="mb-3 p-3 shadow-sm">
       <div className="d-flex justify-content-between align-items-center">
         <div>
-          <strong>{post.authorName}</strong>
+          <strong>{post.autor}</strong>
           <span className="text-muted ms-2" style={{ fontSize: "0.9em" }}>
             {new Date(post.createdAt).toLocaleString("pt-BR")}
           </span>
@@ -42,11 +42,11 @@ export default function ForumPost({ post, onEdit, onDelete, onReply }) {
       {!isEditing ? (
         <div
           className="mt-2"
-          dangerouslySetInnerHTML={{ __html: post.content }}
+          dangerouslySetInnerHTML={{ __html: post.conteudo }}
         />
       ) : (
         <ForumPostEditor
-          initialContent={post.content}
+          initialContent={post.conteudo}
           isEditing
           onSubmit={handleSaveEdit}
           onCancel={() => setIsEditing(false)}

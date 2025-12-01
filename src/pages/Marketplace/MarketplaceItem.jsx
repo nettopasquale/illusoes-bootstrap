@@ -13,6 +13,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useMarketplace from "../../hooks/useMarketplace";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import flareon  from "../../assets/imgs/Pokemon/flareon_tcg.jpg";
 
 export default function MarketplaceItem() {
   const { id } = useParams();
@@ -50,14 +51,14 @@ export default function MarketplaceItem() {
             <Navegacao
               itens={[
                 { label: "Home", to: "/" },
-                { label: "Marketplace", to: "/marketplace" },
-                { label: "Marketplace item", to: "/marketplace/produto" },
+                { label: "Marketplace", to: "/marketplace/anuncios" },
+                { label: "Marketplace item", to: "/marketplace/anuncios/:tipo/:id" },
               ]}
             />
             <Col>
               <Button
                 variant="outline-secondary"
-                onClick={() => navigate("/marketplace")}
+                onClick={() => navigate("/marketplace/anuncios")}
               >
                 Voltar
               </Button>
@@ -68,12 +69,12 @@ export default function MarketplaceItem() {
             <Col md={7}>
               <Card className="shadow-sm border-0">
                 <Carousel>
-                  {item.images?.map((src, idx) => (
+                  {item.imagem?.map((idx) => (
                     <Carousel.Item key={idx}>
                       <img
                         className="d-block w-100"
-                        src={src}
-                        alt={`${item.title} ${idx}`}
+                        src={item.capa}
+                        alt={`${item.titulo} ${idx}`}
                         style={{ objectFit: "cover", height: 420 }}
                       />
                     </Carousel.Item>
@@ -81,13 +82,13 @@ export default function MarketplaceItem() {
                 </Carousel>
                 <Card.Body>
                   <h4 className="fw-bold">
-                    {item.title} <Badge bg="secondary">{item.condition}</Badge>
+                    {item.titulo} <Badge bg="secondary">{item.condicao}</Badge>
                   </h4>
                   <p className="text-muted small">
                     Anunciado em{" "}
                     {new Date(item.createdAt).toLocaleDateString("pt-BR")}
                   </p>
-                  <p>{item.description}</p>
+                  <p>{item.descricao}</p>
                 </Card.Body>
               </Card>
             </Col>
@@ -97,13 +98,13 @@ export default function MarketplaceItem() {
                 <h5 className="fw-bold">
                   {new Intl.NumberFormat("pt-BR", {
                     style: "currency",
-                    currency: item.currency || "BRL",
-                  }).format(item.price)}
+                    currency: "BRL",
+                  }).format(item.preco)}
                 </h5>
                 <p className="text-muted small mb-3">
-                  Vendedor: <strong>{item.seller}</strong>
+                  Vendedor: <strong>{item.vendedor}</strong>
                 </p>
-                <p className="text-muted small mb-3">Local: {item.location}</p>
+                <p className="text-muted small mb-3">Local: {item.localizacao}</p>
 
                 <Button
                   variant="primary"

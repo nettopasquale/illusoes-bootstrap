@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import CreatableSelect from "react-select/creatable";
 import ReactQuill from "react-quill";
@@ -9,6 +9,8 @@ import DatePicker from "react-datepicker";
 import axios from "axios";
 import "react-quill/dist/quill.snow.css";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+// import { useReactQuillFirebase } from "../../hooks/useReactQuillFireBase";
+// import { uploadToFirebase } from "../../utils/uploadFirebase";
 
 export const EditarConteudo = () => {
   const { id, tipo } = useParams();
@@ -17,7 +19,7 @@ export const EditarConteudo = () => {
   const [titulo, setTitulo] = useState("");
   const [subTitulo, setSubTitulo] = useState("");
   const [tags, setTags] = useState([]);
-  const [thumb, setThumb] = useState(null);
+  const [thumbs, setThumbs] = useState(null);
   const [imagems, setImagens] = useState(null);
   const [conteudo, setConteudo] = useState("");
   const [tipoSelecionado, setTipoSelecionado] = useState({
@@ -44,10 +46,12 @@ export const EditarConteudo = () => {
         setTipoSelecionado({ value: dados.tipo, label: dados.tipo });
         setConteudo(dados.conteudo);
         setDataEvento(dados.dataEvento ? new Date(dados.dataEvento) : null);
-        setValorEntrada(dados.valorEntrada != null ? dados.valorEntrada.toString() : "");
+        setValorEntrada(
+          dados.valorEntrada != null ? dados.valorEntrada.toString() : ""
+        );
 
         setTags(dados.tags?.map((tag) => ({ value: tag, label: tag })) || []);
-        //adaptar se estiver usando tag como objeto ou string
+
       } catch (err) {
         console.error(err);
         setErro("Erro ao carregar o conteúdo para edição");
@@ -57,13 +61,7 @@ export const EditarConteudo = () => {
     carregarEvento();
   }, [id]);
 
-  const handleThumb = (e) => {
-    setThumb(e.target.files[0]);
-  };
 
-  const handleImagens = (e) => {
-    setImagens(e.target.files[0]);
-  };
 
   //edição de conteúdo
   const handleSalvarAlteracoes = async (e) => {
@@ -73,20 +71,20 @@ export const EditarConteudo = () => {
       const formData = new FormData();
       formData.append("titulo", titulo);
       formData.append("subTitulo", subTitulo);
-      formData.append("tags", JSON.stringify(tags.length ? tags.map((tag) => tag.value) : []));
-      if (imagem) formData.append("imagem", imagem);
+      formData.append("tags", tags.length ? tags.map((tag) => tag.value) : []);
       formData.append("conteudo", conteudo);
       formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
-
+      
       //transformar String em Number
       let valorLimpo =
-        typeof valorEntrada === "string"
-          ? valorEntrada.replace("R$", "").trim().replace(",", ".")
-          : valorEntrada;
-
+      typeof valorEntrada === "string"
+      ? valorEntrada.replace("R$", "").trim().replace(",", ".")
+      : valorEntrada;
+      
       const valorNumerico = parseFloat(valorLimpo);
-
+      
       formData.append("valorEntrada", isNaN(valorNumerico) ? 0 : valorNumerico);
+      formData.append("thumbs", thumbs);
 
       console.log(formData);
 
@@ -136,6 +134,35 @@ export const EditarConteudo = () => {
     }
   };
 
+  const handleThumb = (e) => {
+    setThumbs(e.target.file);
+  };
+
+  //   const handleImagens = (e) => {
+  //   setImagens(e.target.files[0]);
+  // };
+
+  // TOOLBAR CUSTOMIZADA DO QUILL
+  // const modules = useMemo(
+  //   () => ({
+  //     toolbar: {
+  //       container: [
+  //         [{ header: [1, 2, 3, false] }],
+  //         ["bold", "italic", "underline", "strike"],
+  //         [{ align: [] }],
+  //         [{ list: "ordered" }, { list: "bullet" }],
+  //         ["link"],
+  //         ["image"], // Vamos interceptar este botão
+  //         ["clean"],
+  //       ],
+  //       handlers: {
+  //         image: handleImageUpload, // substitui o handler padrão
+  //       },
+  //     },
+  //   }),
+  //   [handleImageUpload]
+  // );
+
   return (
     <LayoutGeral>
       <Container className="my-5 py-5">
@@ -152,7 +179,7 @@ export const EditarConteudo = () => {
         </h2>
         {mensagem && <Alert variant="success">{mensagem}</Alert>}
         {erro && <Alert variant="danger">{erro}</Alert>}
-        <Form onSubmit={handleSalvarAlteracoes}>
+        <Form onSubmit={handleSalvarAlteracoes} encType="multipart/form-data">
           <Row>
             <Col md={6}>
               <Form.Group className="mb-4 px-5">
@@ -225,45 +252,45 @@ export const EditarConteudo = () => {
             </Col>
           </Row>
 
-          {["evento", "campeonato"].includes(tipoSelecionado?.value) &&(
-                <Row>
-                  <Col md={6}>
-                    <Form.Group className="my-4 px-5">
-                      <Form.Label className="fs-3 fw-bold text-start w-100">
-                        Data do Evento
-                      </Form.Label>
-                      <div className="w-100">
-                        <DatePicker
-                          selected={dataEvento}
-                          onChange={setDataEvento}
-                          dateFormat="dd/MM/yyyy"
-                          className="form-control"
-                          showYearDropdown
-                          scrollableYearDropdown
-                          yearDropdownItemNumber={100}
-                          placeholderText="Selecione a data"
-                        />
-                      </div>
-                    </Form.Group>
-                  </Col>
+          {["evento", "campeonato"].includes(tipoSelecionado?.value) && (
+            <Row>
+              <Col md={6}>
+                <Form.Group className="my-4 px-5">
+                  <Form.Label className="fs-3 fw-bold text-start w-100">
+                    Data do Evento
+                  </Form.Label>
+                  <div className="w-100">
+                    <DatePicker
+                      selected={dataEvento}
+                      onChange={setDataEvento}
+                      dateFormat="dd/MM/yyyy"
+                      className="form-control"
+                      showYearDropdown
+                      scrollableYearDropdown
+                      yearDropdownItemNumber={100}
+                      placeholderText="Selecione a data"
+                    />
+                  </div>
+                </Form.Group>
+              </Col>
 
-                  <Col md={6}>
-                    <Form.Group className="mb-4 px-5">
-                      <Form.Label className="fs-3 fw-bold text-start w-100">
-                        Valor da Entrada
-                      </Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Ex: R$ 0,00"
-                        className="w-100"
-                        style={{ fontSize: "1.2rem" }}
-                        value={valorEntrada}
-                        onChange={(e) => setValorEntrada(e.target.value)}
-                      />
-                    </Form.Group>
-                  </Col>
-                </Row>
-              )}
+              <Col md={6}>
+                <Form.Group className="mb-4 px-5">
+                  <Form.Label className="fs-3 fw-bold text-start w-100">
+                    Valor da Entrada
+                  </Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Ex: R$ 0,00"
+                    className="w-100"
+                    style={{ fontSize: "1.2rem" }}
+                    value={valorEntrada}
+                    onChange={(e) => setValorEntrada(e.target.value)}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+          )}
 
           <Form.Group className="mb-4 px-5">
             <Form.Label className="fs-3 fw-bold text-start w-100">
@@ -274,6 +301,7 @@ export const EditarConteudo = () => {
               accept="image/*"
               className="w-100"
               style={{ height: "30px" }}
+              name="thumbs"
               onChange={handleThumb}
             />
             <Form.Text className="text-muted">
@@ -282,29 +310,33 @@ export const EditarConteudo = () => {
           </Form.Group>
 
           {/* REVER AQUI GALERIA */}
-          <Form.Group className="mb-4 px-5">
+          {/* <Form.Group className="mb-4 px-5">
             <Form.Label className="fs-3 fw-bold text-start w-100">
               Imagens da Galeria
             </Form.Label>
             <Form.Control
-              type="files"
+              type="file"
+              multiple
               accept="image/*"
               className="w-100"
               style={{ height: "30px" }}
-              onChange={handleImagens}
+              value={imagems}
+              onChange={setImagens}
             />
             <Form.Text className="text-muted">
               Você pode substituir a imagem atual.
             </Form.Text>
-          </Form.Group>
+          </Form.Group> */}
 
           <Form.Group className="mb-4 p-5">
             <Form.Label className="fs-3 fw-bold text-start w-100">
               Conteúdo
             </Form.Label>
             <ReactQuill
+              // ref={quillRef}
               value={conteudo}
               onChange={setConteudo}
+              // modules={modules}
               className="w-100"
               style={{
                 height: "300px",
@@ -346,8 +378,8 @@ export const EditarConteudo = () => {
         setSubTitulo={setSubTitulo}
         tags={tags}
         setTags={setTags}
-        thumb={thumb}
-        setThumb={setThumb}
+        thumb={thumbs}
+        setThumb={setThumbs}
         conteudo={conteudo}
         setConteudo={setConteudo}
       />

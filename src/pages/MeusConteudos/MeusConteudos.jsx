@@ -37,7 +37,7 @@ export const MeusConteudos = () => {
           ? ""
           : `?tipo=${tipoSelecionado.value}`;
       const response = await axios.get(
-        `http://localhost:8080/user/conteudos?tipo=${filtro}`,
+        `http://localhost:8080/user/conteudos/${filtro}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -64,7 +64,7 @@ export const MeusConteudos = () => {
       const id = conteudoSelecionado._id;
 
       await axios.delete(
-        `http://localhost:8080/user/conteudos?tipo=${tipo}/${id}`,
+        `http://localhost:8080/user/conteudos/${tipo}/${id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -109,10 +109,10 @@ export const MeusConteudos = () => {
                 onClick={() => abrirModal(item)}
                 style={{ cursor: "pointer" }}
               >
-                {item.thumb && (
+                {item.thumbs && (
                   <Card.Img
                     variant="top"
-                    src={`http://localhost:8080${item.thumb}`}
+                    src={`http://localhost:8080${item.thumbs}`}
                     style={{ height: "150px", objectFit: "cover" }}
                   />
                 )}

@@ -5,6 +5,12 @@ import { useListarConteudo } from "../../hooks/useListarConteudo";
 import LayoutGeral from "../LayoutGeral/LayoutGeral";
 import { useParams } from "react-router-dom";
 import { Navegacao } from "../Navegacao/Navegacao";
+import eldlich from "../../assets/imgs/Yugioh/eldlich_the_golden_lord.jpg";
+import dmg from "../../assets/imgs/Yugioh/dark_magician_girl.jpg";
+import bwvk from "../../assets/imgs/Yugioh/blackwing___vata_the_knave.jpg";
+
+//MOCKUP TEMPORARIO
+const imgsThumb = [eldlich, dmg, bwvk];
 
 export const ListarConteudos = ({
   tipo: tipoProp,
@@ -18,8 +24,7 @@ export const ListarConteudos = ({
     erro,
     carregando,
     navigate,
-  } = useListarConteudo(
-    `http://localhost:8080/conteudos`,tipo);
+  } = useListarConteudo(`http://localhost:8080/conteudos`, tipo);
 
   const responsive = {
     desktop: {
@@ -75,12 +80,17 @@ export const ListarConteudos = ({
                   onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
                   style={{ cursor: "pointer" }}
                 >
-                  {conteudo.imagem && (
+                  {/* {conteudo.thumbs && (
                     <Card.Img
                       variant="top"
-                      src={`http://localhost:8080${conteudo.imagem}`}
+                      src={`http://localhost:8080${conteudo.thumbs}`}
                     />
-                  )}
+                  )} */}
+                  <Card.Img
+                    variant="top"
+                    src={eldlich}
+                  />
+
                   <Card.Body className="bg-white">
                     <Card.Title>{conteudo.titulo}</Card.Title>
                     <Card.Text className="text-truncate">
@@ -105,7 +115,7 @@ export const ListarConteudos = ({
           style={{ maxWidth: "1200px" }}
         >
           <h2 className="text fw-bold text-start fs-3 mb-4">
-            {TITULOS_HOME[tipo] || "Conteúdos Recentes"} 
+            {TITULOS_HOME[tipo] || "Conteúdos Recentes"}
           </h2>
           <hr></hr>
           <Carousel
@@ -131,14 +141,19 @@ export const ListarConteudos = ({
                 }}
                 onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
               >
-                {conteudo.thumb && (
+                {/* {conteudo.thumbs && (
                   <img
-                    src={`http://localhost:8080${conteudo.thumb}`}
+                    src={`http://localhost:8080${conteudo.thumbs}`}
                     alt={conteudo.titulo}
                     className="card-img-top"
                     style={{ height: "88px", objectFit: "cover" }}
                   />
-                )}
+                )} */}
+                <img
+                  className="card-img-top"
+                  style={{ height: "88px", objectFit: "cover" }}
+                  src={eldlich}
+                />
                 <div className="card-body bg-white p-3 rounded-bottom-3 ">
                   <h5 className="card-title fw-bold text-start">
                     {conteudo.titulo}

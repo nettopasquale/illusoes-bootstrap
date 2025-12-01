@@ -5,19 +5,22 @@ import useMarketplace from "../../hooks/useMarketplace";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import MarketplaceCard from "../../components/MarketplaceComponentes/MarketplaceCard";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import flareon  from "../../assets/imgs/Pokemon/flareon_tcg.jpg";
+import knight  from "../../assets/imgs/Digimon/1BT2-020__sasasi_jpg.jpg";
 
 export default function MarketplaceHome() {
   const navigate = useNavigate();
   const { items, loading, loadItems } = useMarketplace();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
+  const [tipo, setTipo] = useState("");
 
   useEffect(() => {
     loadItems();
   }, []);
 
   const handleView = (id) => {
-    navigate(`/marketplace/${id}`);
+    navigate(`/marketplace/anuncios/:tipo/${id}`);
   };
 
   const handleCreate = () => {
@@ -32,7 +35,7 @@ export default function MarketplaceHome() {
             <Navegacao
               itens={[
                 { label: "Home", to: "/" },
-                { label: "Marketplace", to: "/marketplace" },
+                { label: "Marketplace", to: "/marketplace/anuncios" },
               ]}
             />
             <Col>
@@ -65,6 +68,16 @@ export default function MarketplaceHome() {
                 <option value="decks">Decks</option>
                 <option value="cartas">Cartas</option>
                 <option value="acessorios">Acessórios</option>
+              </Form.Select>
+            </Col>
+            <Col md={4} lg={3}>
+              <Form.Select
+                value={tipo}
+                onChange={(e) => setTipo(e.target.value)}
+              >
+                <option value="">Todas os tipos</option>
+                <option value="venda">Venda</option>
+                <option value="troca">Troca</option>
               </Form.Select>
             </Col>
           </Row>

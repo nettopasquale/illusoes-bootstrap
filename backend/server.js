@@ -3,7 +3,6 @@ import cors from "cors";
 import mongoose from "mongoose";
 import path from "path"; //imagens locais
 import { fileURLToPath } from "url"; //imagens locais
-import { upload } from "./uploads/upload.js";
 import userRouters from "./routes/user.routes.js";
 import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
@@ -12,6 +11,8 @@ import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
 import forumTopicoRouters from "./routes/forumTopico.routes.js";
 import forumPostRouters from "./routes/forumPost.routes.js";
+import { criarConteudo } from "./controllers/conteudo.controller.js";
+import { uploadThumb } from "./uploads/upload.js";
 
 const app = express();
 console.log(process.env.PORT);
@@ -45,7 +46,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 //extender limite de 10mb
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.urlencoded({ limit: '200mb', extended: true }));
 
 //conexão MongoDB
 try {
@@ -55,6 +56,19 @@ try {
   console.error("Erro na conexão com o MongoDB!", erro);
   process.exit(1);
 }
+// Para servir a pasta 'uploads' de forma pública:
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+//rota de upar imagem
+app.post('/upload', uploadThumb.single('thumbs'), (req, res) => {
+  console.log(req.file); // aqui estará o arquivo enviado
+  res.send('Imagem recebida com sucesso!');
+});
+
+app.use((error, req, res, next) => {
+  console.log('This is the rejected field ->', error.field);
+});
+
 
 //rotas do app
 app.use("/", conteudoRouters);
@@ -65,29 +79,7 @@ app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
 app.use("/", forumTopicoRouters);
 app.use("/", forumPostRouters);
-//app.use('/uploads', express.static('uploads')); //rota estática das imagens
 
-// Para servir a pasta 'uploads' de forma pública:
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-app.use("/uploads-multi", express.static(path.join(__dirname, "uploads-multi")));
-
-//rota de upar thumb
-app.post('/upload', upload.single('thumb'), (req, res) => {
-  console.log(req.file); // aqui estará o arquivo enviado
-  res.send('Imagem recebida com sucesso!');
-});
-
-//rota de upar imagens
-app.post('/uploads-multi', upload.array('imagem', 10), (req, res) => {
-
-  const filenames = req.files
-
-  if (!filenames) {
-    return res.status(400).send('Nenhum arquivo enviado.');
-  }
-  return res.status(200).send({message: "Arquivos enviados com sucesso!", files: filenames});
-});
 
 app.use((req, res, next) => {
   console.log("rota acessada: ", req.method, req.originalUrl);

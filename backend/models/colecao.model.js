@@ -7,8 +7,12 @@ const ColecaoSchema = new mongoose.Schema({
     nome: { type: String, required: true },
     quantidade: Number,
     imagem: String
-  }],
-  dono: { type: mongoose.Schema.Types.ObjectId, ref: "User" }
+  },
+    { checklist: { type: Boolean, default: false } },
+  ],
+  dono: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  capa: { type: String, default: "", required: false },
+  
 });
 
 const Colecao = mongoose.model("Colecao", ColecaoSchema);

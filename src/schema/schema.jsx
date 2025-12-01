@@ -39,6 +39,7 @@ export const schemaConteudo = yup.object().shape({
   titulo: yup.string().required("O título é obrigatório"),
   subTitulo: yup.string().required("O subtítulo é obrigatório"),
   conteudo: yup.string().required("O conteúdo é obrigatório"),
+  thumb: yup.string().url("Insira uma URL válida").nullable(),
   imagem: yup.string().url("Insira uma URL válida").nullable(),
   tipo: yup
     .string()

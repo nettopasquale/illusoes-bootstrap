@@ -1,5 +1,7 @@
 import { Card, Button } from "react-bootstrap";
 import PropTypes from "prop-types";
+import flareon  from "../../assets/imgs/Pokemon/flareon_tcg.jpg";
+import knight  from "../../assets/imgs/Digimon/1BT2-020__sasasi_jpg.jpg";
 
 MarketplaceCard.propTypes = {
   item: PropTypes.object.isRequired,
@@ -12,22 +14,22 @@ export default function MarketplaceCard({ item, onView }) {
       <div style={{ height: 160, overflow: "hidden" }}>
         <Card.Img
           variant="top"
-          src={item.cover || "/cards/placeholder.jpg"}
-          alt={item.title}
+          src={item.capa || flareon}
+          alt={item.titulo}
           style={{ objectFit: "cover", width: "100%", height: "100%" }}
         />
       </div>
       <Card.Body className="d-flex flex-column">
-        <Card.Title className="mb-1 fs-6 fw-semibold">{item.title}</Card.Title>
+        <Card.Title className="mb-1 fs-6 fw-semibold">{item.titulo}</Card.Title>
         <Card.Text className="text-muted small mb-2">
-          {item.seller} • {item.location}
+          {item.vendedor} • {item.localizacao}
         </Card.Text>
         <div className="mt-auto d-flex justify-content-between align-items-center">
           <div className="fw-bold">
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: item.currency || "BRL",
-            }).format(item.price)}
+            }).format(item.preco)}
           </div>
           <Button size="sm" variant="primary" onClick={() => onView(item.id)}>
             Ver

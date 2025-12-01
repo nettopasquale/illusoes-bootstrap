@@ -4,32 +4,32 @@ import { ChatDots, Eye } from "react-bootstrap-icons";
 import PropTypes from "prop-types";
 
 ForumTopicoCard.propTypes = {
-  title: PropTypes.string.isRequired,
-  author: PropTypes.string,
+  titulo: PropTypes.string.isRequired,
+  autor: PropTypes.string,
   posts: PropTypes.number,
-  views: PropTypes.number,
-  lastPost: PropTypes.object,
+  visualizacoes: PropTypes.number,
+  ultimoPost: PropTypes.object,
   onClick: PropTypes.func,
 };
 
 ForumTopicoCard.defaultProps = {
-  author: "Usuário",
+  autor: "Usuário",
   posts: 0,
-  views: 0,
-  lastPost: null,
+  visualizacoes: 0,
+  ultimoPost: null,
   onClick: () => {},
 };
 
 export default function ForumTopicoCard({
-  title,
-  author,
+  titulo,
+  autor,
   posts,
-  views,
-  lastPost,
+  visualizacoes,
+  ultimoPost,
   onClick,
 }) {
-  const ultimaAtividade = lastPost
-    ? new Date(lastPost.data).toLocaleString("pt-BR", {
+  const ultimaAtividade = ultimoPost
+    ? new Date(ultimoPost.data).toLocaleString("pt-BR", {
         day: "2-digit",
         month: "2-digit",
         hour: "2-digit",
@@ -46,8 +46,8 @@ export default function ForumTopicoCard({
       <Card.Body>
         <Row>
           <Col md={8}>
-            <h5 className="fw-bold mb-1 text-primary">{title}</h5>
-            <small className="text-muted">Criado por {author}</small>
+            <h5 className="fw-bold mb-1 text-primary">{titulo}</h5>
+            <small className="text-muted">Criado por {autor}</small>
           </Col>
           <Col
             md={4}
@@ -59,7 +59,7 @@ export default function ForumTopicoCard({
             </div>
             <div className="d-flex align-items-center me-3">
               <Eye className="me-1" />
-              {views}
+              {visualizacoes}
             </div>
             <div>
               <span>{ultimaAtividade}</span>

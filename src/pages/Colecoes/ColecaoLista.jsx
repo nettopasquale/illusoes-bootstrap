@@ -2,33 +2,51 @@ import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { PlusCircle } from "lucide-react";
+import { Navegacao } from "../../components/Navegacao/Navegacao";
+import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+//MOCKUP TEMPORÁRIO - substituir futuramente por: GET IMAGENS
+import agido from "../../assets/imgs/Yugioh/agido.jpg";
 
 export default function ColecaoLista() {
-  const [collections, setCollections] = useState([]);
+  const [colecoes, setColecoes] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO: integrar com backend (GET /collections)
+    // TODO: integrar com backend (GET /colecoes)
     // Mock temporário
     setTimeout(() => {
-      setCollections([
+      setColecoes([
         {
-          id: "1",
-          title: "Coleção de Dragões",
-          description: "Uma seleção das cartas de dragões mais raras.",
-          cardsCount: 42,
-          cover:
-            "https://images.unsplash.com/photo-1618073190506-bfd9c39f0d2d?w=600",
+          _id: "c1",
+          nome: "Coleção Raras 2025",
+          descricao: "Cartas raras coletadas nos últimos campeonatos.",
+          cartas: ["", false],
+          totalCartas: 52,
+          dono: "Pasquale",
+          capa: agido,
+          dataCriacao: "2025-10-22",
         },
         {
-          id: "2",
-          title: "Coleção Feras do Norte",
-          description:
-            "Cartas inspiradas nas lendas das terras geladas do norte.",
-          cardsCount: 28,
-          cover:
-            "https://images.unsplash.com/photo-1590080875832-13c3f2c4a8e0?w=600",
+          _id: "c2",
+          nome: "Decks Estratégicos",
+          descricao: "Cartas com alta sinergia para decks de controle.",
+          cartas: ["", false],
+          totalCartas: 37,
+          dono: "Pasquale",
+          capa: agido,
+          dataCriacao: "2025-09-15",
+        },
+        {
+          _id: "c3",
+          nome: "Coleção Elementais",
+          descricao:
+            "Coleção temática de cartas baseadas em elementos mágicos.",
+          cartas: ["", false],
+          totalCartas: 64,
+          dono: "Pasquale",
+          capa: agido,
+          dataCriacao: "2025-07-10",
         },
       ]);
       setLoading(false);
@@ -87,7 +105,7 @@ export default function ColecaoLista() {
           </Col>
         </Row>
 
-        {collections.length === 0 ? (
+        {colecoes.length === 0 ? (
           <div className="text-center text-muted mt-5">
             <p>Você ainda não possui coleções criadas.</p>
             <Button onClick={handleCreateCollection} variant="outline-primary">
@@ -96,26 +114,26 @@ export default function ColecaoLista() {
           </div>
         ) : (
           <Row xs={1} sm={2} md={3} lg={3} className="g-4">
-            {collections.map((col) => (
+            {colecoes.map((col) => (
               <Col key={col.id}>
                 <Card className="h-100 shadow-sm">
                   <Card.Img
                     variant="top"
-                    src={col.cover}
-                    alt={col.title}
+                    src={col.capa}
+                    alt={col.nome}
                     style={{
                       height: "180px",
                       objectFit: "cover",
                     }}
                   />
                   <Card.Body>
-                    <Card.Title className="fw-semibold">{col.title}</Card.Title>
+                    <Card.Title className="fw-semibold">{col.nome}</Card.Title>
                     <Card.Text className="text-muted small">
-                      {col.description}
+                      {col.descricao}
                     </Card.Text>
                     <div className="d-flex justify-content-between align-items-center mt-3">
                       <small className="text-muted">
-                        {col.cardsCount} cartas
+                        {col.totalCartas} cartas
                       </small>
                       <div>
                         <Button
