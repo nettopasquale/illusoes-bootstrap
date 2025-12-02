@@ -253,16 +253,7 @@ export const CriarConteudo = () => {
               style={{ height: "30px" }}
               onChange={handleThumb}
             />
-            <div className="mt-2 d-flex flex-wrap gap-2">
-              {thumbs.map((src, idx) => (
-                <Image
-                  key={idx}
-                  src={src}
-                  thumbnail
-                  style={{ width: 100, height: 70, objectFit: "cover" }}
-                />
-              ))}
-            </div>
+
           </Form.Group>
 
           {/* REVER AQUI */}

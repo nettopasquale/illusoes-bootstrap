@@ -6,10 +6,16 @@ const forumTopicoSchema = new mongoose.Schema({
     titulo: { type: String, required: true, trim: true },
     criador: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     dataCriacao: {type: Date, default: Date.now, required: true},
-    dataModificacao: {type: Date, default: Date.now},
+    dataModificacao: {type: Date, default: Date.now, required: true},
     primeiroPostId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumPost", }, // controle de contagem de posts
     visualizacoes: { type: Number, default: 0 },
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ForumPost' }],
+    totalPosts: {type: Number, default: 0},
+    ultimoPost: {
+        postId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumPost" },
+        usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        data: { type: Date }
+    },
     status: { type: String, enum: ["ativo", "trancado", "removido"], default: "ativo" }, // útil para exclusão lógica
     fixado: { type: Boolean, default: false }, //opcional
 }, {

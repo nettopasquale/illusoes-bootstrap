@@ -15,6 +15,7 @@ const forumPostSchema = new mongoose.Schema({
     conteudo: { type: String, required: true },
     anexos: { type: [AnexoSchema], default: [] },
     curtidas: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    curtidasTotais: { type: Number, default: 0 },
     visualizacoes: { type: Number, default: 0 },
     editado: {type: Boolean},
     status: { type: String, enum: ["ativo", "removido"], default: "ativo" }, // útil para exclusão lógica
