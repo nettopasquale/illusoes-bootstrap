@@ -3,14 +3,13 @@ import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import CreatableSelect from "react-select/creatable";
 import { useNavigate } from "react-router-dom";
+import { Navegacao } from "../../components/Navegacao/Navegacao";
+import { cloudinaryUpload } from "../../utils/cloudinaryUpload";
 import ReactQuill from "react-quill";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import "react-quill/dist/quill.snow.css";
 import "react-datepicker/dist/react-datepicker.css";
-import { Navegacao } from "../../components/Navegacao/Navegacao";
-import { useReactQuillFirebase } from "../../hooks/useReactQuillFireBase";
-import { uploadToFirebase } from "../../utils/uploadFirebase";
 
 const tipoOptions = [
   { value: "noticia", label: "Notícia" },
@@ -28,6 +27,7 @@ export const CriarConteudo = () => {
   const [tipo, setTipo] = useState(null);
   const [tags, setTags] = useState([]);
   const [thumbs, setThumbs] = useState(null);
+  const [uploadingThumb, setUploadingThumb] = useState(false);
   const [imagens, setImagens] = useState(null);
   const [conteudo, setConteudo] = useState("");
   const [mensagem, setMensagem] = useState(null);
@@ -36,59 +36,156 @@ export const CriarConteudo = () => {
   const [valorEntrada, setValorEntrada] = useState("");
   // const { handleImageUpload } = useReactQuillFirebase();
 
-  const handleThumb = (e) => {
-    setThumbs(e.target.files);
+  const handleThumb = async (e) => {
+    const file = e.target.files[0]
+    console.log(file);
+
+    if (!file) return;
+    setUploadingThumb(true);
+    try {
+      const url = await cloudinaryUpload(file, "thumbs");
+      console.log("URL da thumb:", url); // 👈 teste
+
+      setThumbs(url);
+    } catch (err) {
+      console.error("Erro ao subir thumb:", err);
+    } finally {
+      setUploadingThumb(false);
+    }
   };
 
-  const handleImagens = (e) => {
-    setImagens(e.target.files[0]);
-  };
+  // const handleThumb = async (e) => {
+  //   const file = e.target.files[0];
+  //   console.log(file);
+  //   if (!file) return;
+  //   setUploadingThumb(true);
+  //   try {
+  //     const thumb = new FormData();
+  //     thumb.append("file", file);
+  //     thumb.append("upload_preset", "ilm-upload-preset");
+  //     thumb.append("folder", "thumbs");
+  //     thumb.append("cloud_name", cloudName);
+
+  //     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+
+  //     const res = await cloudinaryAPI.post(url, thumb);
+
+  //     console.log(res);
+  //     setThumbs(thumb);
+  //     // setThumbs(file);
+  //     return res.data.secure_url;
+
+  //   } catch (err) {
+  //     console.error("Erro ao subir thumb:", err);
+  //   } finally {
+  //     setUploadingThumb(false);
+  //   }
+  // };
+
+  // const handleImagens = (e) => {
+  //   setImagens(e.target.files[0]);
+  // };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   if (!tipo) return setErro("Escolha um tipo de conteúdo");
+  //   if (!thumbs) {
+  //     alert("Aguarde o upload da thumb terminar.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("titulo", titulo);
+  //     formData.append("subTitulo", subTitulo);
+  //     formData.append("conteudo", conteudo);
+  //     if (imagens)
+  //       formData.append(
+  //         "imagem",
+  //         JSON.stringify(imagens.length ? imagens.map((img) => img.value) : []),
+  //       );
+  //     formData.append(
+  //       "tags",
+  //       JSON.stringify(tags.length ? tags.map((t) => t.value) : []),
+  //     );
+  //     formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
+
+  //     //transformar String em Number
+  //     const valorLimpo = valorEntrada
+  //       .replace("R$", "")
+  //       .trim()
+  //       .replace(",", ".");
+  //     const valorNumerico = parseFloat(valorLimpo);
+
+  //     // depois no formData:
+  //     formData.append("valorEntrada", isNaN(valorNumerico) ? 0 : valorNumerico);
+
+  //     const token = localStorage.getItem("token");
+
+  //     console.log("Enviando dados:", formData);
+
+  //     const result = await axios.post(
+  //       `https://illusoes-bootstrap.onrender.com/conteudos/${tipo.value}`,
+  //       formData,
+  //       thumbs,
+  //       {
+  //         headers: {
+  //           "Content-Type": "multipart/form-data",
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       },
+  //     );
+
+  //     console.log("Resposta do servidor:", result.data);
+  //     console.log("Thumb no submit:", thumbs);
+
+  //     setMensagem(`Publicação realizada com sucesso! ${result.data}`);
+  //     setErro(null);
+  //     setTimeout(() => navigate("/"), 2000);
+  //   } catch (err) {
+  //     console.error(err);
+  //     console.log(`Erro: ${err.data}`);
+  //     setErro("Erro ao publicar conteúdo");
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!tipo) return setErro("Escolha um tipo de conteúdo");
+    // teste de thumb,
+    if (!thumbs) {
+      alert("Aguarde o upload da thumb terminar!");
+      return;
+    }
+
+    //formatar valor de entrada, caso exista
+    const valorLimpo = valorEntrada.replace("R$", "").trim().replace(",", ".");
+    const valorNumerico = parseFloat(valorLimpo);
+
+    const token = localStorage.getItem("token");
+
     try {
-      const formData = new FormData();
-      formData.append("titulo", titulo);
-      formData.append("subTitulo", subTitulo);
-      formData.append("conteudo", conteudo);
-      if (thumbs) formData.append("thumbs", thumbs);
-      if (imagens)
-        formData.append(
-          "imagem",
-          JSON.stringify(imagens.length ? imagens.map((img) => img.value) : [])
-        );
-      formData.append(
-        "tags",
-        JSON.stringify(tags.length ? tags.map((t) => t.value) : [])
-      );
-      formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
-
-      //transformar String em Number
-      const valorLimpo = valorEntrada
-        .replace("R$", "")
-        .trim()
-        .replace(",", ".");
-      const valorNumerico = parseFloat(valorLimpo);
-
-      // depois no formData:
-      formData.append("valorEntrada", isNaN(valorNumerico) ? 0 : valorNumerico);
-      const token = localStorage.getItem("token");
-
-      console.log("Enviando dados:", formData);
-
+      const payload = {
+        titulo,
+        subTitulo,
+        tipo: tipo.value,
+        tags: JSON.stringify(tags.length ? tags.map((t) => t.value) : []),
+        conteudo,
+        dataEvento: dataEvento ? dataEvento.toISOString() : "",
+        valorEntrada: isNaN(valorNumerico) ? 0 : valorNumerico,
+        thumbs,
+      };
       const result = await axios.post(
         `https://illusoes-bootstrap.onrender.com/conteudos/${tipo.value}`,
-        formData,
+        payload,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
-      console.log("Resposta do servidor:", result.data);
+      console.log("dados enviados:", payload);
 
       setMensagem(`Publicação realizada com sucesso! ${result.data}`);
       setErro(null);
@@ -253,8 +350,15 @@ export const CriarConteudo = () => {
               style={{ height: "30px" }}
               onChange={handleThumb}
             />
-
           </Form.Group>
+          {/* prévia da thumb */}
+          {thumbs && (
+            <img
+              src={thumbs}
+              alt="preview"
+              style={{ width: "200px", marginTop: "10px" }}
+            />
+          )}
 
           {/* REVER AQUI */}
 
@@ -285,8 +389,12 @@ export const CriarConteudo = () => {
             >
               Cancelar
             </Button>
-            <Button className="p-5 fw-bold fs-3 bg-black w-50" type="submit">
-              Publicar
+            <Button
+              className="p-5 fw-bold fs-3 bg-black w-50"
+              type="submit"
+              disabled={uploadingThumb}
+            >
+              {uploadingThumb ? "Enviando imagem..." : "Publicar"}
             </Button>
           </div>
         </Form>

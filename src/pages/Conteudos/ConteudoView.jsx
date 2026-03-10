@@ -54,7 +54,7 @@ export default function ConteudoView() {
             <Navegacao
               itens={[
                 { label: "Home", to: "/" },
-                { label: "Todos os Conteudos", to:`/conteudos`},
+                { label: "Todos os Conteudos", to: `/conteudos` },
                 { label: "Conteudo" },
               ]}
             />
@@ -79,7 +79,7 @@ export default function ConteudoView() {
                       day: "2-digit",
                       month: "long",
                       year: "numeric",
-                    }
+                    },
                   )}
                 </span>
               </div>
@@ -91,7 +91,7 @@ export default function ConteudoView() {
                       <p>
                         <strong>Data do Evento: </strong>
                         {new Date(conteudo.dataEvento).toLocaleDateString(
-                          "pt-BR"
+                          "pt-BR",
                         )}
                       </p>
                     </div>
@@ -112,22 +112,22 @@ export default function ConteudoView() {
               <div className="my-3 text-muted text-start">
                 Tags: <strong>{conteudo.tipo}</strong>
               </div>
-              {/* {conteudo.thumbs && (
+              {conteudo.thumbs && (
                 <Image
-                  src={`http://localhost:8080${conteudo.thumbs}`}
+                  src={conteudo.thumbs}
                   width={700}
                   height={200}
                   className="img-fluid rounded mb-3"
                   alt="imagem do conteudo"
                 />
-              )} */}
-                <Image
+              )}
+              {/* <Image
                   src={eldlich}
                   width={700}
                   height={200}
                   className="img-fluid rounded mb-3"
                   alt="imagem do conteudo"
-                />
+                /> */}
               <div
                 className="lead conteudo-html text-muted"
                 style={{ whiteSpace: "pre-line" }}

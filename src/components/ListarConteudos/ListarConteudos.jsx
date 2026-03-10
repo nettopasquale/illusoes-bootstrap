@@ -80,16 +80,16 @@ export const ListarConteudos = ({
                   onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
                   style={{ cursor: "pointer" }}
                 >
-                  {/* {conteudo.thumbs && (
+                  {conteudo.thumbs && (
                     <Card.Img
                       variant="top"
-                      src={`http://localhost:8080${conteudo.thumbs}`}
+                      src={conteudo.thumbs}
                     />
-                  )} */}
-                  <Card.Img
+                  )}
+                  {/* <Card.Img
                     variant="top"
                     src={eldlich}
-                  />
+                  /> */}
 
                   <Card.Body className="bg-white">
                     <Card.Title>{conteudo.titulo}</Card.Title>
@@ -141,19 +141,19 @@ export const ListarConteudos = ({
                 }}
                 onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
               >
-                {/* {conteudo.thumbs && (
+                {conteudo.thumbs && (
                   <img
-                    src={`http://localhost:8080${conteudo.thumbs}`}
+                    src={conteudo.thumbs}
                     alt={conteudo.titulo}
                     className="card-img-top"
                     style={{ height: "88px", objectFit: "cover" }}
                   />
-                )} */}
-                <img
+                )}
+                {/* <img
                   className="card-img-top"
                   style={{ height: "88px", objectFit: "cover" }}
                   src={eldlich}
-                />
+                /> */}
                 <div className="card-body bg-white p-3 rounded-bottom-3 ">
                   <h5 className="card-title fw-bold text-start">
                     {conteudo.titulo}
