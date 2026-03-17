@@ -1,5 +1,5 @@
 import PrivateRoute from "../context/PrivateRoute";
-import { MeusConteudos } from "../pages/MeusConteudos/MeusConteudos";
+import { MeusConteudos } from "../pages/Conteudos/MeusConteudos";
 import DashboardUsuario from "../pages/DashBoardUsuario/DashBoardUsuario";
 import { Route } from "react-router-dom";
 import { PerfilUsuario } from "../pages/PerfilUsuario/PerfilUsuario";

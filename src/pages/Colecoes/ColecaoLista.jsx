@@ -1,69 +1,33 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, ArrowLeft, Collection } from "react-bootstrap-icons";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-//MOCKUP TEMPORÁRIO - substituir futuramente por: GET IMAGENS
-import agido from "../../assets/imgs/Yugioh/agido.jpg";
+import { useParams } from "react-router-dom";
+import { useListarColecao } from "../../hooks/useListarColecao";
 
 export default function ColecaoLista() {
-  const [colecoes, setColecoes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [modoEdicao, setModoEdicao] = useState(false);
+  
+  //para identificar caso o usuário veja suas próprias coleções
+  //e permitir que ele edite elas
+  const { id } = useParams();
 
-  useEffect(() => {
-    // TODO: integrar com backend (GET /colecoes)
-    // Mock temporário
-    setTimeout(() => {
-      setColecoes([
-        {
-          _id: "c1",
-          nome: "Coleção Raras 2025",
-          descricao: "Cartas raras coletadas nos últimos campeonatos.",
-          cartas: ["", false],
-          totalCartas: 52,
-          dono: "Pasquale",
-          capa: agido,
-          dataCriacao: "2025-10-22",
-        },
-        {
-          _id: "c2",
-          nome: "Decks Estratégicos",
-          descricao: "Cartas com alta sinergia para decks de controle.",
-          cartas: ["", false],
-          totalCartas: 37,
-          dono: "Pasquale",
-          capa: agido,
-          dataCriacao: "2025-09-15",
-        },
-        {
-          _id: "c3",
-          nome: "Coleção Elementais",
-          descricao:
-            "Coleção temática de cartas baseadas em elementos mágicos.",
-          cartas: ["", false],
-          totalCartas: 64,
-          dono: "Pasquale",
-          capa: agido,
-          dataCriacao: "2025-07-10",
-        },
-      ]);
-      setLoading(false);
-    }, 800);
-  }, []);
+  const {
+      colecoes,
+      erro,
+      navigate,
+    } = useListarColecao(`https://illusoes-bootstrap.onrender.com/colecoes`);
 
-  const handleCreateCollection = () => {
-    navigate("/colecoes/criar");
-  };
+  //se o usuário dono das coleções estiver na página
+    useEffect(() => {
+      if (id) {
+        setModoEdicao(true);
+      }
+    }, [id]);
 
-  const handleViewCollection = (id) => {
-    navigate(`/colecoes/${id}`);
-  };
-
-  const handleEditCollection = (id) => {
-    navigate(`/colecoes/${id}/editar`);
-  };
+  
 
   if (loading) {
     return (
@@ -75,7 +39,22 @@ export default function ColecaoLista() {
               { label: "Todas as Coleções", to: "/colecoes" },
             ]}
           />
-          <p className="mt-3">Carregando suas coleções...</p>
+          <p className="mt-3">Carregando as coleções...</p>
+        </Container>
+      </LayoutGeral>
+    );
+  }
+  if (erro) {
+    return (
+      <LayoutGeral>
+        <Container className="my-5 py-5">
+          <Navegacao
+            itens={[
+              { label: "Home", to: "/" },
+              { label: "Todas as Coleções", to: "/colecoes" },
+            ]}
+          />
+          <p className="mt-3">{erro}</p>
         </Container>
       </LayoutGeral>
     );
@@ -92,13 +71,16 @@ export default function ColecaoLista() {
         />
         <Row className="mb-4 align-items-center">
           <Col>
-            <h3 className="fw-bold">Minhas Coleções</h3>
-            <p className="text-muted mb-0">
-              Gerencie suas coleções personalizadas de cartas.
-            </p>
+            <h3 className="fw-bold text-primary d-flex align-items-center">
+              <Collection className="me-2" />
+              Todas as Coleções
+            </h3>
           </Col>
           <Col className="text-end">
-            <Button variant="primary" onClick={handleCreateCollection}>
+            <Button
+              variant="primary"
+              onClick={() => navigate(`/colecoes/criar`)}
+            >
               <PlusCircle className="me-2" size={18} />
               Nova Coleção
             </Button>
@@ -108,14 +90,17 @@ export default function ColecaoLista() {
         {colecoes.length === 0 ? (
           <div className="text-center text-muted mt-5">
             <p>Você ainda não possui coleções criadas.</p>
-            <Button onClick={handleCreateCollection} variant="outline-primary">
+            <Button
+              onClick={() => navigate(`/colecoes/criar`)}
+              variant="outline-primary"
+            >
               Criar minha primeira coleção
             </Button>
           </div>
         ) : (
           <Row xs={1} sm={2} md={3} lg={3} className="g-4">
             {colecoes.map((col) => (
-              <Col key={col.id}>
+              <Col key={col._id}>
                 <Card className="h-100 shadow-sm">
                   <Card.Img
                     variant="top"
@@ -136,18 +121,20 @@ export default function ColecaoLista() {
                         {col.totalCartas} cartas
                       </small>
                       <div>
-                        <Button
-                          size="sm"
-                          variant="outline-secondary"
-                          className="me-2"
-                          onClick={() => handleEditCollection(col.id)}
-                        >
-                          Editar
-                        </Button>
+                        {modoEdicao && (
+                          <Button
+                            size="sm"
+                            variant="outline-secondary"
+                            className="me-2"
+                            onClick={() => navigate(`/colecoes/${col._id}`)}
+                          >
+                            Editar
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="primary"
-                          onClick={() => handleViewCollection(col.id)}
+                          onClick={() => navigate(`/colecoes/${col._id}`)}
                         >
                           Ver
                         </Button>

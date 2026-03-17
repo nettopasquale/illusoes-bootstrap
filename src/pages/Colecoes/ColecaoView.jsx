@@ -1,62 +1,26 @@
 import { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
+  PlusCircle,
   PencilSquare,
   Trash3,
   Collection,
 } from "react-bootstrap-icons";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-
-//MOCKUP TEMPORÁRIO - substituir futuramente por: GET IMAGENS
-import agido  from "../../assets/imgs/Yugioh/agido.jpg";
+import { useListarColecao } from "../../hooks/useListarColecao";
+import axios from "axios";
 
 export default function ColecaoView() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [colecao, setColecao] = useState(null);
 
-  useEffect(() => {
-    // ========== MOCK TEMPORÁRIO ==========
-    // Substituir futuramente por:
-    // axios.get(`/api/colecoes/${id}`)
-    setColecao({
-      _id: id,
-      nome: "Coleção Raras 2025",
-      descricao: "Cartas raras coletadas nos últimos campeonatos.",
-      criador: "Pasquale",
-      dataCriacao: "2025-10-22",
-      cartas: [
-        {
-          _id: "c1",
-          nome: "Dragão de Fogo Supremo",
-          tipo: "Lendária",
-          imagem: {agido},
-        },
-        {
-          _id: "c2",
-          nome: "Feiticeiro das Sombras",
-          tipo: "Épica",
-          imagem: {agido},
-        },
-        {
-          _id: "c3",
-          nome: "Guardião Elemental",
-          tipo: "Rara",
-          imagem: {agido},
-        },
-        {
-          _id: "c4",
-          nome: "Arqueiro Élfico",
-          tipo: "Comum",
-          imagem: {agido},
-        },
-      ],
-    });
-    // =====================================
-  }, [id]);
+  const {
+      colecoes: colecao,
+      erro,
+      navigate,
+    } = useListarColecao(`https://illusoes-bootstrap.onrender.com/colecoes`);
 
   const handleExcluir = () => {
     if (window.confirm("Tem certeza que deseja excluir esta coleção?")) {
@@ -88,7 +52,7 @@ export default function ColecaoView() {
               </h3>
               <p className="text-muted mb-0">{colecao.descricao}</p>
               <small className="text-secondary">
-                Criada por <strong>{colecao.criador}</strong> em{" "}
+                Criada por <strong>{colecao.dono}</strong> em{" "}
                 {new Date(colecao.dataCriacao).toLocaleDateString("pt-BR")}
               </small>
             </Col>
@@ -115,7 +79,7 @@ export default function ColecaoView() {
           <Row className="gy-4">
             {colecao.cartas && colecao.cartas.length > 0 ? (
               colecao.cartas.map((carta) => (
-                <Col xs={12} sm={6} md={4} lg={3} key={carta._id}>
+                <Col xs={12} sm={6} md={4} lg={3} key={carta.cartaID}>
                   <Card className="shadow-sm border-0 rounded-3 carta-card">
                     <div className="carta-imagem-wrapper">
                       <Card.Img
@@ -130,16 +94,28 @@ export default function ColecaoView() {
                         {carta.nome}
                       </Card.Title>
                       <Card.Text className="text-muted small">
-                        {carta.tipo}
+                        {carta.jogo}
+                      </Card.Text>
+                      <Card.Text className="text-muted small">
+                        {carta.setNome}
                       </Card.Text>
                     </Card.Body>
                   </Card>
                 </Col>
               ))
             ) : (
-              <p className="text-center text-muted mt-4">
-                Nenhuma carta adicionada nesta coleção ainda.
-              </p>
+              <div>
+                <p className="text-center text-muted mt-4">
+                  Nenhuma carta adicionada nesta coleção ainda.
+                </p>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate("/colecoes/:id/cartas")}
+                >
+                  <PlusCircle className="me-1" />
+                  Adicionar cartas
+                </Button>
+              </div>
             )}
           </Row>
         </Container>

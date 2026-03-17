@@ -10,6 +10,9 @@ function MenuGaveta({ autenticado }) {
     artigos: false,
     eventos: false,
     campeonatos: false,
+    colecoes: false,
+    cardgames: false,
+    forum: false,
   });
 
   const toggleSubmenu = (menu) => {
@@ -148,10 +151,24 @@ function MenuGaveta({ autenticado }) {
               </>
             )}
             <hr />
-
-            <Nav.Link as={Link} to="/colecoes" className="fs-5">
-              Coleções
+            {/* Coleções */}
+            <Nav.Link
+              onClick={() => toggleSubmenu("colecoes")}
+              className="fs-5 d-flex justify-content-between align-items-center"
+            >
+              Coleções{" "}
+              {submenuAberto.colecoes ? <FaChevronUp /> : <FaChevronDown />}
             </Nav.Link>
+            {submenuAberto.colecoes && (
+              <>
+                <Nav.Link as={Link} to="/colecoes" className="ps-4">
+                  Todas as Coleções
+                </Nav.Link>
+                <Nav.Link as={Link} to={`/colecoes/criar`} className="ps-4">
+                  Criar Coleção
+                </Nav.Link>
+              </>
+            )}
             <hr />
             <Nav.Link as={Link} to="/cardgames" className="fs-5">
               Card Games

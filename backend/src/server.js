@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import path from "path"; //imagens locais
 import { fileURLToPath } from "url"; //imagens locais
 import {v2 as cloudinary} from "cloudinary";
-// import userRouters from "./routes/user.routes.js";
 import userRouters from "./routes/user.routes.js";
 import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
@@ -14,7 +13,9 @@ import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
 import forumTopicoRouters from "./routes/forumTopico.routes.js";
 import forumPostRouters from "./routes/forumPost.routes.js";
-import { uploadToCloudinary } from "./middleware/uploadImgs.middleware.js";
+// import imagesUpload from "./uploads/imagesUpload.js";
+// import thumbsUpload from "./uploads/thumbsUploads.js";
+// import { uploadToCloudinary } from "./middleware/uploadImgs.middleware.js";
 
 // necessário para resolver bug do DNS, a partir do node v24.13.1
 dns.setDefaultResultOrder("ipv4first");
@@ -73,12 +74,6 @@ try {
   process.exit(1);
 }
 
-app.use((error, req, res, next) => {
-  console.log('This is the rejected field ->', error.field);
-  console.log("REQ: ", req.method, req.url)
-});
-
-
 //rotas do app
 app.use("/", conteudoRouters);
 app.use("/", userRouters);
@@ -88,12 +83,21 @@ app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
 app.use("/", forumTopicoRouters);
 app.use("/", forumPostRouters);
+// Rotas imagens
+// Para servir a pasta 'uploads' de forma pública:
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 
 app.use((req, res, next) => {
   console.log("rota acessada: ", req.method, req.originalUrl);
   next();
 })
+
+app.use((error, req, res, next) => {
+  console.log("This is the rejected field ->", error.field);
+  console.log("REQ: ", req.method, req.url);
+});
+
 
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
