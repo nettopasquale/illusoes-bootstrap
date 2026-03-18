@@ -5,9 +5,7 @@ import { Navegacao } from "../../components/Navegacao/Navegacao";
 import eldlich from "../../assets/imgs/Yugioh/eldlich_the_golden_lord.jpg"
 
 export default function ConteudoView() {
-  const { conteudo, erro } = useConteudo(
-    `https://illusoes-bootstrap.onrender.com/conteudos`
-  );
+  const { conteudo, erro } = useConteudo(`http://localhost:8080/conteudos`);
   console.log("Conteúdo pego: ", conteudo);
 
   if (erro) return (

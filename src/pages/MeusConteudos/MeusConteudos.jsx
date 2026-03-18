@@ -37,10 +37,10 @@ export const MeusConteudos = () => {
           ? ""
           : `?tipo=${tipoSelecionado.value}`;
       const response = await axios.get(
-        `https://illusoes-bootstrap.onrender.com/user/conteudos/${filtro}`,
+        `http://localhost:8080/user/conteudos/${filtro}`,
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       setConteudos(response.data);
     } catch (err) {
@@ -63,12 +63,9 @@ export const MeusConteudos = () => {
       const tipo = conteudoSelecionado.tipo;
       const id = conteudoSelecionado._id;
 
-      await axios.delete(
-        `https://illusoes-bootstrap.onrender.com/user/conteudos/${tipo}/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.delete(`http://localhost:8080/user/conteudos/${tipo}/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setModalShow(true);
       buscarConteudos();
     } catch (err) {
@@ -85,11 +82,13 @@ export const MeusConteudos = () => {
   return (
     <LayoutGeral>
       <Container className="my-5">
-                <Navegacao itens={[
-                  {label: "Home", to: "/"},
-                  {label: "Meu Perfil", to: "/dashboard"},
-                  {label: "Meus Conteúdos",},
-                ]}/>
+        <Navegacao
+          itens={[
+            { label: "Home", to: "/" },
+            { label: "Meu Perfil", to: "/dashboard" },
+            { label: "Meus Conteúdos" },
+          ]}
+        />
         <h2 className="fw-bold mb-4">Meus Conteúdos</h2>
 
         <Form.Group className="mb-4" style={{ maxWidth: "300px" }}>
@@ -112,7 +111,7 @@ export const MeusConteudos = () => {
                 {item.thumbs && (
                   <Card.Img
                     variant="top"
-                    src={`https://illusoes-bootstrap.onrender.com${item.thumbs}`}
+                    src={`http://localhost:8080${item.thumbs}`}
                     style={{ height: "150px", objectFit: "cover" }}
                   />
                 )}

@@ -176,7 +176,7 @@ export const CriarConteudo = () => {
         thumbs,
       };
       const result = await axios.post(
-        `https://illusoes-bootstrap.onrender.com/conteudos/${tipo.value}`,
+        `http://localhost:8080/conteudos/${tipo.value}`,
         payload,
         {
           headers: {

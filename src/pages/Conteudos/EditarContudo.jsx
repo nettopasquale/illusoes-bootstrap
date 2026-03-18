@@ -37,7 +37,7 @@ export const EditarConteudo = () => {
     const carregarEvento = async () => {
       try {
         const response = await axios.get(
-          `https://illusoes-bootstrap.onrender.com/conteudos/${tipo}/${id}`
+          `http://localhost:8080/conteudos/${tipo}/${id}`,
         );
         const dados = response.data;
 
@@ -91,14 +91,14 @@ export const EditarConteudo = () => {
       const token = localStorage.getItem("token");
 
       await axios.put(
-        `https://illusoes-bootstrap.onrender.com/conteudos/${tipoSelecionado.value}/${id}`,
+        `http://localhost:8080/conteudos/${tipoSelecionado.value}/${id}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setMensagem(`Alterações realizadas com sucesso!`);
@@ -116,12 +116,12 @@ export const EditarConteudo = () => {
       const token = localStorage.getItem("token");
 
       await axios.delete(
-        `https://illusoes-bootstrap.onrender.com/conteudos/${tipoSelecionado.value}/${id}`,
+        `http://localhost:8080/conteudos/${tipoSelecionado.value}/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       setMensagem("Conteúdo excluído com sucesso!");

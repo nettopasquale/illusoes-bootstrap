@@ -24,7 +24,7 @@ export const ListarConteudos = ({
     erro,
     carregando,
     navigate,
-  } = useListarConteudo(`https://illusoes-bootstrap.onrender.com/conteudos`, tipo);
+  } = useListarConteudo(`http://localhost:8080/conteudos`, tipo);
 
   const responsive = {
     desktop: {
