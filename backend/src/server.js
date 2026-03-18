@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import path from "path"; //imagens locais
 import { fileURLToPath } from "url"; //imagens locais
 import {v2 as cloudinary} from "cloudinary";
+import fileUpload from "express-fileupload";
 import userRouters from "./routes/user.routes.js";
 import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
@@ -13,9 +14,6 @@ import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
 import forumTopicoRouters from "./routes/forumTopico.routes.js";
 import forumPostRouters from "./routes/forumPost.routes.js";
-// import imagesUpload from "./uploads/imagesUpload.js";
-// import thumbsUpload from "./uploads/thumbsUploads.js";
-// import { uploadToCloudinary } from "./middleware/uploadImgs.middleware.js";
 
 // necessário para resolver bug do DNS, a partir do node v24.13.1
 dns.setDefaultResultOrder("ipv4first");
@@ -38,7 +36,8 @@ let corsPermitidos = [
   "http://localhost:8080", // Server local (teste)
   "https://illusoes-bootstrap.onrender.com", // server Render
   "https://illusoes-bootstrap.vercel.app", //Produção
-  "https://api.cloudinary.com"
+  "https://api.cloudinary.com",
+  "https://api.cloudinary.com/v1_1",
 ];
 
 
@@ -63,7 +62,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 //extender limite de 10mb
-app.use(express.urlencoded({ limit: '200mb', extended: true }));
+app.use(express.urlencoded({extended: true }));
 
 //conexão MongoDB
 try {
@@ -83,9 +82,32 @@ app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
 app.use("/", forumTopicoRouters);
 app.use("/", forumPostRouters);
+app.use(fileUpload({useTempFiles: true}));
+
 // Rotas imagens
-// Para servir a pasta 'uploads' de forma pública:
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+//rota thumbs
+
+//rota capas(coleções)
+app.post('/uploads', function(req, res){
+  let capaSample;
+  let uploadPath;
+
+  if(!req.files || Object.keys(req.files).length === 0){
+    return res.status(400).send("Nenhum arquivo de capa foi enviado");
+  }
+
+  //nome do input para a capa
+  capaSample = req.files.capa;
+  //rota para upar a imagem
+  uploadPath = `${__dirname}/capas/${capaSample.name}`
+
+  capaSample.mv(uploadPath, (error)=>{
+    if(error) return res.status(500).send(error);
+
+    res.send("Capa enviada com sucesso!")
+  })
+})
 
 
 app.use((req, res, next) => {
@@ -104,3 +126,5 @@ const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+console.log("SERVIDOR INICIADO - VERSÃO NOVA");

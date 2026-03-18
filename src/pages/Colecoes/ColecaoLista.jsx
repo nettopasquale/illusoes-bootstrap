@@ -5,6 +5,16 @@ import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useParams } from "react-router-dom";
 import { useListarColecao } from "../../hooks/useListarColecao";
+// Cloudinary
+import { AdvancedImage } from "@cloudinary/react";
+import { Cloudinary } from "@cloudinary/url-gen";
+import { Resize } from "@cloudinary/url-gen/actions/resize";
+
+const cld = new Cloudinary({
+  cloud: {
+    cloudName: "dl6zp5i80",
+  },
+});
 
 export default function ColecaoLista() {
   const [loading, setLoading] = useState(false);
@@ -14,11 +24,12 @@ export default function ColecaoLista() {
   //e permitir que ele edite elas
   const { id } = useParams();
 
-  const {
-      colecoes,
-      erro,
-      navigate,
-    } = useListarColecao(`https://illusoes-bootstrap.onrender.com/colecoes`);
+  //hook das coleções
+  const { colecoes, erro, navigate } = useListarColecao(
+    `http://localhost:8080/colecoes`,
+  );
+
+  console.log(colecoes);
 
   //se o usuário dono das coleções estiver na página
     useEffect(() => {
@@ -28,7 +39,7 @@ export default function ColecaoLista() {
     }, [id]);
 
   
-
+//caso estiver em estado de carregar ou de der erro
   if (loading) {
     return (
       <LayoutGeral>

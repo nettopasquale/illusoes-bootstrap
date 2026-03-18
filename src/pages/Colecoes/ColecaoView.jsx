@@ -17,10 +17,10 @@ export default function ColecaoView() {
   const { id } = useParams();
 
   const {
-      colecoes: colecao,
-      erro,
-      navigate,
-    } = useListarColecao(`https://illusoes-bootstrap.onrender.com/colecoes`);
+    colecoes: colecao,
+    erro,
+    navigate,
+  } = useListarColecao(`http://localhost:8080/colecoes`);
 
   const handleExcluir = () => {
     if (window.confirm("Tem certeza que deseja excluir esta coleção?")) {
@@ -84,8 +84,7 @@ export default function ColecaoView() {
                     <div className="carta-imagem-wrapper">
                       <Card.Img
                         variant="top"
-                        // src={carta.imagem || "/cards/placeholder.jpg"}
-                        src={agido}
+                        src={carta.imagem}
                         alt={carta.nome}
                       />
                     </div>

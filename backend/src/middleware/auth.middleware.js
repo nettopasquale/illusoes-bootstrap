@@ -3,6 +3,7 @@ import { key } from "../configs/jwtConfig.js";
 
 export function verificarToken(req, res, next) {
   const tokenHeader = req.headers["authorization"];
+  // const tokenHeader = req.headers.authorization;
 
   //se token n existir
   if (!tokenHeader) {
@@ -11,6 +12,7 @@ export function verificarToken(req, res, next) {
   }
 
   const token = tokenHeader.replace("Bearer ", "");
+  // const token = tokenHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, key);

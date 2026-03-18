@@ -11,6 +11,17 @@ export const colecoesRoutes = [
   //todas as coleções existentes
   <Route path="/colecoes" element={<ColecaoLista />} key="colecoes-home" />,
 
+  // ver as minhas coleções
+  <Route
+    path="user/colecoes"
+    element={
+      <PrivateRoute>
+        <MinhasColecoes />
+      </PrivateRoute>
+    }
+    key="colecoes-id-editar"
+  />,
+
   // editar entidade coleção
   <Route
     path="/colecoes/:id/editar"

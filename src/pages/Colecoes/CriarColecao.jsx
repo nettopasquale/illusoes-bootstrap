@@ -12,6 +12,7 @@ import { PlusCircle, ArrowLeft, Collection } from "react-bootstrap-icons";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { cloudinaryUpload } from "../../utils/cloudinaryUpload";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 export default function CriarColecao() {
@@ -21,6 +22,7 @@ export default function CriarColecao() {
   const [uploadingCapa, setUploadingCapa] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
+  const navigate = useNavigate();
 
 //salva a imagem na variavel capa
 //envia a imagem para o cloudinary
@@ -32,7 +34,6 @@ export default function CriarColecao() {
     setUploadingCapa(true);
 
     try {
-      //refazer a rota
       const url = await cloudinaryUpload(file, "capa");
       console.log("URL da capa: ", url);
 
@@ -42,6 +43,7 @@ export default function CriarColecao() {
     } finally {
       setUploadingCapa(false);
     }
+    
   };
 
   const handleSubmit = async (e) => {
@@ -67,7 +69,7 @@ export default function CriarColecao() {
       };
 
       const resultado = await axios.post(
-        `https://illusoes-bootstrap.onrender.com/colecoes`,
+        `http://localhost:8080/colecoes`,
         payload,
         {
           headers: {

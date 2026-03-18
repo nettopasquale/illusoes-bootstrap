@@ -23,7 +23,6 @@ export const useListarColecao = (baseURL) => {
     };
 
     buscarColecao();
-    console.log("Lista de coleções: ", colecoes)
   }, [baseURL]);
 
   return { colecoes, erro, carregando, navigate };

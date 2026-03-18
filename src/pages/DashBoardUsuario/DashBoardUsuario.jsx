@@ -47,8 +47,8 @@ const DashboardUsuario = () => {
   const buscarConteudos = async (tipo) => {
     try {
       const response = await axios.get(
-        `https://illusoes-bootstrap.onrender.com/user/conteudos?tipo=${tipo}`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        `http://localhost:8080/user/conteudos?tipo=${tipo}`,
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setConteudos(response.data);
     } catch (err) {
@@ -139,7 +139,7 @@ const DashboardUsuario = () => {
             </Nav.Link>
 
             {submenus[menu] == 0 && !menuToRouteMap[menu] && (
-              <Nav.Link as={Link} to={`/userProfile`}>
+              <Nav.Link as={Link} to={`/user/colecoes`}>
                 Editar
               </Nav.Link>
             )}

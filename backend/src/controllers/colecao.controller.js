@@ -1,10 +1,52 @@
 import Colecao from "../models/colecao.model.js";
+import {v2 as cloudinary} from "cloudinary";
 
 //Criar Colecao
 export const criarColecao = async (req, res) => {
   try {
     const { nome, descricao, cartas, capa } = req.body;
 
+    if (!nome || !descricao) {
+      return res.status(400).json({
+        error: "Campos obrigatórios devem ser preenchidos!",
+      });
+    }
+
+    // let capaUrl = '';
+    // const capaImagem = req?.files?.capaImagem;
+
+    // if(capaImagem){
+    //   //salvar no cloudinary
+    //   await cloudinary.uploader.upload(
+    //     capaImagem.tempFilePath,
+    //     async(erro, resultado)=>{
+    //       if(erro){
+    //         console.log("Erro ao subir imagem da Capa");
+    //       }else{
+    //         //pega url da imagem
+    //         const capaImagemLink = resultado.secure_url
+    //         //alterar aqui
+    //         capaUrl =  capaImagemLink;
+    //         console.log("capaUrl: ", capaUrl);
+    //       }
+    //     }
+    //   )
+    //   //salvar a imagem no banco
+    //   const novaColecao = new Colecao({
+    //         nome,
+    //         descricao,
+    //         cartas,
+    //         dono: req.userId,
+    //         capa: capaUrl,
+    //         dataPublicacao: new Date(),
+    //       });
+      
+    //     console.log("BODY:", req.body);
+    //   const resposta = await novaColecao.save();
+    //   res.json({status: true, message: "Coleção criada com sucesso!", novaColecao: resposta.capa})
+    // }
+
+    //cria a coleção DEPOIS de resolver o upload da imagem
     const novaColecao = new Colecao({
       nome,
       descricao,
@@ -14,13 +56,10 @@ export const criarColecao = async (req, res) => {
       dataPublicacao: new Date(),
     });
 
-    if (!nome || !descricao) {
-      return res
-        .status(400)
-        .json({ error: "Campos obrigatórios devem ser preenchidos!" });
-    }
+    console.log("BODY:", req.body);
+
     await novaColecao.save();
-    res.status(201).json(novaColecao);
+    res.status(201).json({msg: "cheguei aqui"});
   } catch (erro) {
     res.status(500).json({ error: erro.message });
   }

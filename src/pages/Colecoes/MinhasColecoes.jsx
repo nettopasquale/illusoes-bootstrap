@@ -52,7 +52,7 @@ export default function MinhasColecoes() {
   // }, []);
 
   const { colecoes, erro, carregando, navigate } = useListarColecao(
-    `https://illusoes-bootstrap.onrender.com/colecoes`,
+    `http://localhost:8080/colecoes`,
   );
 
   const colecoesFiltradas = colecoes.filter((c) =>
