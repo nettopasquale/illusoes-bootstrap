@@ -1,88 +1,118 @@
-import Carta from "../models/carta.model"
-import CartaColecao from "../models/cartaColecao.model"
+import Carta from "../models/carta.model.js"
+import CartaColecao from "../models/cartaColecao.model.js"
 import dotenv from "dotenv";
 dotenv.config();
 
-const url = "https://api.justtcg.com/v1/cards";
+const url = "https://api.tcgapi.dev/v1";
 
 // buscar carta da JustTCG
 export const buscarCartas = async (req, res) => {
   try {
-    const { q } = req.query;
-    if (!q)
-      return res
-        .status(400)
-        .json({ error: "Parâmetro de busca não informado!" });
+    const { q, game } = req.query;
 
-    const respostaCarta = await fetch(`${url}?q=${encodeURIComponent(q)}`, {
+    if (!q) {
+      return res.status(400).json({
+        error: "Parâmetro de busca não informado!",
+      });
+    }
+
+    const params = new URLSearchParams({q});
+
+    if(game) params.set('game', game)
+
+    const response = await fetch(`${url}/search?${params}`, {
       headers: {
-        "x-api-key": process.env.JUSTTCG_API_KEY,
+        "X-API-Key": process.env.TCG_API_KEY,
       },
     });
 
-    if (!respostaCarta.ok)
-      return res
-        .status(respostaCarta.status)
-        .json({ error: "Erro ao consultar API JustTCG" });
+    const data = await response.json();
 
-    const dados = await respostaCarta.json();
+    if(!data.data || data.data.length === 0){
+      return res.status(404).json({
+        error: "Carta não encontrada"
+      })
+    }
+    console.log("RESPOSTA TCG API:", data);
 
-    if (!dados || dados.length === 0)
-      return res.status(404).json({ error: "Carta não encontrada" });
-
-    return res.status(200).json(dados);
-  } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+    return res.status(200).json(data);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: error.message });
   }
 };
 
+//listar as cartas da coleção
+export const listarCartasDaColecao = async (req, res) => {
+  try {
+    const { colecaoId } = req.params;
+
+    const cartas = await CartaColecao.find({ colecaoId }).populate("carta");
+
+    return res.status(200).json(cartas);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+};
 // adicionar carta na coleção
 export const addCartaColecao = async (req, res) => {
   try {
-    const { colecaoId } = req.params.id;
-    const { cartaID, nome, quantidade, imagem, jogo, setNome } = req.body;
+    const { colecaoId } = req.params;
+    const { cartas } = req.body;
 
-    if (!cartaID)
-      return res.status(404).json({ error: "Carta não encontrada ou Inválida!" });
+    if (!cartas || cartas.length === 0)
+      return res.status(404).json({ error: "Cartas não encontradas ou Inválidas!" });
 
-    //procura se a carta existe no banco
-    let carta = await Carta.findOne({cartaID});
+    const resultados = [];
 
-    //se não existir, cria no banco
-    if(!carta){
-      carta = await Carta.create({
-        cartaID,
-        nome,
-        jogo,
-        setNome
+    for(const c of cartas){
+      const {cartaID, nome, jogo, setNome, raridade, printagem, imagem, quantidade = 1} = c;
+
+      if(!cartaID) continue;
+
+      //procura se a carta existe no banco
+      let carta = await Carta.findOne({cartaID});
+  
+      //se não existir, cria no banco
+      if(!carta){
+        carta = await Carta.create({
+          cartaID,
+          nome,
+          jogo,
+          setNome,
+          raridade,
+          printagem,
+          imagem
+        })
+      }
+  
+      //verifica se existe a carta na coleção
+      let cartaExiste = await CartaColecao.findOne({
+        colecaoId,
+        carta: carta._id
       })
+
+      // se existe, adiciona na propriedade de quantidade
+      if(cartaExiste){
+        cartaExiste.quantidade += quantidade;
+        await cartaExiste.save();
+        resultados.push(cartaExiste);
+        continue;
+      }
+
+      //adiciona a carta na coleção
+      const addCarta = await CartaColecao.create({
+        colecaoId,
+        carta,
+        quantidade,
+      });
+      // await addCarta.save();
+      resultados.push(addCarta);
     }
-
-    //verifica se existe a carta na coleção
-    let cartaExiste = await CartaColecao.findOne({
-      colecaoId,
-      carta: cartaID
-    })
-
-    // se existe, adiciona na propriedade de quantidade
-    if(cartaExiste){
-      cartaExiste.quantidade += 1;
-      await cartaExiste.save();
-      return res.status(200).json(cartaExiste);
-    }
-
-    //adiciona a carta na coleção
-    const addCarta = new CartaColecao({
-      colecaoId,
-      carta: carta.cartaID,
-      quantidade: quantidade,
-      imagem,
-    });
-
-    await addCarta.save();
-
-    return res.status(200).json(addCarta);
+    console.log("ANTES DO RETURN", resultados);
+    return res.status(200).json(resultados);
   } catch (erro) {
+    console.error("ERRO NO CONTROLLER:", erro);
     res.status(500).json({ error: erro.message });
   }
 };
@@ -101,4 +131,35 @@ export const deletarCartaColecao = async (req, res) => {
   } catch (erro) {
     res.status(500).json({ error: erro.message });
   }
+};
+
+
+// APENAS PARA CONVENIENCIA
+export const deletarTodasCartas = async (req, res) => {
+    try {
+        // Apenas administradores podem fazer isso
+        if (req.userRole !== "admin") {
+            return res.status(403).json({ error: "Apenas administradores podem deletar tudo" });
+        }
+
+        const resultado = await Carta.deleteMany({});
+        return res.status(200).res.json({ message: `Todas as cartas foram deletadas (${resultado.deletedCount} itens).` });
+    } catch (erro) {
+        return res.status(500).json({ error: erro.message });
+    }
+};
+
+// APENAS PARA CONVENIENCIA
+export const deletarTodasCartasColecao = async (req, res) => {
+    try {
+        // Apenas administradores podem fazer isso
+        if (req.userRole !== "admin") {
+            return res.status(403).json({ error: "Apenas administradores podem deletar tudo" });
+        }
+
+        const resultado = await CartaColecao.deleteMany({});
+        return res.status(200).res.json({ message: `Todas as coleçoes de cartas foram deletadas (${resultado.deletedCount} itens).` });
+    } catch (erro) {
+        return res.status(500).json({ error: erro.message });
+    }
 };

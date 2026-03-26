@@ -12,66 +12,44 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-//MOCKUP TEMPORÁRIO - substituir futuramente por: GET IMAGENS
-import agido from "../../assets/imgs/Yugioh/agido.jpg";
-import darkMagicianFanGirl from "../../assets/imgs/Yugioh/dark magician fan girl.jpg";
+import axios from "axios";
 
 export default function ColecaoEdicao() {
   const { id } = useParams(); // ID da coleção a ser editada
   const navigate = useNavigate();
 
-  // Estado da coleção
-  const [colecao, setColecao] = useState({
-    nome: "",
-    descricao: "",
-    tags: [],
-    capa: agido,
-    visibilidade: "public",
-  });
-
+  const [nome, setNome] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [capa, setCapa] = useState("");
+  const [uploadingCapa, setUploadingCapa] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [todasCartas, setTodasCartas] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
 
-  // MOCK - simula carregamento de dados
   useEffect(() => {
-    // TODO: integrar com backend (GET /colecoes/:id)
-    setTimeout(() => {
-      setColecao({
-        nome: "Coleção Exemplo",
-        descricao: "Essa é uma coleção de exemplo criada pelo usuário.",
-        tags: ["Dragões", "Fogo", "Raro"],
-        capa: agido,
-        cartasSelecionadas: ["c1", "c3"],
-        visibilidade: "private",
-      });
+    const carregarColecao = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/colecoes/${id}`,
+        );
+        const dados = response.data;
 
-      setTodasCartas([
-        { _id: "c1", nome: "Dragão de Fogo Supremo", img: darkMagicianFanGirl },
-        { _id: "c2", nome: "Feiticeiro das Sombras", img: darkMagicianFanGirl },
-        { _id: "c3", nome: "Guardião Elemental", img: darkMagicianFanGirl },
-        { _id: "c4", nome: "Arqueiro Élfico", img: darkMagicianFanGirl },
-        { _id: "c5", nome: "Golpe Tempestuoso", img: darkMagicianFanGirl },
-      ]);
-      setLoading(false);
-    }, 500);
+        setNome(dados.titulo);
+        setDescricao(dados.subTitulo);
+      } catch (err) {
+        console.error(err);
+        setErro("Erro ao carregar a coleção para edição");
+      }
+    };
+
+    carregarColecao();
   }, [id]);
 
-  // Atualiza valores dos campos
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setColecao((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Atualiza tags (separadas por vírgula)
-  const handleTagsChange = (e) => {
-    setColecao((prev) => ({
-      ...prev,
-      tags: e.target.value.split(",").map((tag) => tag.trim()),
-    }));
-  };
+  // Atualiza capa
+  const handleCapa = (e) =>{
+    setCapa(e.target.files)
+  }
 
   // Salvar alterações
   const handleSave = (e) => {
@@ -79,11 +57,9 @@ export default function ColecaoEdicao() {
     // TODO: integrar com backend (PUT /colecoes/:id)
     try {
       const formData = new FormData();
-      formData.append("nome", colecao.nome);
-      formData.append("descricao", colecao.descricao);
-      formData.append("tags", JSON.stringify(colecao.tags));
-      formData.append("visibilidade", colecao.visibilidade);
-      formData.append("capa", colecao.capa);
+      formData.append("nome", nome);
+      formData.append("descricao", descricao);
+      formData.append("capa", capa);
 
       setMensagem(`Alterações realizadas com sucesso!`);
       setErro("");
@@ -126,8 +102,8 @@ export default function ColecaoEdicao() {
                   <Form.Control
                     type="text"
                     name="nome"
-                    value={colecao.nome}
-                    onChange={handleChange}
+                    value={nome}
+                    onChange={(e) => setNome(e.target.value)}
                     placeholder="Digite o nome da coleção"
                     required
                   />
@@ -139,75 +115,23 @@ export default function ColecaoEdicao() {
                     as="textarea"
                     rows={4}
                     name="descricao"
-                    value={colecao.descricao}
-                    onChange={handleChange}
+                    value={descricao}
+                    onChange={(e)=>(setDescricao(e.target.value))}
                     placeholder="Escreva uma breve descrição"
                   />
                 </Form.Group>
 
                 <Form.Group className="mb-3">
-                  <Form.Label>Tags (separadas por vírgula)</Form.Label>
+                  <Form.Label>Capa da coleção</Form.Label>
                   <Form.Control
-                    type="text"
-                    value={colecao.tags.join(", ")}
-                    name="tags"
-                    onChange={handleTagsChange}
-                    placeholder="Ex: Dragões, Fogo, Lendário"
-                  />
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Selecione as cartas</Form.Label>
-                  <Row xs={1} md={2} lg={3} className="g-4 text-center">
-                    {todasCartas.map((carta) => (
-                      <Row
-                        key={carta._id}
-                        className={`row align-items-start ${
-                          colecao.cartasSelecionadas.includes(carta._id)
-                            ? "selecionada"
-                            : ""
-                        }`}
-                        onClick={() => handleToggleCarta(carta._id)}
-                      >
-                        <Col className="col">
-                          <img
-                            src={carta.img}
-                            alt={carta.nome}
-                            style={{
-                              width: "150px",
-                              height: "140px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          <div>{carta.nome}</div>
-                        </Col>
-                        <Col className="col">
-                          <img
-                            src={carta.img}
-                            alt={carta.nome}
-                            style={{
-                              width: "150px",
-                              height: "140px",
-                              objectFit: "cover",
-                            }}
-                          />
-                          <div>{carta.nome}</div>
-                        </Col>
-                      </Row>
-                    ))}
-                  </Row>
-                </Form.Group>
-
-                <Form.Group className="mb-3">
-                  <Form.Label>Visibilidade</Form.Label>
-                  <Form.Select
-                    name="visibilidade"
-                    value={colecao.visibilidade}
-                    onChange={handleChange}
-                  >
-                    <option value="public">Pública</option>
-                    <option value="private">Privada</option>
-                  </Form.Select>
+                    name="capa"
+                    type="file"
+                    accept="image/"
+                    className="w-100"
+                    rows={3}
+                    onChange={handleCapa}
+                    placeholder="Coloque uma capa para sua coleção"
+                    />
                 </Form.Group>
 
                 <div className="d-flex justify-content-between mt-4">

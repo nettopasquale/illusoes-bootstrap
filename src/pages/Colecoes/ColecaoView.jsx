@@ -15,6 +15,7 @@ import axios from "axios";
 
 export default function ColecaoView() {
   const { id } = useParams();
+  const [cartas, setCartas] = useState([]);
 
   const {
     colecoes: colecao,
@@ -22,14 +23,32 @@ export default function ColecaoView() {
     navigate,
   } = useListarColecao(`http://localhost:8080/colecoes`);
 
-  const handleExcluir = () => {
+  const handleExcluir = async() => {
     if (window.confirm("Tem certeza que deseja excluir esta coleção?")) {
-      // ========== MOCK TEMPORÁRIO ==========
-      // axios.delete(`/api/colecoes/${id}`)
-      console.log("Coleção excluída:", id);
-      navigate("/colecoes");
+      try{
+        await axios.delete(`http://localhost:8080/colecoes/${id}`);
+        console.log("Coleção excluída:", id);
+        navigate("/colecoes");
+      }catch(error){
+        console.error("Erro ao deletar coleção.")
+      }
     }
   };
+
+  //lidar com população de cartas, caso exista
+  useEffect(()=>{
+    const fetchCartas = async()=>{
+      try{
+        const resposta = await axios.get(
+          `http://localhost:8080/colecoes/${id}/cartas`,
+        );
+        setCartas(resposta.data);
+      }catch(error){
+        console.error("erro ao buscar cartas:", error)
+      }
+    };
+    if(id) fetchCartas();
+  },[id])
 
   if (!colecao)
     return <p className="text-center mt-5">Carregando coleção...</p>;
@@ -43,7 +62,7 @@ export default function ColecaoView() {
               itens={[
                 { label: "Home", to: "/" },
                 { label: "Todoas as coleções", to: "/colecoes" },
-                { label: "Colecao", to: `/colecoes/${colecao._id}` },
+                { label: "Colecao", to: `/colecoes/${id}` },
               ]}
             />
             <Col>
@@ -65,7 +84,7 @@ export default function ColecaoView() {
                 <ArrowLeft className="me-1" /> Voltar
               </Button>
               <Link
-                to={`/colecoes/${colecao._id}/editar`}
+                to={`/colecoes/${id}/cartas/editar`}
                 className="btn btn-outline-primary me-2"
               >
                 <PencilSquare className="me-1" /> Editar
@@ -77,26 +96,35 @@ export default function ColecaoView() {
           </Row>
 
           <Row className="gy-4">
-            {colecao.cartas && colecao.cartas.length > 0 ? (
-              colecao.cartas.map((carta) => (
+            {cartas.length > 0 ? (
+              cartas.map((carta) => (
                 <Col xs={12} sm={6} md={4} lg={3} key={carta.cartaID}>
                   <Card className="shadow-sm border-0 rounded-3 carta-card">
                     <div className="carta-imagem-wrapper">
                       <Card.Img
                         variant="top"
-                        src={carta.imagem}
-                        alt={carta.nome}
+                        src={carta.carta.imagem}
+                        alt={carta.carta.nome}
                       />
                     </div>
                     <Card.Body>
                       <Card.Title className="fs-6 fw-semibold">
-                        {carta.nome}
+                        Nome: {carta.carta.nome}
                       </Card.Title>
                       <Card.Text className="text-muted small">
-                        {carta.jogo}
+                        Jogo: {carta.carta.jogo}
                       </Card.Text>
                       <Card.Text className="text-muted small">
-                        {carta.setNome}
+                        Set: {carta.carta.setNome}
+                      </Card.Text>
+                      <Card.Text className="text-muted small">
+                        Raridade: {carta.carta.raridade}
+                      </Card.Text>
+                      <Card.Text className="text-muted small">
+                        Printagem: {carta.carta.printagem}
+                      </Card.Text>
+                      <Card.Text className="text-muted small">
+                        Quantidade: {carta.quantidade}
                       </Card.Text>
                     </Card.Body>
                   </Card>
@@ -109,7 +137,7 @@ export default function ColecaoView() {
                 </p>
                 <Button
                   variant="primary"
-                  onClick={() => navigate("/colecoes/:id/cartas")}
+                  onClick={() => navigate(`/colecoes/${id}/cartas`)}
                 >
                   <PlusCircle className="me-1" />
                   Adicionar cartas

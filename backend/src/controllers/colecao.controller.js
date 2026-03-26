@@ -1,5 +1,4 @@
 import Colecao from "../models/colecao.model.js";
-import {v2 as cloudinary} from "cloudinary";
 
 //Criar Colecao
 export const criarColecao = async (req, res) => {
@@ -11,40 +10,6 @@ export const criarColecao = async (req, res) => {
         error: "Campos obrigatórios devem ser preenchidos!",
       });
     }
-
-    // let capaUrl = '';
-    // const capaImagem = req?.files?.capaImagem;
-
-    // if(capaImagem){
-    //   //salvar no cloudinary
-    //   await cloudinary.uploader.upload(
-    //     capaImagem.tempFilePath,
-    //     async(erro, resultado)=>{
-    //       if(erro){
-    //         console.log("Erro ao subir imagem da Capa");
-    //       }else{
-    //         //pega url da imagem
-    //         const capaImagemLink = resultado.secure_url
-    //         //alterar aqui
-    //         capaUrl =  capaImagemLink;
-    //         console.log("capaUrl: ", capaUrl);
-    //       }
-    //     }
-    //   )
-    //   //salvar a imagem no banco
-    //   const novaColecao = new Colecao({
-    //         nome,
-    //         descricao,
-    //         cartas,
-    //         dono: req.userId,
-    //         capa: capaUrl,
-    //         dataPublicacao: new Date(),
-    //       });
-      
-    //     console.log("BODY:", req.body);
-    //   const resposta = await novaColecao.save();
-    //   res.json({status: true, message: "Coleção criada com sucesso!", novaColecao: resposta.capa})
-    // }
 
     //cria a coleção DEPOIS de resolver o upload da imagem
     const novaColecao = new Colecao({
@@ -81,7 +46,7 @@ export const listarColecaoPorID = async (req, res) => {
     const colecao = await Colecao.findById(req.params.id);
 
     if (!colecao)
-      return res.status(404).json({ error: "Colecao não encontrada" });
+      return res.status(404).json({ error: "Coleção não encontrada" });
 
     res.json(colecao);
   } catch (erro) {
@@ -89,13 +54,14 @@ export const listarColecaoPorID = async (req, res) => {
   }
 };
 
+
 // atualizar Colecao
 export const editarColecao = async (req, res) => {
   try {
     const colecao = await Colecao.findById(req.params.id);
 
     if (!colecao)
-      return res.status(404).json({ error: "Colecao não encontrada" });
+      return res.status(404).json({ error: "Coleção não encontrada" });
 
     // Garante que só o autor ou admn pode editar
     if (
@@ -105,9 +71,9 @@ export const editarColecao = async (req, res) => {
       return res.status(403).json({ error: "Não autorizado" });
     }
 
-    //imagem
-    if (req.file) {
-      req.body.imagem = `/uploads/${req.file.filename}`;
+    //imagem de capa
+    if (req.file?.capa) {
+      colecao.capa = req.body.capa;
     }
 
     // Atualiza com os novos dados
@@ -129,7 +95,7 @@ export const deletarColecao = async (req, res) => {
     const colecao = await Colecao.findById(req.params.id);
 
     if (!colecao)
-      return res.status(404).json({ error: "Colecao não encontrada" });
+      return res.status(404).json({ error: "Coleção não encontrada" });
 
     //apenas autor e admin podem deletar
     if (
@@ -140,8 +106,37 @@ export const deletarColecao = async (req, res) => {
     }
 
     await colecao.deleteOne();
-    res.json({ message: "Colecaodeletado com sucesso" });
+    res.json({ message: "Coleção deletada com sucesso" });
   } catch (erro) {
     res.status(500).json({ error: erro.message });
   }
+};
+
+// deleter coleções sem criador -- APENAS ADMIN
+export const deletarColecoesSemCriador = async (req, res) => {
+    try {
+        if (req.userRole !== "admin") {
+            return res.status(403).json({ error: "Apenas administradores podem deletar órfãos" });
+        }
+
+        const resultado = await Colecao.deleteMany({ dono: { $exists: false } });
+        return res.status(200).json({ message: `${resultado.deletedCount} coleções sem donos foram deletadas.` });
+    } catch (erro) {
+        return res.status(500).json({ error: erro.message });
+    }
+};
+
+// APENAS PARA CONVENIENCIA
+export const deletarTodasColecoes = async (req, res) => {
+    try {
+        // Apenas administradores podem fazer isso
+        if (req.userRole !== "admin") {
+            return res.status(403).json({ error: "Apenas administradores podem deletar tudo" });
+        }
+
+        const resultado = await Colecao.deleteMany({});
+        return res.status(200).res.json({ message: `Todas as coleçoes foram deletadas (${resultado.deletedCount} itens).` });
+    } catch (erro) {
+        return res.status(500).json({ error: erro.message });
+    }
 };

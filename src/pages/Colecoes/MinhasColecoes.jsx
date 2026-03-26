@@ -12,45 +12,6 @@ import { useListarColecao } from "../../hooks/useListarColecao";
 export default function MinhasColecoes() {
   const [busca, setBusca] = useState("");
 
-  // useEffect(() => {
-  //   // ========== MOCK TEMPORÁRIO ==========
-  //   // Substituir futuramente por:
-  //   // axios.get("/api/colecoes")
-  //   setColecoes([
-  //     {
-  //       _id: "c1",
-  //       nome: "Coleção Raras 2025",
-  //       descricao: "Cartas raras coletadas nos últimos campeonatos.",
-  //       cartas: ["", false],
-  //       totalCartas: 52,
-  //       dono: "Pasquale",
-  //       capa: agido,
-  //       dataCriacao: "2025-10-22",
-  //     },
-  //     {
-  //       _id: "c2",
-  //       nome: "Decks Estratégicos",
-  //       descricao: "Cartas com alta sinergia para decks de controle.",
-  //       cartas: ["", false],
-  //       totalCartas: 37,
-  //       dono: "Pasquale",
-  //       capa: charizard,
-  //       dataCriacao: "2025-09-15",
-  //     },
-  //     {
-  //       _id: "c3",
-  //       nome: "Coleção Elementais",
-  //       descricao: "Coleção temática de cartas baseadas em elementos mágicos.",
-  //       cartas: ["", false],
-  //       totalCartas: 64,
-  //       dono: "Pasquale",
-  //       capa: liliana,
-  //       dataCriacao: "2025-07-10",
-  //     },
-  //   ]);
-  //   // =====================================
-  // }, []);
-
   const { colecoes, erro, carregando, navigate } = useListarColecao(
     `http://localhost:8080/colecoes`,
   );

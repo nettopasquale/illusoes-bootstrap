@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import { Container, Row, Col, Card, Button, Spinner } from "react-bootstrap";
-import { PlusCircle, ArrowLeft, Collection } from "react-bootstrap-icons";
+import {
+  PlusCircle,
+  ArrowLeft,
+  Collection,
+  Trash3,
+  PencilSquare,
+} from "react-bootstrap-icons";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useListarColecao } from "../../hooks/useListarColecao";
 // Cloudinary
 import { AdvancedImage } from "@cloudinary/react";
 import { Cloudinary } from "@cloudinary/url-gen";
 import { Resize } from "@cloudinary/url-gen/actions/resize";
-
-const cld = new Cloudinary({
-  cloud: {
-    cloudName: "dl6zp5i80",
-  },
-});
 
 export default function ColecaoLista() {
   const [loading, setLoading] = useState(false);
@@ -38,6 +38,18 @@ export default function ColecaoLista() {
       }
     }, [id]);
 
+    const handleExcluir = async() => {
+      if (window.confirm("Tem certeza que deseja excluir esta coleção?")) {
+          try{
+            await axios.delete(`http://localhost:8080/colecoes/${id}`);
+            console.log("Coleção excluída:", id);
+            navigate("/colecoes");
+          }catch(error){
+            console.error("Erro ao deletar coleção.")
+          }
+        }
+      };
+    
   
 //caso estiver em estado de carregar ou de der erro
   if (loading) {
@@ -133,14 +145,24 @@ export default function ColecaoLista() {
                       </small>
                       <div>
                         {modoEdicao && (
-                          <Button
-                            size="sm"
-                            variant="outline-secondary"
-                            className="me-2"
-                            onClick={() => navigate(`/colecoes/${col._id}`)}
-                          >
-                            Editar
-                          </Button>
+                          <div>
+                            <Button
+                              size="sm"
+                              variant="outline-secondary"
+                              className="me-2"
+                              onClick={() => navigate(`/colecoes/${col._id}`)}
+                            >
+                              Editar
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="danger"
+                              className="me-2"
+                              onClick={handleExcluir}
+                            >
+                              Excluir
+                            </Button>
+                          </div>
                         )}
                         <Button
                           size="sm"

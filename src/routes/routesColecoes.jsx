@@ -6,44 +6,13 @@ import ColecaoEdicao from "../pages/Colecoes/ColecaoEdicao";
 import PrivateRoute from "../context/PrivateRoute";
 import ColecaoLista from "../pages/Colecoes/ColecaoLista";
 import ColecaoCarta from "../pages/Colecoes/ColecaoCarta";
+import ColecaoCartaEdicao from "../pages/Colecoes/ColecaoCartaEdicao";
 
 export const colecoesRoutes = [
   //todas as coleções existentes
   <Route path="/colecoes" element={<ColecaoLista />} key="colecoes-home" />,
 
-  // ver as minhas coleções
-  <Route
-    path="user/colecoes"
-    element={
-      <PrivateRoute>
-        <MinhasColecoes />
-      </PrivateRoute>
-    }
-    key="colecoes-id-editar"
-  />,
-
-  // editar entidade coleção
-  <Route
-    path="/colecoes/:id/editar"
-    element={
-      <PrivateRoute>
-        <ColecaoEdicao />
-      </PrivateRoute>
-    }
-    key="colecoes-id-editar"
-  />,
-
-  //adicionar cartas na coleção
-  <Route
-    path="/colecoes/:id/cartas"
-    element={
-      <PrivateRoute>
-        <ColecaoCarta />
-      </PrivateRoute>
-    }
-    key="colecoes-id-editar"
-  />,
-
+  //criar coleçao
   <Route
     path="/colecoes/criar"
     element={
@@ -53,5 +22,50 @@ export const colecoesRoutes = [
     }
     key="criar-colecao"
   />,
-  <Route path="/colecoes/:id" element={<ColecaoView />} key="colecoes-id" />,
+
+  // ver as minhas coleções
+  <Route
+    path="user/colecoes"
+    element={
+      <PrivateRoute>
+        <MinhasColecoes />
+      </PrivateRoute>
+    }
+    key="colecoes-id"
+  />,
+
+  // editar entidade coleção
+  <Route
+    path="/colecoes/:colecaoId/editar"
+    element={
+      <PrivateRoute>
+        <ColecaoEdicao />
+      </PrivateRoute>
+    }
+    key="colecoes-id-editar"
+  />,
+
+  //adicionar/remover cartas na coleção
+  <Route
+    path="/colecoes/:colecaoId/cartas"
+    element={
+      <PrivateRoute>
+        <ColecaoCarta />
+      </PrivateRoute>
+    }
+    key="colecoes-id-cartas"
+  />,
+
+  //adicionar/remover cartas na coleção
+  <Route
+    path="/colecoes/:colecaoId/cartas/editar"
+    element={
+      <PrivateRoute>
+        <ColecaoCartaEdicao />
+      </PrivateRoute>
+    }
+    key="colecoes-id-cartas"
+  />,
+
+  <Route path="/colecoes/:id" element={<ColecaoView />} key="colecoes-id-criar" />,
 ];

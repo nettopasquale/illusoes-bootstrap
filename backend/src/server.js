@@ -9,6 +9,7 @@ import fileUpload from "express-fileupload";
 import userRouters from "./routes/user.routes.js";
 import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
+import cartasColecaoRouters from "./routes/cartasColecao.routes.js";
 import marketplaceRouters from "./routes/marketplace.routes.js";
 import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
@@ -30,7 +31,6 @@ cloudinary.config({
 const app = express();
 console.log(process.env.PORT);
 
-
 let corsPermitidos = [
   "http://localhost:5173", //React FrontEnd
   "http://localhost:8080", // Server local (teste)
@@ -38,8 +38,8 @@ let corsPermitidos = [
   "https://illusoes-bootstrap.vercel.app", //Produção
   "https://api.cloudinary.com",
   "https://api.cloudinary.com/v1_1",
+  "https://api.justtcg.com/v1/cards",
 ];
-
 
 let corsOptions = {
    origin: function (origin, callback) {
@@ -78,6 +78,7 @@ app.use("/", conteudoRouters);
 app.use("/", userRouters);
 app.use("/", userProfileRouters);
 app.use("/", colecaoRouters);
+app.use("/", cartasColecaoRouters);
 app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
 app.use("/", forumTopicoRouters);
