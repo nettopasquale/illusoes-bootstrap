@@ -7,10 +7,9 @@ import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { ModalEditarConteudo } from "../../components/ModalEditarConteudo/ModalEditarConteudo";
 import DatePicker from "react-datepicker";
 import axios from "axios";
+import api from "../../services/api";
 import "react-quill/dist/quill.snow.css";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
-// import { useReactQuillFirebase } from "../../hooks/useReactQuillFireBase";
-// import { uploadToFirebase } from "../../utils/uploadFirebase";
 
 export const EditarConteudo = () => {
   const { id, tipo } = useParams();
@@ -34,11 +33,9 @@ export const EditarConteudo = () => {
   const [erro, setErro] = useState(null);
 
   useEffect(() => {
-    const carregarEvento = async () => {
+    const carregarConteudo = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:8080/conteudos/${tipo}/${id}`,
-        );
+        const response = await api.get(`/conteudos/${tipo}/${id}`);
         const dados = response.data;
 
         setTitulo(dados.titulo);
@@ -47,7 +44,9 @@ export const EditarConteudo = () => {
         setConteudo(dados.conteudo);
         setDataEvento(dados.dataEvento ? new Date(dados.dataEvento) : null);
         setValorEntrada(
-          dados.valorEntrada != null ? dados.valorEntrada.toString() : ""
+          dados.valorEntrada != null 
+          ? dados.valorEntrada.toString() 
+          : ""
         );
 
         setTags(dados.tags?.map((tag) => ({ value: tag, label: tag })) || []);
@@ -58,9 +57,8 @@ export const EditarConteudo = () => {
       }
     };
 
-    carregarEvento();
+    carregarConteudo();
   }, [id]);
-
 
 
   //edição de conteúdo
@@ -90,16 +88,7 @@ export const EditarConteudo = () => {
 
       const token = localStorage.getItem("token");
 
-      await axios.put(
-        `http://localhost:8080/conteudos/${tipoSelecionado.value}/${id}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      await api.put(`/conteudos/${tipoSelecionado.value}/${id}`,formData);
 
       setMensagem(`Alterações realizadas com sucesso!`);
       setErro("");
@@ -115,14 +104,7 @@ export const EditarConteudo = () => {
     try {
       const token = localStorage.getItem("token");
 
-      await axios.delete(
-        `http://localhost:8080/conteudos/${tipoSelecionado.value}/${id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+      await api.delete(`/conteudos/${tipoSelecionado.value}/${id}`);
 
       setMensagem("Conteúdo excluído com sucesso!");
       setErro(null);

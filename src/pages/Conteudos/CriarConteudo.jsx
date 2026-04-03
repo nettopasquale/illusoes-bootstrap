@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
-import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-import CreatableSelect from "react-select/creatable";
 import { useNavigate } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import { cloudinaryUpload } from "../../utils/cloudinaryUpload";
+import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import CreatableSelect from "react-select/creatable";
 import ReactQuill from "react-quill";
 import axios from "axios";
+import api from "../../services/api";
 import DatePicker from "react-datepicker";
 import "react-quill/dist/quill.snow.css";
 import "react-datepicker/dist/react-datepicker.css";
@@ -175,14 +176,8 @@ export const CriarConteudo = () => {
         valorEntrada: isNaN(valorNumerico) ? 0 : valorNumerico,
         thumbs,
       };
-      const result = await axios.post(
-        `http://localhost:8080/conteudos/${tipo.value}`,
-        payload,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        },
+      const result = await api.post(
+        `/conteudos/${tipo.value}`,payload
       );
 
       console.log("dados enviados:", payload);

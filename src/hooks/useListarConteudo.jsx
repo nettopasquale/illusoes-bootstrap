@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../services/api";
 
-export const useListarConteudo = (baseURL, tipo) => {
+export const useListarConteudo = (tipo) => {
   const [conteudos, setConteudos] = useState([]);
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
@@ -12,7 +12,7 @@ export const useListarConteudo = (baseURL, tipo) => {
   useEffect(() => {
     const buscarConteudo = async () => {
       try {
-        const response = await axios.get(`${baseURL}/${tipo}`);
+        const response = await api.get(`/${tipo}`);
         setConteudos(response.data);
       } catch (error) {
         setErro("Erro ao buscar conteúdo.");
@@ -25,7 +25,7 @@ export const useListarConteudo = (baseURL, tipo) => {
     if (tipo) {
       buscarConteudo();
     }
-  }, [baseURL, tipo]);
+  }, [tipo]);
 
   return { conteudos, erro, carregando, navigate };
 };

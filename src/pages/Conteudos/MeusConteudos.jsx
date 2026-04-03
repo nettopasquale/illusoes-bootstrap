@@ -11,6 +11,7 @@ import {
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import CreatableSelect from "react-select/creatable";
 import axios from "axios";
+import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 
@@ -36,12 +37,7 @@ export const MeusConteudos = () => {
         tipoSelecionado.value === "todos"
           ? ""
           : `?tipo=${tipoSelecionado.value}`;
-      const response = await axios.get(
-        `http://localhost:8080/user/conteudos/${filtro}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      const response = await api.get(`/user/conteudos/${filtro}`);
       setConteudos(response.data);
     } catch (err) {
       console.error("Erro ao buscar conteúdos:", err);
@@ -63,9 +59,7 @@ export const MeusConteudos = () => {
       const tipo = conteudoSelecionado.tipo;
       const id = conteudoSelecionado._id;
 
-      await axios.delete(`http://localhost:8080/user/conteudos/${tipo}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await api.delete(`/user/conteudos/${tipo}/${id}`);
       setModalShow(true);
       buscarConteudos();
     } catch (err) {

@@ -2,10 +2,9 @@ import { Container, Col, Row, Image } from "react-bootstrap";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useConteudo } from "../../hooks/useConteudo";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
-import eldlich from "../../assets/imgs/Yugioh/eldlich_the_golden_lord.jpg"
 
 export default function ConteudoView() {
-  const { conteudo, erro } = useConteudo(`http://localhost:8080/conteudos`);
+  const { conteudo, erro } = useConteudo();
   console.log("Conteúdo pego: ", conteudo);
 
   if (erro) return (
