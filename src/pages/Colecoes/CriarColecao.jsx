@@ -1,74 +1,128 @@
-import { useState, useEffect } from "react";
-import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useState, useContext } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Card,
+  Alert,
+} from "react-bootstrap";
 import { PlusCircle, ArrowLeft, Collection } from "react-bootstrap-icons";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import { cloudinaryUpload } from "../../utils/cloudinaryUpload";
+import { useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { ModalEditarColecao } from "../../components/ModalEditarColecao/ModalEditarColecao";
+import { useColecao } from "../../hooks/useColecao";
+import api from "../../services/api";
 
 export default function CriarColecao() {
-  const navigate = useNavigate();
-  const { id } = useParams(); // usado caso seja modo edição
-  const [modoEdicao, setModoEdicao] = useState(false);
-  const [colecao, setColecao] = useState({
-    nome: "",
-    descricao: "",
-    cartasSelecionadas: [],
-  });
-  const [todasCartas, setTodasCartas] = useState([]);
+  const { colecaoId } = useParams();
+  // const [nome, setNome] = useState("");
+  // const [descricao, setDescricao] = useState("");
+  // const [capa, setCapa] = useState("");
+  const [uploadingCapa, setUploadingCapa] = useState(false);
+  // const [mensagem, setMensagem] = useState(null);
+  // const [erro, setErro] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const { usuario } = useContext(AuthContext);
+  
+  const modoEdicao = !!colecaoId;
+  const [loading, setLoading] = useState(modoEdicao);
 
-  useEffect(() => {
-    // ========== MOCK TEMPORÁRIO ==========
-    // Aqui futuramente entrará a chamada real ao backend:
-    // axios.get("/api/cartas")
-    setTodasCartas([
-      { _id: "c1", nome: "Dragão de Fogo Supremo" },
-      { _id: "c2", nome: "Feiticeiro das Sombras" },
-      { _id: "c3", nome: "Guardião Elemental" },
-      { _id: "c4", nome: "Arqueiro Élfico" },
-      { _id: "c5", nome: "Golpe Tempestuoso" },
-    ]);
+  const {
+    nome,
+    setNome,
+    descricao,
+    setDescricao,
+    capa,
+    setCapa,
+    mensagem, 
+    erro, 
+    navigate, 
+    handleCapa, publicarColecao} = useColecao(colecaoId);
 
-    if (id) {
-      // ========== MOCK TEMPORÁRIO ==========
-      // axios.get(`/api/colecoes/${id}`)
-      setColecao({
-        nome: "Coleção Raras 2025",
-        descricao: "Cartas raras coletadas nos últimos campeonatos.",
-        cartasSelecionadas: ["c1", "c3"],
-      });
-      setModoEdicao(true);
-    }
-  }, [id]);
+  //salva a imagem na variavel capa
+  //envia a imagem para o cloudinary
+  // const handleCapa = async (e) => {
+  //   const file = e.target.files[0];
+  //   console.log("a imagem:", file);
 
-  const handleChange = (e) => {
-    setColecao({ ...colecao, [e.target.name]: e.target.value });
-  };
+  //   if (!file) return;
+  //   setUploadingCapa(true);
 
-  const handleToggleCarta = (idCarta) => {
-    setColecao((prev) => {
-      const selecionadas = prev.cartasSelecionadas.includes(idCarta)
-        ? prev.cartasSelecionadas.filter((c) => c !== idCarta)
-        : [...prev.cartasSelecionadas, idCarta];
-      return { ...prev, cartasSelecionadas: selecionadas };
-    });
-  };
+  //   try {
+  //     const url = await cloudinaryUpload(file, "capa");
+  //     console.log("URL da capa: ", url);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  //     setCapa(url);
+  //   } catch (error) {
+  //     console.error("Erro ao subir capa: ", error);
+  //   } finally {
+  //     setUploadingCapa(false);
+  //   }
+  // };
 
-    if (!colecao.nome.trim()) {
-      alert("O nome da coleção é obrigatório.");
-      return;
-    }
+  //enviar no backend
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    // ========== MOCK TEMPORÁRIO ==========
-    // Substituir futuramente por:
-    // if (modoEdicao) axios.put(`/api/colecoes/${id}`, colecao)
-    // else axios.post("/api/colecoes", colecao)
-    console.log("Coleção salva:", colecao);
+  //   if (!nome.trim()) {
+  //     alert("O nome da coleção é obrigatório.");
+  //     return;
+  //   }
 
-    navigate("/colecoes");
-  };
+  //   if (!capa) {
+  //     alert("Aguarde o upload da capa terminar!");
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     nome,
+  //     descricao,
+  //     capa,
+  //   };
+
+  //   try {
+  //     //checa se modo edição é verdadeiro, se não procede apenas com a criação
+  //     if (modoEdicao) {
+  //       await api.put(`/colecoes/${colecaoId}`, payload);
+  //       setMensagem("Coleção atualizada com sucesso!");
+  //     } else {
+  //       const resultado = await api.post(`/colecoes`, payload);
+  //       console.log("coleção enviada: ", payload);
+
+  //       setMensagem(`Coleção criada com sucesso! ${resultado.data}`);
+  //       setErro(null);
+  //     }
+  //     setTimeout(() => navigate("/colecoes"), 2000);
+  //   } catch (error) {
+  //     console.error("Erro ao publicar a coleção: ", error);
+  //   }
+  // };
+
+  //buscar dados se for edição
+  // useEffect(() => {
+  //   if (modoEdicao) {
+  //     const buscarColecaoExistente = async () => {
+  //       try {
+  //         const res = await api.get(`/colecoes/${colecaoId}`);
+  //         const colecao = res.data;
+  //         console.log("Colecao atual: ", colecao);
+
+  //         setNome(colecao.nome);
+  //         setDescricao(colecao.descricao);
+  //         setCapa(colecao.capa);
+  //       } catch (error) {
+  //         console.error("Erro ao buscar coleção: ", error);
+  //       }
+  //     };
+  //     buscarColecaoExistente();
+  //   }
+  // }, [colecaoId, modoEdicao]);
 
   return (
     <LayoutGeral>
@@ -79,13 +133,28 @@ export default function CriarColecao() {
               itens={[
                 { label: "Home", to: "/" },
                 { label: "Meu Perfil", to: "/dashboard" },
+                { label: "Colecoes", to: "/colecoes" },
                 { label: "Criar Colecao" },
               ]}
             />
+            <h2 className="mb-4 fs-1 fw-bold">
+              {modoEdicao ? "Editar Coleção" : "Criar Coleção"}
+            </h2>
+            {mensagem && <Alert variant="success">{mensagem}</Alert>}
+            {erro && <Alert variant="danger">{erro}</Alert>}
             <Col>
               <h3 className="fw-bold text-primary d-flex align-items-center">
-                <Collection className="me-2" />
-                {modoEdicao ? "Editar Coleção" : "Criar Nova Coleção"}
+                {modoEdicao ? (
+                  <>
+                    <Collection className="me-2" />
+                    Editar Coleção
+                  </>
+                ) : (
+                  <>
+                    <Collection className="me-2" />
+                    Criar Nova Coleção
+                  </>
+                )}
               </h3>
             </Col>
             <Col className="text-end">
@@ -99,14 +168,14 @@ export default function CriarColecao() {
           </Row>
 
           <Card className="shadow-sm border-0 rounded-3 p-4">
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={publicarColecao}>
               <Form.Group className="mb-3">
                 <Form.Label>Nome da Coleção</Form.Label>
                 <Form.Control
                   type="text"
                   name="nome"
-                  value={colecao.nome}
-                  onChange={handleChange}
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
                   placeholder="Ex: Coleção Raras 2025"
                   required
                 />
@@ -118,40 +187,76 @@ export default function CriarColecao() {
                   as="textarea"
                   name="descricao"
                   rows={3}
-                  value={colecao.descricao}
-                  onChange={handleChange}
+                  value={descricao}
+                  onChange={(e) => setDescricao(e.target.value)}
                   placeholder="Descreva brevemente sua coleção..."
                 />
               </Form.Group>
 
               <Form.Group className="mb-3">
-                <Form.Label>Selecione as cartas</Form.Label>
-                <div className="cartas-grid">
-                  {todasCartas.map((carta) => (
-                    <div
-                      key={carta._id}
-                      className={`carta-item ${
-                        colecao.cartasSelecionadas.includes(carta._id)
-                          ? "selecionada"
-                          : ""
-                      }`}
-                      onClick={() => handleToggleCarta(carta._id)}
-                    >
-                      {carta.nome}
-                    </div>
-                  ))}
-                </div>
+                <Form.Label>Capa da coleção</Form.Label>
+                <Form.Control
+                  name="capa"
+                  type="file"
+                  accept="image/"
+                  className="w-100"
+                  rows={3}
+                  onChange={handleCapa}
+                  placeholder="Coloque uma capa para sua coleção"
+                />
               </Form.Group>
 
+              {/* prévia da capa */}
+              {capa && (
+                <img
+                  src={capa}
+                  alt="preview"
+                  style={{ width: "200px", marginTop: "10px" }}
+                />
+              )}
+
               <div className="text-end">
-                <Button variant="primary" type="submit">
-                  <PlusCircle className="me-1" />
-                  {modoEdicao ? "Salvar Alterações" : "Criar Coleção"}
-                </Button>
+                {modoEdicao && (
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      navigate(`/colecoes/${colecaoId}/cartas/editar`)
+                    }
+                  >
+                    <PlusCircle className="me-1" />
+                    Editar Cartas
+                  </Button>
+                )}
+                {modoEdicao ? (
+                  <Button variant="primary" type="submit">
+                    <PlusCircle className="me-1" />
+                    Salvar Coleção
+                  </Button>
+                ) : (
+                  <Button variant="primary" type="submit">
+                    <PlusCircle className="me-1" />
+                    Criar Coleção
+                  </Button>
+                )}
               </div>
             </Form>
           </Card>
         </Container>
+        {/* MODAL COLECAO */}
+        <ModalEditarColecao
+          show={showModal}
+          onClose={() => setShowModal(false)}
+          onDelete={() => {
+            setShowModal(false);
+            setShowConfirmDelete(true);
+          }}
+          nome={nome}
+          setNome={setNome}
+          descricao={descricao}
+          setDescricao={setDescricao}
+          capa={capa}
+          setCapa={setCapa}
+        />
       </section>
     </LayoutGeral>
   );

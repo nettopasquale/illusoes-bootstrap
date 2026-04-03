@@ -1,6 +1,7 @@
 import { useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 import { schemaCadastro } from "../schema/schema";
+import { useNavigate } from "react-router-dom";
 
 export const useCadastroUsuario = () => {
   //validação form
@@ -13,6 +14,7 @@ export const useCadastroUsuario = () => {
 
   const [erro, setErro] = useState({});
   const [sucesso, setSucesso] = useState(false);
+  const navigate = useNavigate();
 
   //controle de mudança dos inputs
   const handleChange = (e) => {
@@ -30,7 +32,7 @@ export const useCadastroUsuario = () => {
       setSucesso(false);
 
       //enviar p o Backend
-      const resposta = await axios.post("https://illusoes-bootstrap.onrender.com/users", {
+      const resposta = await api.post("/users", {
         usuario: formData.usuario,
         email: formData.email,
         senha: formData.senha,

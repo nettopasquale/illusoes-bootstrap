@@ -139,7 +139,7 @@ const DashboardUsuario = () => {
             </Nav.Link>
 
             {submenus[menu] == 0 && !menuToRouteMap[menu] && (
-              <Nav.Link as={Link} to={`/userProfile`}>
+              <Nav.Link as={Link} to={`/user/colecoes`}>
                 Editar
               </Nav.Link>
             )}

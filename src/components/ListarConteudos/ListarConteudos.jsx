@@ -137,7 +137,7 @@ export const ListarConteudos = ({
                 className="rounded overflow-hidden cursor-pointer hover:shadow-xl transition duration-300"
                 style={{
                   maxWidth: "300px",
-                  cursor: "pointer",
+                  cursor: "pointer", 
                 }}
                 onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
               >

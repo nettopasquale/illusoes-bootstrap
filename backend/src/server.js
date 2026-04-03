@@ -5,16 +5,18 @@ import mongoose from "mongoose";
 import path from "path"; //imagens locais
 import { fileURLToPath } from "url"; //imagens locais
 import {v2 as cloudinary} from "cloudinary";
-// import userRouters from "./routes/user.routes.js";
+import fileUpload from "express-fileupload";
 import userRouters from "./routes/user.routes.js";
 import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
+import cartasColecaoRouters from "./routes/cartasColecao.routes.js";
 import marketplaceRouters from "./routes/marketplace.routes.js";
 import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
 import forumTopicoRouters from "./routes/forumTopico.routes.js";
 import forumPostRouters from "./routes/forumPost.routes.js";
-import { uploadToCloudinary } from "./middleware/uploadImgs.middleware.js";
+import likesRouters from "./routes/likes.routes.js";
+import comentariosRouters from "./routes/comentarios.routes.js";
 
 // necessário para resolver bug do DNS, a partir do node v24.13.1
 dns.setDefaultResultOrder("ipv4first");
@@ -31,15 +33,15 @@ cloudinary.config({
 const app = express();
 console.log(process.env.PORT);
 
-
 let corsPermitidos = [
   "http://localhost:5173", //React FrontEnd
   "http://localhost:8080", // Server local (teste)
   "https://illusoes-bootstrap.onrender.com", // server Render
   "https://illusoes-bootstrap.vercel.app", //Produção
-  "https://api.cloudinary.com"
+  "https://api.cloudinary.com",
+  "https://api.cloudinary.com/v1_1",
+  "https://api.justtcg.com/v1/cards",
 ];
-
 
 let corsOptions = {
    origin: function (origin, callback) {
@@ -62,7 +64,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 //extender limite de 10mb
-app.use(express.urlencoded({ limit: '200mb', extended: true }));
+app.use(express.urlencoded({extended: true }));
 
 //conexão MongoDB
 try {
@@ -73,21 +75,44 @@ try {
   process.exit(1);
 }
 
-app.use((error, req, res, next) => {
-  console.log('This is the rejected field ->', error.field);
-  console.log("REQ: ", req.method, req.url)
-});
-
-
 //rotas do app
 app.use("/", conteudoRouters);
 app.use("/", userRouters);
 app.use("/", userProfileRouters);
 app.use("/", colecaoRouters);
+app.use("/", cartasColecaoRouters);
 app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
 app.use("/", forumTopicoRouters);
 app.use("/", forumPostRouters);
+app.use("/", likesRouters);
+app.use("/", comentariosRouters);
+app.use(fileUpload({useTempFiles: true}));
+
+// Rotas imagens
+
+//rota thumbs
+
+//rota capas(coleções)
+app.post('/uploads', function(req, res){
+  let capaSample;
+  let uploadPath;
+
+  if(!req.files || Object.keys(req.files).length === 0){
+    return res.status(400).send("Nenhum arquivo de capa foi enviado");
+  }
+
+  //nome do input para a capa
+  capaSample = req.files.capa;
+  //rota para upar a imagem
+  uploadPath = `${__dirname}/capas/${capaSample.name}`
+
+  capaSample.mv(uploadPath, (error)=>{
+    if(error) return res.status(500).send(error);
+
+    res.send("Capa enviada com sucesso!")
+  })
+})
 
 
 app.use((req, res, next) => {
@@ -95,8 +120,16 @@ app.use((req, res, next) => {
   next();
 })
 
+app.use((error, req, res, next) => {
+  console.log("This is the rejected field ->", error.field);
+  console.log("REQ: ", req.method, req.url);
+});
+
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+console.log("SERVIDOR INICIADO - VERSÃO NOVA");

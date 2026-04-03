@@ -4,56 +4,18 @@ import { PlusCircle, Collection, Search } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-import agido from "../../assets/imgs/Yugioh/agido.jpg";
-import charizard from "../../assets/imgs/Pokemon/Charizard-Base-SEt-art-pkmn-900x900.jpg";
-import liliana from "../../assets/imgs/Magic/liliana-vess-1920_jpg.jpg";
+import { useColecao } from "../../hooks/useColecao";
 
-export default function ColecoesHome() {
-  const [colecoes, setColecoes] = useState([]);
+export default function MinhasColecoes() {
   const [busca, setBusca] = useState("");
 
-  useEffect(() => {
-    // ========== MOCK TEMPORÁRIO ==========
-    // Substituir futuramente por:
-    // axios.get("/api/colecoes")
-    setColecoes([
-      {
-        _id: "c1",
-        nome: "Coleção Raras 2025",
-        descricao: "Cartas raras coletadas nos últimos campeonatos.",
-        cartas: ["", false],
-        totalCartas: 52,
-        dono: "Pasquale",
-        capa: agido,
-        dataCriacao: "2025-10-22",
-      },
-      {
-        _id: "c2",
-        nome: "Decks Estratégicos",
-        descricao: "Cartas com alta sinergia para decks de controle.",
-        cartas: ["", false],
-        totalCartas: 37,
-        dono: "Pasquale",
-        capa: charizard,
-        dataCriacao: "2025-09-15",
-      },
-      {
-        _id: "c3",
-        nome: "Coleção Elementais",
-        descricao: "Coleção temática de cartas baseadas em elementos mágicos.",
-        cartas: ["", false],
-        totalCartas: 64,
-        dono: "Pasquale",
-        capa: liliana,
-        dataCriacao: "2025-07-10",
-      },
-    ]);
-    // =====================================
-  }, []);
+  const { colecoes, erro, carregando, navigate } = useColecao();
 
   const colecoesFiltradas = colecoes.filter((c) =>
-    c.nome.toLowerCase().includes(busca.toLowerCase())
+    c.nome.toLowerCase().includes(busca.toLowerCase()),
   );
+  if(carregando) return <p>Carregando...</p>;
+  if (erro)  return <p>{erro}</p>
   return (
     <LayoutGeral>
       <section id="artigo" className="block artigo-block">
@@ -95,7 +57,13 @@ export default function ColecoesHome() {
           <Row className="gy-4">
             {colecoesFiltradas.length > 0 ? (
               colecoesFiltradas.map((colecao) => (
-                <Col xs={12} md={6} lg={4} key={colecao._id}>
+                <Col
+                  xs={12}
+                  md={6}
+                  lg={4}
+                  key={colecao._id}
+                  onClick={() => navigate(`/colecoes/${colecao._id}`)}
+                >
                   <Card className="shadow-sm border-0 rounded-3 colecao-card">
                     <Card.Body>
                       <Card.Title className="fw-bold mb-2 text-dark">
@@ -104,15 +72,12 @@ export default function ColecoesHome() {
                       <Card.Text className="text-muted small mb-2">
                         {colecao.descricao}
                       </Card.Text>
-                      <Card.Img
-                        variant="top"
-                        src={colecao.capa}
-                      />
+                      <Card.Img variant="top" src={colecao.capa} />
                       <Card.Text className="text-muted small mb-3">
                         <strong>{colecao.totalCartas}</strong> cartas • Criada
                         em{" "}
                         {new Date(colecao.dataCriacao).toLocaleDateString(
-                          "pt-BR"
+                          "pt-BR",
                         )}
                       </Card.Text>
                       <Link

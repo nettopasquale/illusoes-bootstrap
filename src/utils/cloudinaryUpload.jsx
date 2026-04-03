@@ -22,7 +22,7 @@ export const cloudinaryUpload = async (file, folder)=>{
         // });
         const res = await cloudinaryAPI.post(url, formData);
     
-        console.log(res)
+        console.log("RESPOSTA CLOUDINARY:", res.data);
         return res.data.secure_url;
 
     }catch(error){

@@ -1,71 +1,66 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import {
   ArrowLeft,
+  PlusCircle,
   PencilSquare,
   Trash3,
   Collection,
 } from "react-bootstrap-icons";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+import { useColecao } from "../../hooks/useColecao";
+import { AuthContext } from "../../context/AuthContext";
+import { useLike } from "../../hooks/useLikes";
+import { useComentarios } from "../../hooks/useComentarios";
+import api from "../../services/api"
+import Comentarios from "../../components/Comentarios/Comentarios";
+import BotaoLike from "../../components/BotaoLike/BotaoLike";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-
-//MOCKUP TEMPORÁRIO - substituir futuramente por: GET IMAGENS
-import agido  from "../../assets/imgs/Yugioh/agido.jpg";
+import ShareLinks from "../../components/ShareLinks/ShareLinks";
 
 export default function ColecaoView() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const [colecao, setColecao] = useState(null);
+  const { colecaoId } = useParams();
+  const [cartas, setCartas] = useState([]);
+  const { usuario, token } = useContext(AuthContext);
 
+  //hook das coleções
+  const { colecoes, excluirColecao, navigate, setColecoes } = useColecao();
+  const colecao = colecoes?.find((c) => c._id === colecaoId);
+  const isDono = usuario?._id === colecao?.dono?._id;
+
+  //url para compartilhar
+  const url = `${window.location.origin}/colecoes/${colecaoId}`;
+
+  //hook dos likes
+  const { curtido, curtidasTotais, toggleLike } = useLike(
+    colecaoId,
+    "colecao",
+    token,
+  );
+
+  //hook dos comentários
+  const {
+    comentarios,
+    criarComentario,
+    deletarComentario,
+    curtirComentario,
+  } = useComentarios(colecaoId,"colecao",token);
+
+
+  //lidar com população de cartas, caso exista
   useEffect(() => {
-    // ========== MOCK TEMPORÁRIO ==========
-    // Substituir futuramente por:
-    // axios.get(`/api/colecoes/${id}`)
-    setColecao({
-      _id: id,
-      nome: "Coleção Raras 2025",
-      descricao: "Cartas raras coletadas nos últimos campeonatos.",
-      criador: "Pasquale",
-      dataCriacao: "2025-10-22",
-      cartas: [
-        {
-          _id: "c1",
-          nome: "Dragão de Fogo Supremo",
-          tipo: "Lendária",
-          imagem: {agido},
-        },
-        {
-          _id: "c2",
-          nome: "Feiticeiro das Sombras",
-          tipo: "Épica",
-          imagem: {agido},
-        },
-        {
-          _id: "c3",
-          nome: "Guardião Elemental",
-          tipo: "Rara",
-          imagem: {agido},
-        },
-        {
-          _id: "c4",
-          nome: "Arqueiro Élfico",
-          tipo: "Comum",
-          imagem: {agido},
-        },
-      ],
-    });
-    // =====================================
-  }, [id]);
-
-  const handleExcluir = () => {
-    if (window.confirm("Tem certeza que deseja excluir esta coleção?")) {
-      // ========== MOCK TEMPORÁRIO ==========
-      // axios.delete(`/api/colecoes/${id}`)
-      console.log("Coleção excluída:", id);
-      navigate("/colecoes");
-    }
-  };
+    const fetchCartas = async () => {
+      try {
+        const res = await api.get(`/colecoes/${colecaoId}/cartas`);
+        const cartasExistentes = res.data;
+        setCartas(cartasExistentes);
+      } catch (error) {
+        console.error("erro ao buscar cartas:", error);
+      }
+    };
+    if (colecaoId) fetchCartas();
+  }, [colecaoId]);
 
   if (!colecao)
     return <p className="text-center mt-5">Carregando coleção...</p>;
@@ -79,7 +74,7 @@ export default function ColecaoView() {
               itens={[
                 { label: "Home", to: "/" },
                 { label: "Todoas as coleções", to: "/colecoes" },
-                { label: "Colecao", to: `/colecoes/${colecao._id}` },
+                { label: "Colecao", to: `/colecoes/${colecaoId}` },
               ]}
             />
             <Col>
@@ -88,10 +83,22 @@ export default function ColecaoView() {
               </h3>
               <p className="text-muted mb-0">{colecao.descricao}</p>
               <small className="text-secondary">
-                Criada por <strong>{colecao.criador}</strong> em{" "}
-                {new Date(colecao.dataCriacao).toLocaleDateString("pt-BR")}
+                Criada por <strong>{colecao.dono.usuario}</strong> em{" "}
+                {new Date(colecao.dataCriacao).toLocaleDateString("pt-BR") ||
+                  "Data desconhecida"}
               </small>
             </Col>
+
+            {/* Botões de Share e Likes */}
+            <BotaoLike
+              curtido={curtido}
+              curtidasTotais={curtidasTotais}
+              onClick={toggleLike}
+            />
+            <ShareLinks
+            url={url}
+            title={colecao?.nome}/>
+
             <Col className="text-end">
               <Button
                 variant="outline-secondary"
@@ -101,46 +108,100 @@ export default function ColecaoView() {
                 <ArrowLeft className="me-1" /> Voltar
               </Button>
               <Link
-                to={`/colecoes/${colecao._id}/editar`}
+                to={`/colecoes/${colecaoId}/cartas/editar`}
                 className="btn btn-outline-primary me-2"
               >
                 <PencilSquare className="me-1" /> Editar
               </Link>
-              <Button variant="danger" onClick={handleExcluir}>
+              <Button
+                variant="danger"
+                onClick={() => excluirColecao(colecaoId)}
+              >
                 <Trash3 className="me-1" /> Excluir
               </Button>
             </Col>
           </Row>
 
           <Row className="gy-4">
-            {colecao.cartas && colecao.cartas.length > 0 ? (
-              colecao.cartas.map((carta) => (
-                <Col xs={12} sm={6} md={4} lg={3} key={carta._id}>
+            <h3 className="fw-bold text-primary d-flex align-items-center">
+              Cartas da coleção
+            </h3>
+            {cartas.length > 0 ? (
+              cartas.map((carta) => (
+                <Col xs={12} sm={6} md={4} lg={3} key={carta.cartaID}>
                   <Card className="shadow-sm border-0 rounded-3 carta-card">
                     <div className="carta-imagem-wrapper">
                       <Card.Img
                         variant="top"
-                        // src={carta.imagem || "/cards/placeholder.jpg"}
-                        src={agido}
-                        alt={carta.nome}
+                        src={carta.carta.imagem}
+                        alt={carta.carta.nome}
                       />
                     </div>
                     <Card.Body>
                       <Card.Title className="fs-6 fw-semibold">
-                        {carta.nome}
+                        Nome: {carta.carta.nome}
                       </Card.Title>
                       <Card.Text className="text-muted small">
-                        {carta.tipo}
+                        Jogo: {carta.carta.jogo}
+                      </Card.Text>
+                      <Card.Text className="text-muted small">
+                        Set: {carta.carta.setNome}
+                      </Card.Text>
+                      <Card.Text className="text-muted small">
+                        Raridade: {carta.carta.raridade}
+                      </Card.Text>
+                      <Card.Text className="text-muted small">
+                        Printagem: {carta.carta.printagem}
+                      </Card.Text>
+                      <Card.Text className="text-muted small">
+                        Quantidade: {carta.quantidade}
                       </Card.Text>
                     </Card.Body>
                   </Card>
                 </Col>
               ))
             ) : (
-              <p className="text-center text-muted mt-4">
-                Nenhuma carta adicionada nesta coleção ainda.
-              </p>
+              <div>
+                <p className="text-center text-muted mt-4">
+                  Nenhuma carta adicionada nesta coleção ainda.
+                </p>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate(`/colecoes/${colecaoId}/cartas`)}
+                >
+                  <PlusCircle className="me-1" />
+                  Adicionar cartas
+                </Button>
+              </div>
             )}
+            {colecao.dono?._id && (
+              <>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate(`/colecoes/${colecaoId}/editar`)}
+                >
+                  <PlusCircle className="me-1" />
+                  Editar Coleção
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => excluirColecao(colecaoId)}
+                >
+                  <PlusCircle className="me-1" />
+                  Excluir Coleção
+                </Button>
+              </>
+            )}
+          </Row>
+          {/* Comentários */}
+          <Row>
+            <Comentarios
+              comentarios={comentarios}
+              criarComentario={criarComentario}
+              deletarComentario={deletarComentario}
+              curtirComentario={curtirComentario}
+              usuario={usuario}
+            />
           </Row>
         </Container>
       </section>

@@ -1,7 +1,8 @@
 // Permite o login / logout em qualquer lugar, evita o localStorage excessivo
 import { createContext, useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import axios from "axios";
+import api from "../services/api";
+import { toast } from "react-toastify";
 
 export const AuthContext = createContext();
 
@@ -34,10 +35,7 @@ export const AuthProvider = ({ children }) => {
     const carregarPerfil = async () => {
       if (token && usuario && !usuario.imagemProfile) {
         try {
-          const res = await axios.get("https://illusoes-bootstrap.onrender.com/userProfile/me", {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
+          const res = await api.get("/userProfile/me");
           const perfil = res.data;
 
           const usuarioAtualizado = {
@@ -70,7 +68,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     setUsuario(null);
     
-    if (mensagem) alert(mensagem);
+    if (mensagem) toast.success(mensagem);
 
     setTimeout(() => {
       window.location.href = "/";
@@ -79,7 +77,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ usuario, token, login, logout, autenticado: !!usuario }}
+      value={{ usuario, token, login, logout, autenticado: !!usuario, userId: usuario?._id || null }}
     >
       {children}
     </AuthContext.Provider>

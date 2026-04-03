@@ -10,7 +10,11 @@ export const tokenExp = () => {
     const interceptor = axios.interceptors.response.use(
       (response) => response,
       (error) => {
-        if (error.response && error.response.status === 401) {
+        if (
+          error.response &&
+          error.response.status === 401 &&
+          error.response.data?.error === "Token inválido"
+        ) {
           logout("Sua sessão expirou. Faça login novamente.");
         }
         return Promise.reject(error);

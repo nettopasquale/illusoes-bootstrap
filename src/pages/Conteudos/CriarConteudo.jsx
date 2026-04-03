@@ -180,7 +180,7 @@ export const CriarConteudo = () => {
         payload,
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,
           },
         },
       );

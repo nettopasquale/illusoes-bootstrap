@@ -3,9 +3,11 @@ import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useCadastroUsuario } from "../../hooks/useCadastroUsuario";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 
+
 export default function CadastroUsuario() {
   const { formData, erro, sucesso, handleChange, handleSubmit } =
     useCadastroUsuario();
+
   return (
     <LayoutGeral>
       <Container fluid className="mt-5" style={{ width: "100%" }}>
