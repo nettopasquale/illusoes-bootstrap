@@ -9,14 +9,14 @@ const CartaColecaoSchema = new mongoose.Schema({
   carta: { type: mongoose.Schema.Types.ObjectId, ref: "Carta" },
   quantidade: { type: Number, default: 1 },
   checklist: { type: Boolean, default: false },
-});
+}, {timestamps: true});
 
 CartaColecaoSchema.index({
   colecaoId: 1, carta:1
 },
 {unique: true})
 
-const CartaColecao = mongoose.model("CartaColecao", CartaColecaoSchema);
+const CartaColecaoModel = mongoose.model("CartaColecao", CartaColecaoSchema);
 
 
-export default CartaColecao;
+export default CartaColecaoModel;

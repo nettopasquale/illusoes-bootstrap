@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   Container,
   Row,
@@ -12,81 +12,117 @@ import { PlusCircle, ArrowLeft, Collection } from "react-bootstrap-icons";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { cloudinaryUpload } from "../../utils/cloudinaryUpload";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useParams } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
+import { ModalEditarColecao } from "../../components/ModalEditarColecao/ModalEditarColecao";
+import { useColecao } from "../../hooks/useColecao";
+import api from "../../services/api";
 
 export default function CriarColecao() {
-  const [nome, setNome] = useState("");
-  const [descricao, setDescricao] = useState("");
-  const [capa, setCapa] = useState("");
+  const { colecaoId } = useParams();
+  // const [nome, setNome] = useState("");
+  // const [descricao, setDescricao] = useState("");
+  // const [capa, setCapa] = useState("");
   const [uploadingCapa, setUploadingCapa] = useState(false);
-  const [mensagem, setMensagem] = useState(null);
-  const [erro, setErro] = useState(null);
-  const navigate = useNavigate();
+  // const [mensagem, setMensagem] = useState(null);
+  // const [erro, setErro] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const { usuario } = useContext(AuthContext);
+  
+  const modoEdicao = !!colecaoId;
+  const [loading, setLoading] = useState(modoEdicao);
 
-//salva a imagem na variavel capa
-//envia a imagem para o cloudinary
-  const handleCapa = async (e) => {
-    const file = e.target.files[0];
-    console.log("a imagem:", file);
+  const {
+    nome,
+    setNome,
+    descricao,
+    setDescricao,
+    capa,
+    setCapa,
+    mensagem, 
+    erro, 
+    navigate, 
+    handleCapa, publicarColecao} = useColecao(colecaoId);
 
-    if (!file) return;
-    setUploadingCapa(true);
+  //salva a imagem na variavel capa
+  //envia a imagem para o cloudinary
+  // const handleCapa = async (e) => {
+  //   const file = e.target.files[0];
+  //   console.log("a imagem:", file);
 
-    try {
-      const url = await cloudinaryUpload(file, "capa");
-      console.log("URL da capa: ", url);
+  //   if (!file) return;
+  //   setUploadingCapa(true);
 
-      setCapa(url);
-    } catch (error) {
-      console.error("Erro ao subir capa: ", error);
-    } finally {
-      setUploadingCapa(false);
-    }
-    
-  };
+  //   try {
+  //     const url = await cloudinaryUpload(file, "capa");
+  //     console.log("URL da capa: ", url);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  //     setCapa(url);
+  //   } catch (error) {
+  //     console.error("Erro ao subir capa: ", error);
+  //   } finally {
+  //     setUploadingCapa(false);
+  //   }
+  // };
 
-    if (!nome.trim()) {
-      alert("O nome da coleção é obrigatório.");
-      return;
-    }
+  //enviar no backend
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    if (!capa) {
-      alert("Aguarde o upload da capa terminar!");
-      return;
-    }
+  //   if (!nome.trim()) {
+  //     alert("O nome da coleção é obrigatório.");
+  //     return;
+  //   }
 
-    const token = localStorage.getItem("token");
+  //   if (!capa) {
+  //     alert("Aguarde o upload da capa terminar!");
+  //     return;
+  //   }
 
-    try {
-      const payload = {
-        nome,
-        descricao,
-        capa,
-      };
+  //   const payload = {
+  //     nome,
+  //     descricao,
+  //     capa,
+  //   };
 
-      const resultado = await axios.post(
-        `http://localhost:8080/colecoes`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
+  //   try {
+  //     //checa se modo edição é verdadeiro, se não procede apenas com a criação
+  //     if (modoEdicao) {
+  //       await api.put(`/colecoes/${colecaoId}`, payload);
+  //       setMensagem("Coleção atualizada com sucesso!");
+  //     } else {
+  //       const resultado = await api.post(`/colecoes`, payload);
+  //       console.log("coleção enviada: ", payload);
 
-      console.log("coleção enviada: ", payload);
+  //       setMensagem(`Coleção criada com sucesso! ${resultado.data}`);
+  //       setErro(null);
+  //     }
+  //     setTimeout(() => navigate("/colecoes"), 2000);
+  //   } catch (error) {
+  //     console.error("Erro ao publicar a coleção: ", error);
+  //   }
+  // };
 
-      setMensagem(`Coleção criada com sucesso! ${resultado.data}`);
-      setErro(null);
-      setTimeout(() => navigate("/colecoes"), 2000);
-    } catch (error) {
-      console.error("Erro ao publicar a coleção: ", error);
-    }
-  };
+  //buscar dados se for edição
+  // useEffect(() => {
+  //   if (modoEdicao) {
+  //     const buscarColecaoExistente = async () => {
+  //       try {
+  //         const res = await api.get(`/colecoes/${colecaoId}`);
+  //         const colecao = res.data;
+  //         console.log("Colecao atual: ", colecao);
+
+  //         setNome(colecao.nome);
+  //         setDescricao(colecao.descricao);
+  //         setCapa(colecao.capa);
+  //       } catch (error) {
+  //         console.error("Erro ao buscar coleção: ", error);
+  //       }
+  //     };
+  //     buscarColecaoExistente();
+  //   }
+  // }, [colecaoId, modoEdicao]);
 
   return (
     <LayoutGeral>
@@ -97,16 +133,28 @@ export default function CriarColecao() {
               itens={[
                 { label: "Home", to: "/" },
                 { label: "Meu Perfil", to: "/dashboard" },
+                { label: "Colecoes", to: "/colecoes" },
                 { label: "Criar Colecao" },
               ]}
             />
-            <h2 className="mb-4 fs-1 fw-bold">Criar Coleção</h2>
+            <h2 className="mb-4 fs-1 fw-bold">
+              {modoEdicao ? "Editar Coleção" : "Criar Coleção"}
+            </h2>
             {mensagem && <Alert variant="success">{mensagem}</Alert>}
             {erro && <Alert variant="danger">{erro}</Alert>}
             <Col>
               <h3 className="fw-bold text-primary d-flex align-items-center">
-                <Collection className="me-2" />
-                Criar Nova Coleção
+                {modoEdicao ? (
+                  <>
+                    <Collection className="me-2" />
+                    Editar Coleção
+                  </>
+                ) : (
+                  <>
+                    <Collection className="me-2" />
+                    Criar Nova Coleção
+                  </>
+                )}
               </h3>
             </Col>
             <Col className="text-end">
@@ -120,7 +168,7 @@ export default function CriarColecao() {
           </Row>
 
           <Card className="shadow-sm border-0 rounded-3 p-4">
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={publicarColecao}>
               <Form.Group className="mb-3">
                 <Form.Label>Nome da Coleção</Form.Label>
                 <Form.Control
@@ -158,15 +206,57 @@ export default function CriarColecao() {
                 />
               </Form.Group>
 
+              {/* prévia da capa */}
+              {capa && (
+                <img
+                  src={capa}
+                  alt="preview"
+                  style={{ width: "200px", marginTop: "10px" }}
+                />
+              )}
+
               <div className="text-end">
-                <Button variant="primary" type="submit">
-                  <PlusCircle className="me-1" />
-                  Criar Coleção
-                </Button>
+                {modoEdicao && (
+                  <Button
+                    variant="secondary"
+                    onClick={() =>
+                      navigate(`/colecoes/${colecaoId}/cartas/editar`)
+                    }
+                  >
+                    <PlusCircle className="me-1" />
+                    Editar Cartas
+                  </Button>
+                )}
+                {modoEdicao ? (
+                  <Button variant="primary" type="submit">
+                    <PlusCircle className="me-1" />
+                    Salvar Coleção
+                  </Button>
+                ) : (
+                  <Button variant="primary" type="submit">
+                    <PlusCircle className="me-1" />
+                    Criar Coleção
+                  </Button>
+                )}
               </div>
             </Form>
           </Card>
         </Container>
+        {/* MODAL COLECAO */}
+        <ModalEditarColecao
+          show={showModal}
+          onClose={() => setShowModal(false)}
+          onDelete={() => {
+            setShowModal(false);
+            setShowConfirmDelete(true);
+          }}
+          nome={nome}
+          setNome={setNome}
+          descricao={descricao}
+          setDescricao={setDescricao}
+          capa={capa}
+          setCapa={setCapa}
+        />
       </section>
     </LayoutGeral>
   );

@@ -5,6 +5,7 @@ import axios from "axios";
 import { useAuth } from "../../context/useAuth";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
+import api from "../../services/api";
 
 LayoutGeral.propTypes = {
   children: PropTypes.node,
@@ -20,10 +21,10 @@ function LayoutGeral({ children }) {
   const handleModalClose = useCallback(() => setModalShow(false), []);
 
     //login persistente - localstorage?
-  const token = localStorage.getItem("token");
-    if (token) {
-        axios.defaults.headers.common["Authorization"] = token;
-    }
+  // const token = localStorage.getItem("token");
+  //   if (token) {
+  //       axios.defaults.headers.common["Authorization"] = token;
+  //   }
 
   return (
     <div className="d-flex flex-column min-vh-100 bg-body-secondary">

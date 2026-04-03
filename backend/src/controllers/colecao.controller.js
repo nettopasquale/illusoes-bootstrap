@@ -1,4 +1,5 @@
-import Colecao from "../models/colecao.model.js";
+import ColecaoModel from "../models/colecao.model.js";
+import CartaColecaoModel from "../models/cartaColecao.model.js";
 
 //Criar Colecao
 export const criarColecao = async (req, res) => {
@@ -12,7 +13,7 @@ export const criarColecao = async (req, res) => {
     }
 
     //cria a coleção DEPOIS de resolver o upload da imagem
-    const novaColecao = new Colecao({
+    const novaColecao = new ColecaoModel({
       nome,
       descricao,
       cartas,
@@ -21,10 +22,8 @@ export const criarColecao = async (req, res) => {
       dataPublicacao: new Date(),
     });
 
-    console.log("BODY:", req.body);
-
     await novaColecao.save();
-    res.status(201).json({msg: "cheguei aqui"});
+    res.status(201).json({ msg: "cheguei aqui" });
   } catch (erro) {
     res.status(500).json({ error: erro.message });
   }
@@ -33,8 +32,23 @@ export const criarColecao = async (req, res) => {
 // listar Colecao
 export const listarColecoes = async (req, res) => {
   try {
-    const colecao = await Colecao.find().populate("dono", "colecao");
-    res.json(colecao);
+    const colecao = await ColecaoModel.find().populate("dono", "usuario");
+
+    //calcula qtd de cartas das coleções
+    const qtdCartas = await Promise.all(
+      colecao.map(async (col)=>{
+        const totalCartas = await CartaColecaoModel.countDocuments({
+          colecaoId:col._id,
+        });
+        return{
+          ...col.toObject(),
+          totalCartas,
+        };
+      })
+    )
+    // res.status(201).json(colecao);
+    res.status(200).json(qtdCartas);
+    // res.json(qtdCartas);
   } catch (erro) {
     res.status(500).json({ error: erro.message });
   }
@@ -43,12 +57,12 @@ export const listarColecoes = async (req, res) => {
 // listar Colecao por ID
 export const listarColecaoPorID = async (req, res) => {
   try {
-    const colecao = await Colecao.findById(req.params.id);
+    const colecao = await ColecaoModel.findById(req.params.id);
 
     if (!colecao)
       return res.status(404).json({ error: "Coleção não encontrada" });
 
-    res.json(colecao);
+    return res.status(200).json(colecao);
   } catch (erro) {
     res.status(500).json({ erro: erro.message });
   }
@@ -58,16 +72,13 @@ export const listarColecaoPorID = async (req, res) => {
 // atualizar Colecao
 export const editarColecao = async (req, res) => {
   try {
-    const colecao = await Colecao.findById(req.params.id);
-
+    const colecao = await ColecaoModel.findById(req.params.id);
+    
     if (!colecao)
       return res.status(404).json({ error: "Coleção não encontrada" });
 
     // Garante que só o autor ou admn pode editar
-    if (
-      colecao.dono.toString() !== req.usuarioId &&
-      req.usuarioTipo !== "admin"
-    ) {
+    if (colecao.dono.toString() !== req.userId && req.userRole !== "admin") {
       return res.status(403).json({ error: "Não autorizado" });
     }
 
@@ -77,13 +88,13 @@ export const editarColecao = async (req, res) => {
     }
 
     // Atualiza com os novos dados
-    const colecaoAtualizada = await Colecao.findByIdAndUpdate(
+    const colecaoAtualizada = await ColecaoModel.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true, runValidators: true },
     );
 
-    res.json(colecaoAtualizada);
+    res.status(200).json(colecaoAtualizada);
   } catch (erro) {
     res.status(500).json({ error: erro.message });
   }
@@ -92,21 +103,24 @@ export const editarColecao = async (req, res) => {
 // deletar Colecao
 export const deletarColecao = async (req, res) => {
   try {
-    const colecao = await Colecao.findById(req.params.id);
-
+    const {id} = req.params;
+    const colecao = await ColecaoModel.findById(id);
     if (!colecao)
-      return res.status(404).json({ error: "Coleção não encontrada" });
+      return res.status(404).json({ error: "Coleção Não Encontrada" });
 
-    //apenas autor e admin podem deletar
-    if (
-      colecao.dono.toString() !== req.usuarioId &&
-      req.usuarioTipo !== "admin"
-    ) {
+    // Garante que só o autor ou admn pode excluir
+    if (colecao.dono.toString() !== req.userId && req.userRole !== "admin") {
       return res.status(403).json({ error: "Não autorizado" });
     }
 
-    await colecao.deleteOne();
-    res.json({ message: "Coleção deletada com sucesso" });
+    //remove cartas da coleção
+    await CartaColecaoModel.deleteMany({ colecaoId: colecao._id });
+
+    //remove a coleção
+    await ColecaoModel.deleteOne();
+
+    console.log("Coleção deletada com sucesso")
+    return res.status(200).json({ message: "Coleção deletada" });
   } catch (erro) {
     res.status(500).json({ error: erro.message });
   }
@@ -119,7 +133,9 @@ export const deletarColecoesSemCriador = async (req, res) => {
             return res.status(403).json({ error: "Apenas administradores podem deletar órfãos" });
         }
 
-        const resultado = await Colecao.deleteMany({ dono: { $exists: false } });
+        const resultado = await ColecaoModel.deleteMany({
+          dono: { $exists: false },
+        });
         return res.status(200).json({ message: `${resultado.deletedCount} coleções sem donos foram deletadas.` });
     } catch (erro) {
         return res.status(500).json({ error: erro.message });
@@ -134,7 +150,7 @@ export const deletarTodasColecoes = async (req, res) => {
             return res.status(403).json({ error: "Apenas administradores podem deletar tudo" });
         }
 
-        const resultado = await Colecao.deleteMany({});
+        const resultado = await ColecaoModel.deleteMany({});
         return res.status(200).res.json({ message: `Todas as coleçoes foram deletadas (${resultado.deletedCount} itens).` });
     } catch (erro) {
         return res.status(500).json({ error: erro.message });

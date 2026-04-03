@@ -11,7 +11,7 @@ import { BsFillPersonFill } from "react-icons/bs";
 import { useAuth } from "../../context/useAuth";
 import { schemaLogin } from "../../schema/schema";
 import PropTypes from "prop-types";
-import axios from "axios";
+import api from "../../services/api";
 
 export default function ModalLoginteste({ show, onClose }) {
   const [formData, setFormData] = useState({ login: "", senha: "" });
@@ -32,7 +32,7 @@ export default function ModalLoginteste({ show, onClose }) {
     try {
       await schemaLogin.validate(formData, { abortEarly: false });
 
-      const resposta = await axios.post("https://illusoes-bootstrap.onrender.com/users/login", {
+      const resposta = await api.post("/users/login", {
         login: formData.login,
         senha: formData.senha,
       });

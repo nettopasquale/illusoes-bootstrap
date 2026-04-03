@@ -3,6 +3,7 @@ import {
   buscarCartas,
   listarCartasDaColecao,
   addCartaColecao,
+  editarCartaColecao,
   deletarCartaColecao,
 } from "../controllers/colecaoCarta.controller.js";
 import {
@@ -29,26 +30,33 @@ cartasColecaoRouters.post(
   addCartaColecao,
 );
 
-// //edita a coleção inteira de cartas
-// cartasColecaoRouters.put(
-//   "/colecoes/:colecaoId/cartas",
-//   verificarToken,
-//   editarColecao,
-// );
+//edita a coleção inteira de cartas
+cartasColecaoRouters.put(
+  "/colecoes/:colecaoId/cartas",
+  verificarToken,
+  editarCartaColecao,
+);
 
-// //muda apenas uma propriedade
-// cartasColecaoRouters.patch(
-//   "/colecoes/:colecaoId/cartas",
-//   verificarToken,
-//   editarColecao,
-// );
+//muda apenas uma propriedade
+cartasColecaoRouters.patch(
+  "/colecoes/:colecaoId/cartas",
+  verificarToken,
+  editarCartaColecao,
+);
 
-// deleta alguma carta da coleção
+// deleta a coleção de Cartas
 cartasColecaoRouters.delete(
   "/colecoes/:colecaoId/cartas",
   verificarToken,
   deletarCartaColecao,
 );
+
+// deleta alguma carta da coleção
+// cartasColecaoRouters.delete(
+//   "/colecoes/:colecaoId/cartas",
+//   verificarToken,
+//   deletarCartaColecao,
+// );
 
 
 //Rotas ADMN

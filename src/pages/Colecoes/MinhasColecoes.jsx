@@ -4,17 +4,12 @@ import { PlusCircle, Collection, Search } from "react-bootstrap-icons";
 import { Link } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-import agido from "../../assets/imgs/Yugioh/agido.jpg";
-import charizard from "../../assets/imgs/Pokemon/Charizard-Base-SEt-art-pkmn-900x900.jpg";
-import liliana from "../../assets/imgs/Magic/liliana-vess-1920_jpg.jpg";
-import { useListarColecao } from "../../hooks/useListarColecao";
+import { useColecao } from "../../hooks/useColecao";
 
 export default function MinhasColecoes() {
   const [busca, setBusca] = useState("");
 
-  const { colecoes, erro, carregando, navigate } = useListarColecao(
-    `http://localhost:8080/colecoes`,
-  );
+  const { colecoes, erro, carregando, navigate } = useColecao();
 
   const colecoesFiltradas = colecoes.filter((c) =>
     c.nome.toLowerCase().includes(busca.toLowerCase()),

@@ -3,10 +3,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import * as yup from "yup";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+import api from "../../services/api";
 
 // schema do login
 const schema = yup.object().shape({
@@ -55,7 +55,7 @@ export default function Login() {
       setSucesso(false);
 
       //enviar p o Backend
-      const resposta = await axios.post("http://localhost:8080/users/login", {
+      const resposta = await api.post("/users/login", {
         login: formData.login,
         senha: formData.senha,
       });

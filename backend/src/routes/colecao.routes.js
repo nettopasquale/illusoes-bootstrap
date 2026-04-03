@@ -28,7 +28,7 @@ colecaoRouters.patch('/colecoes/:id', verificarToken, editarColecao);
 colecaoRouters.delete('/colecoes/:id', verificarToken, deletarColecao);
 
 //rotas admn
-colecaoRouters.delete('/colecoes/:id', verificarAdmin, deletarTodasColecoes);
-colecaoRouters.delete("/colecoes/:id", verificarAdmin, deletarColecoesSemCriador);
+// colecaoRouters.delete('/colecoes/:id', verificarAdmin, deletarTodasColecoes);
+// colecaoRouters.delete("/colecoes/:id", verificarAdmin, deletarColecoesSemCriador);
 
 export default colecaoRouters;

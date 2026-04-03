@@ -9,9 +9,9 @@ const CartaSchema = new mongoose.Schema({
   printagem: { type: String },
   imagem:{type: String},
   donos: {type: Number}
-});
+}, {timestamps: true});
 
-const Carta = mongoose.model("Carta", CartaSchema);
+const CartaModel = mongoose.model("Carta", CartaSchema);
 
 
-export default Carta;
+export default CartaModel;

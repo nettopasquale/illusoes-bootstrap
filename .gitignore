@@ -29,5 +29,8 @@ node_modules/
 /backend/node_modules
 
 # env / process
-.env
-/backend/.env
+# .env
+# .env.dev
+# .env.prod
+.env*
+/backend/.env*

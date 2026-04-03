@@ -2,11 +2,10 @@ import { Route } from "react-router-dom";
 import MinhasColecoes from "../pages/Colecoes/MinhasColecoes";
 import CriarColecao from "../pages/Colecoes/CriarColecao";
 import ColecaoView from "../pages/Colecoes/ColecaoView";
-import ColecaoEdicao from "../pages/Colecoes/ColecaoEdicao";
 import PrivateRoute from "../context/PrivateRoute";
 import ColecaoLista from "../pages/Colecoes/ColecaoLista";
 import ColecaoCarta from "../pages/Colecoes/ColecaoCarta";
-import ColecaoCartaEdicao from "../pages/Colecoes/ColecaoCartaEdicao";
+
 
 export const colecoesRoutes = [
   //todas as coleções existentes
@@ -39,7 +38,7 @@ export const colecoesRoutes = [
     path="/colecoes/:colecaoId/editar"
     element={
       <PrivateRoute>
-        <ColecaoEdicao />
+        <CriarColecao />
       </PrivateRoute>
     }
     key="colecoes-id-editar"
@@ -61,11 +60,15 @@ export const colecoesRoutes = [
     path="/colecoes/:colecaoId/cartas/editar"
     element={
       <PrivateRoute>
-        <ColecaoCartaEdicao />
+        <ColecaoCarta />
       </PrivateRoute>
     }
     key="colecoes-id-cartas"
   />,
 
-  <Route path="/colecoes/:id" element={<ColecaoView />} key="colecoes-id-criar" />,
+  <Route
+    path="/colecoes/:colecaoId"
+    element={<ColecaoView />}
+    key="colecoes-id-criar"
+  />,
 ];

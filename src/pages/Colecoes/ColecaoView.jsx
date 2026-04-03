@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import { useParams, Link } from "react-router-dom";
 import {
@@ -9,46 +9,58 @@ import {
   Collection,
 } from "react-bootstrap-icons";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+import { useColecao } from "../../hooks/useColecao";
+import { AuthContext } from "../../context/AuthContext";
+import { useLike } from "../../hooks/useLikes";
+import { useComentarios } from "../../hooks/useComentarios";
+import api from "../../services/api"
+import Comentarios from "../../components/Comentarios/Comentarios";
+import BotaoLike from "../../components/BotaoLike/BotaoLike";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
-import { useListarColecao } from "../../hooks/useListarColecao";
-import axios from "axios";
+import ShareLinks from "../../components/ShareLinks/ShareLinks";
 
 export default function ColecaoView() {
-  const { id } = useParams();
+  const { colecaoId } = useParams();
   const [cartas, setCartas] = useState([]);
+  const { usuario, token } = useContext(AuthContext);
 
+  //hook das coleções
+  const { colecoes, excluirColecao, navigate, setColecoes } = useColecao();
+  const colecao = colecoes?.find((c) => c._id === colecaoId);
+  const isDono = usuario?._id === colecao?.dono?._id;
+
+  //url para compartilhar
+  const url = `${window.location.origin}/colecoes/${colecaoId}`;
+
+  //hook dos likes
+  const { curtido, curtidasTotais, toggleLike } = useLike(
+    colecaoId,
+    "colecao",
+    token,
+  );
+
+  //hook dos comentários
   const {
-    colecoes: colecao,
-    erro,
-    navigate,
-  } = useListarColecao(`http://localhost:8080/colecoes`);
+    comentarios,
+    criarComentario,
+    deletarComentario,
+    curtirComentario,
+  } = useComentarios(colecaoId,"colecao",token);
 
-  const handleExcluir = async() => {
-    if (window.confirm("Tem certeza que deseja excluir esta coleção?")) {
-      try{
-        await axios.delete(`http://localhost:8080/colecoes/${id}`);
-        console.log("Coleção excluída:", id);
-        navigate("/colecoes");
-      }catch(error){
-        console.error("Erro ao deletar coleção.")
-      }
-    }
-  };
 
   //lidar com população de cartas, caso exista
-  useEffect(()=>{
-    const fetchCartas = async()=>{
-      try{
-        const resposta = await axios.get(
-          `http://localhost:8080/colecoes/${id}/cartas`,
-        );
-        setCartas(resposta.data);
-      }catch(error){
-        console.error("erro ao buscar cartas:", error)
+  useEffect(() => {
+    const fetchCartas = async () => {
+      try {
+        const res = await api.get(`/colecoes/${colecaoId}/cartas`);
+        const cartasExistentes = res.data;
+        setCartas(cartasExistentes);
+      } catch (error) {
+        console.error("erro ao buscar cartas:", error);
       }
     };
-    if(id) fetchCartas();
-  },[id])
+    if (colecaoId) fetchCartas();
+  }, [colecaoId]);
 
   if (!colecao)
     return <p className="text-center mt-5">Carregando coleção...</p>;
@@ -62,7 +74,7 @@ export default function ColecaoView() {
               itens={[
                 { label: "Home", to: "/" },
                 { label: "Todoas as coleções", to: "/colecoes" },
-                { label: "Colecao", to: `/colecoes/${id}` },
+                { label: "Colecao", to: `/colecoes/${colecaoId}` },
               ]}
             />
             <Col>
@@ -71,10 +83,22 @@ export default function ColecaoView() {
               </h3>
               <p className="text-muted mb-0">{colecao.descricao}</p>
               <small className="text-secondary">
-                Criada por <strong>{colecao.dono}</strong> em{" "}
-                {new Date(colecao.dataCriacao).toLocaleDateString("pt-BR")}
+                Criada por <strong>{colecao.dono.usuario}</strong> em{" "}
+                {new Date(colecao.dataCriacao).toLocaleDateString("pt-BR") ||
+                  "Data desconhecida"}
               </small>
             </Col>
+
+            {/* Botões de Share e Likes */}
+            <BotaoLike
+              curtido={curtido}
+              curtidasTotais={curtidasTotais}
+              onClick={toggleLike}
+            />
+            <ShareLinks
+            url={url}
+            title={colecao?.nome}/>
+
             <Col className="text-end">
               <Button
                 variant="outline-secondary"
@@ -84,18 +108,24 @@ export default function ColecaoView() {
                 <ArrowLeft className="me-1" /> Voltar
               </Button>
               <Link
-                to={`/colecoes/${id}/cartas/editar`}
+                to={`/colecoes/${colecaoId}/cartas/editar`}
                 className="btn btn-outline-primary me-2"
               >
                 <PencilSquare className="me-1" /> Editar
               </Link>
-              <Button variant="danger" onClick={handleExcluir}>
+              <Button
+                variant="danger"
+                onClick={() => excluirColecao(colecaoId)}
+              >
                 <Trash3 className="me-1" /> Excluir
               </Button>
             </Col>
           </Row>
 
           <Row className="gy-4">
+            <h3 className="fw-bold text-primary d-flex align-items-center">
+              Cartas da coleção
+            </h3>
             {cartas.length > 0 ? (
               cartas.map((carta) => (
                 <Col xs={12} sm={6} md={4} lg={3} key={carta.cartaID}>
@@ -137,13 +167,41 @@ export default function ColecaoView() {
                 </p>
                 <Button
                   variant="primary"
-                  onClick={() => navigate(`/colecoes/${id}/cartas`)}
+                  onClick={() => navigate(`/colecoes/${colecaoId}/cartas`)}
                 >
                   <PlusCircle className="me-1" />
                   Adicionar cartas
                 </Button>
               </div>
             )}
+            {colecao.dono?._id && (
+              <>
+                <Button
+                  variant="primary"
+                  onClick={() => navigate(`/colecoes/${colecaoId}/editar`)}
+                >
+                  <PlusCircle className="me-1" />
+                  Editar Coleção
+                </Button>
+                <Button
+                  variant="danger"
+                  onClick={() => excluirColecao(colecaoId)}
+                >
+                  <PlusCircle className="me-1" />
+                  Excluir Coleção
+                </Button>
+              </>
+            )}
+          </Row>
+          {/* Comentários */}
+          <Row>
+            <Comentarios
+              comentarios={comentarios}
+              criarComentario={criarComentario}
+              deletarComentario={deletarComentario}
+              curtirComentario={curtirComentario}
+              usuario={usuario}
+            />
           </Row>
         </Container>
       </section>

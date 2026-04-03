@@ -15,6 +15,8 @@ import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
 import forumTopicoRouters from "./routes/forumTopico.routes.js";
 import forumPostRouters from "./routes/forumPost.routes.js";
+import likesRouters from "./routes/likes.routes.js";
+import comentariosRouters from "./routes/comentarios.routes.js";
 
 // necessário para resolver bug do DNS, a partir do node v24.13.1
 dns.setDefaultResultOrder("ipv4first");
@@ -83,6 +85,8 @@ app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
 app.use("/", forumTopicoRouters);
 app.use("/", forumPostRouters);
+app.use("/", likesRouters);
+app.use("/", comentariosRouters);
 app.use(fileUpload({useTempFiles: true}));
 
 // Rotas imagens
