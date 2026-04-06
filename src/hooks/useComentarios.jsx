@@ -31,7 +31,7 @@ export const useComentarios = (targetId, targetTipo, token) => {
       const res = await api.post("/comentarios", {
         conteudo,
         targetId,
-        targetTipo: "colecao",
+        targetTipo,
         parentId,
       });
       setComentarios((prev) => [res.data, ...prev]);
@@ -53,13 +53,15 @@ export const useComentarios = (targetId, targetTipo, token) => {
   };
 
   const curtirComentario = async (id) => {
+    console.log("ID: ", id);
     try {
-      const res = await api.post(`/comentarios/${id}/like`, {});
+      const res = await api.post(`/comentarios/${id}/likes`, {});
 
+      //likes: Array(res.data.totalLikes).fill(0)
       setComentarios((prev) =>
         prev.map((c) =>
           c._id === id
-            ? { ...c, likes: Array(res.data.totalLikes).fill(0) }
+            ? { ...c, curtidasTotais: res.data.curtidasTotais }
             : c,
         ),
       );

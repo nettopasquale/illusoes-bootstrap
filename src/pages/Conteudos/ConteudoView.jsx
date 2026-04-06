@@ -1,13 +1,63 @@
-import { Container, Col, Row, Image } from "react-bootstrap";
+import { Container, Col, Row, Image, Button } from "react-bootstrap";
+import {
+  ArrowLeft,
+  PlusCircle,
+  PencilSquare,
+  Trash3,
+  Collection,
+} from "react-bootstrap-icons";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useConteudo } from "../../hooks/useConteudo";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+import { useParams, Link } from "react-router-dom";
+import { useLike } from "../../hooks/useLikes";
+import { useComentarios } from "../../hooks/useComentarios";
+import Comentarios from "../../components/Comentarios/Comentarios";
+import BotaoLike from "../../components/BotaoLike/BotaoLike";
+import ShareLinks from "../../components/ShareLinks/ShareLinks";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
 
 export default function ConteudoView() {
-  const { conteudo, erro } = useConteudo();
-  console.log("Conteúdo pego: ", conteudo);
+  const {tipo: tipoParam, id} = useParams();
 
-  if (erro) return (
+  const {usuario, token}=useContext(AuthContext);
+  const { 
+    conteudo, 
+    setConteudo, 
+    erro,
+    navigate, 
+  } = useConteudo(id);
+
+  const isDono = usuario?._id === conteudo?.autor?._id;
+
+  console.log("Tipo Param: ", tipoParam);
+  console.log("Id: ", id);
+  console.log("Usuário: ", usuario);
+  console.log("É dono: ", isDono);
+
+
+  //url para compartilhar
+  const url = `${window.location.origin}/conteudos/${tipoParam}/${id}`;
+  console.log("URL: ", url)
+
+    //hook dos likes
+  const { 
+    curtido, 
+    curtidasTotais, 
+    toggleLike 
+  } = useLike(id,"conteudo",token);
+  
+    //hook dos comentários
+  const {
+    comentarios,
+    criarComentario,
+    deletarComentario,
+    curtirComentario,
+  } = useComentarios(id,"conteudo",token);
+
+  if (erro)
+    return (
       <LayoutGeral>
         <section id="conteudo" className="block evento-block">
           <Container className="my-5">
@@ -25,8 +75,9 @@ export default function ConteudoView() {
         </section>
       </LayoutGeral>
     );
-  if (!conteudo) return (
-          <LayoutGeral>
+  if (!conteudo)
+    return (
+      <LayoutGeral>
         <section id="conteudo" className="block evento-block">
           <Container className="my-5">
             <Row className="justify-content-center">
@@ -41,7 +92,8 @@ export default function ConteudoView() {
             </Row>
           </Container>
         </section>
-      </LayoutGeral>);
+      </LayoutGeral>
+    );
 
   return (
     <LayoutGeral>
@@ -55,6 +107,49 @@ export default function ConteudoView() {
                 { label: "Conteudo" },
               ]}
             />
+
+            <Row>
+              {/* Botões de Share e Likes */}
+              <BotaoLike
+                curtido={curtido}
+                curtidasTotais={curtidasTotais}
+                onClick={toggleLike}
+              />
+
+              <ShareLinks url={url} title={conteudo?.titulo} />
+
+              {/* Voltar/Editar/Excluir */}
+              <Col className="text-end">
+                <Button
+                  variant="outline-secondary"
+                  className="me-2"
+                  onClick={() => navigate("/conteudos")}
+                >
+                  <ArrowLeft className="me-1" /> Voltar
+                </Button>
+
+                <Button
+                  variant="outline-secondary"
+                  className="me-2"
+                  onClick={() =>
+                    navigate(`/conteudos/${tipoParam}/${id}/editar`)
+                  }
+                >
+                  Editar
+                </Button>
+
+                {/* <Link
+            to={`/conteudos/${tipoParam}/${id}/editar`}
+            className="btn btn-outline-primary me-2"
+            >
+              <PencilSquare className="me-1" /> Editar
+            </Link> */}
+                <Button variant="danger" onClick={() => excluirConteudo()}>
+                  <Trash3 className="me-1" /> Excluir
+                </Button>
+              </Col>
+            </Row>
+
             <Col md={10}>
               <h1 className="fw-bold mb-2 text-start">{conteudo.titulo}</h1>
               <h5 className="text-muted mb-4 text-start">
@@ -109,6 +204,7 @@ export default function ConteudoView() {
               <div className="my-3 text-muted text-start">
                 Tags: <strong>{conteudo.tipo}</strong>
               </div>
+
               {conteudo.thumbs && (
                 <Image
                   src={conteudo.thumbs}
@@ -118,19 +214,22 @@ export default function ConteudoView() {
                   alt="imagem do conteudo"
                 />
               )}
-              {/* <Image
-                  src={eldlich}
-                  width={700}
-                  height={200}
-                  className="img-fluid rounded mb-3"
-                  alt="imagem do conteudo"
-                /> */}
               <div
                 className="lead conteudo-html text-muted"
                 style={{ whiteSpace: "pre-line" }}
-                dangerouslySetInnerHTML={{ __html: conteudo.conteudo }}
+                dangerouslySetInnerHTML={{ __html: conteudo.texto }}
               ></div>
             </Col>
+          </Row>
+          {/* Comentários */}
+          <Row>
+            <Comentarios
+              comentarios={comentarios}
+              criarComentario={criarComentario}
+              deletarComentario={deletarComentario}
+              curtirComentario={curtirComentario}
+              usuario={usuario}
+            />
           </Row>
         </Container>
       </section>
