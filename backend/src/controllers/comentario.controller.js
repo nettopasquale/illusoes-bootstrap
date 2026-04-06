@@ -1,43 +1,40 @@
 import ComentarioModel from "../models/comentario.model.js";
 
 //criar o comentário
-export const criarComentario = async(req, res) =>{
-    try{
-        const {conteudo, targetId, targetTipo, parentId} = req.body;
+export const criarComentario = async (req, res) => {
+  try {
+    const { conteudo, targetId, targetTipo, parentId } = req.body;
 
-        const comentario = await ComentarioModel.create({
-            conteudo,
-            autor: req.userId,
-            targetId,
-            targetTipo,
-            parentId: parentId || null,
-        });
-        const comentarioPopulado = await comentario.populate(
-          "autor",
-          "usuario",
-        );
+    const comentario = await ComentarioModel.create({
+      conteudo,
+      autor: req.userId,
+      targetId,
+      targetTipo,
+      parentId: parentId || null,
+    });
+    const comentarioPopulado = await comentario.populate("autor", "usuario");
 
-        res.status(201).json(comentarioPopulado);
-    }catch(error){
-        console.error("Erro ao criar comentário: ", error);
-        res.status(500).json({error: error.message})
-    }
-}
+    res.status(201).json(comentarioPopulado);
+  } catch (error) {
+    console.error("Erro ao criar comentário: ", error);
+    res.status(500).json({ error: error.message });
+  }
+};
 
 //listar comentários
 export const listarComentarios = async (req, res) => {
   try {
     const { targetId } = req.params;
-    const {targetTipo} = req.query;
-    console.log("Filtro aplicado:", { targetId, targetTipo });
+    const { targetTipo } = req.query;
+    // console.log("Filtro aplicado:", { targetId, targetTipo });
 
     const comentarios = await ComentarioModel.find({
       targetId,
-      targetTipo
+      targetTipo,
     })
-    .populate("autor", "usuario")
-    .sort({createdAt: -1})
-    console.log("Comentarios Backend: ", comentarios);
+      .populate("autor", "usuario")
+      .sort({ createdAt: -1 });
+    // console.log("Comentarios Backend: ", comentarios);
     res.status(201).json(comentarios);
   } catch (error) {
     console.error("Erro ao listar comentários: ", error);
@@ -48,7 +45,8 @@ export const listarComentarios = async (req, res) => {
 //curtir comentário
 export const toggleLikeComentario = async (req, res) => {
   try {
-    const comentario = await ComentarioModel.findById(req.params.id);
+    const comentario = await ComentarioModel.findById(req.params.targetId);
+    console.log("Comentario a ser curtido: ", comentario);
 
     if (!comentario) {
       return res.status(404).json({ error: "Comentário não encontrado" });
@@ -61,26 +59,25 @@ export const toggleLikeComentario = async (req, res) => {
       });
     }
 
-    const jaCurtiu = comentario.likes.includes(req.userId);
+    const jaCurtiu = comentario.curtidas.includes(req.userId);
 
     if (jaCurtiu) {
-      comentario.likes.pull(req.userId);
+      comentario.curtidas.pull(req.userId);
     } else {
-      comentario.likes.push(req.userId);
+      comentario.curtidas.push(req.userId);
     }
 
     await comentario.save();
 
     res.json({
-      liked: !jaCurtiu,
-      totalLikes: comentario.likes.length,
+      curtiu: !jaCurtiu,
+      curtidasTotais: comentario.curtidas.length,
     });
   } catch (error) {
     console.error("Erro ao curtir comentários: ", error);
     res.status(500).json({ error: error.message });
   }
 };
-
 
 //deletar comentário
 export const deletarComentario = async (req, res) => {

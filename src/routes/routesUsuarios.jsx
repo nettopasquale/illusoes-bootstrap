@@ -3,8 +3,8 @@ import { MeusConteudos } from "../pages/Conteudos/MeusConteudos";
 import DashboardUsuario from "../pages/DashBoardUsuario/DashBoardUsuario";
 import { Route } from "react-router-dom";
 import { PerfilUsuario } from "../pages/PerfilUsuario/PerfilUsuario";
-import { EditarConteudo } from "../pages/Conteudos/EditarContudo";
-import ColecaoLista from "../pages/Colecoes/ColecaoLista"
+import { EditarConteudo } from "../pages/Conteudos/EditarConteudo";
+import ColecaoLista from "../pages/Colecoes/ColecaoLista";
 import MarketplaceLista from "../pages/Marketplace/MarketplaceLista";
 import ForumUserProfile from "../pages/Forum/ForumUserProfile";
 
@@ -17,8 +17,8 @@ export const usuarioRoutes = [
       </PrivateRoute>
     }
     key="usuario-id"
-    />,
-    
+  />,
+
   <Route
     path="/userProfile"
     element={
@@ -28,7 +28,7 @@ export const usuarioRoutes = [
     }
     key="usuario-profile"
   />,
-  
+
   <Route
     path="/userForumProfile"
     element={
@@ -37,8 +37,8 @@ export const usuarioRoutes = [
       </PrivateRoute>
     }
     key="usuario-forum-profile"
-    />,
-    
+  />,
+
   <Route
     path="/user/conteudos/:tipo"
     element={
@@ -57,7 +57,7 @@ export const usuarioRoutes = [
     }
     key="usuario-editar-conteudos"
   />,
-   <Route
+  <Route
     path="/user/colecoes"
     element={
       <PrivateRoute>
@@ -66,7 +66,7 @@ export const usuarioRoutes = [
     }
     key="usuario-colecoes"
   />,
-   <Route
+  <Route
     path="/user/marketplace/meus-anuncios"
     element={
       <PrivateRoute>
@@ -75,5 +75,4 @@ export const usuarioRoutes = [
     }
     key="usuario-anuncios"
   />,
-
 ];

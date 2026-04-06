@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { ref } from "yup";
 
 const LikeSchema = new mongoose.Schema(
   {

@@ -20,12 +20,7 @@ import api from "../../services/api";
 
 export default function CriarColecao() {
   const { colecaoId } = useParams();
-  // const [nome, setNome] = useState("");
-  // const [descricao, setDescricao] = useState("");
-  // const [capa, setCapa] = useState("");
   const [uploadingCapa, setUploadingCapa] = useState(false);
-  // const [mensagem, setMensagem] = useState(null);
-  // const [erro, setErro] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
   const { usuario } = useContext(AuthContext);
@@ -43,7 +38,7 @@ export default function CriarColecao() {
     mensagem, 
     erro, 
     navigate, 
-    handleCapa, publicarColecao} = useColecao(colecaoId);
+    handleCapa, publicarColecao} = useColecao(colecaoId, modoEdicao);
 
   //salva a imagem na variavel capa
   //envia a imagem para o cloudinary
