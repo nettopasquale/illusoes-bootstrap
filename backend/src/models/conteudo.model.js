@@ -4,7 +4,7 @@ import mongoose, {Schema} from "mongoose";
 const conteudoModel = new Schema({
     titulo: { type: String, required: true },
     subTitulo: { type: String, required: true },
-    conteudo: { type: String, required: true },
+    texto: { type: String, required: true },
     thumbs: { type: String, required: false },
     imagens: [{ type: String, default:[""], required: false }],
     autor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

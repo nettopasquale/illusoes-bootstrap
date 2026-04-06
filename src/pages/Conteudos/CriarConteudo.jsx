@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import { cloudinaryUpload } from "../../utils/cloudinaryUpload";
+import { useConteudo } from "../../hooks/useConteudo";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import CreatableSelect from "react-select/creatable";
+import {ModalEditarConteudo} from "../../components/ModalEditarConteudo/ModalEditarConteudo"
 import ReactQuill from "react-quill";
-import axios from "axios";
-import api from "../../services/api";
 import DatePicker from "react-datepicker";
+import api from "../../services/api";
 import "react-quill/dist/quill.snow.css";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -20,177 +21,71 @@ const tipoOptions = [
 ];
 
 export const CriarConteudo = () => {
-  const navigate = useNavigate();
-  // const quillRef = useRef(null);
-
-  const [titulo, setTitulo] = useState("");
-  const [subTitulo, setSubTitulo] = useState("");
-  const [tipo, setTipo] = useState(null);
-  const [tags, setTags] = useState([]);
-  const [thumbs, setThumbs] = useState(null);
-  const [uploadingThumb, setUploadingThumb] = useState(false);
+  const {id, tipo: tipoParams} = useParams();
   const [imagens, setImagens] = useState(null);
-  const [conteudo, setConteudo] = useState("");
-  const [mensagem, setMensagem] = useState(null);
-  const [erro, setErro] = useState(null);
-  const [dataEvento, setDataEvento] = useState(null);
-  const [valorEntrada, setValorEntrada] = useState("");
-  // const { handleImageUpload } = useReactQuillFirebase();
+  const [uploadingImagens, setUploadingImagens] = useState(false);
 
-  const handleThumb = async (e) => {
+  const modoEdicao = !!id;
+  console.log("É edição: ", modoEdicao);
+  console.log("id: ", id);
+  console.log("Tipo Params: ", tipoParams);
+  console.log("Params: ", useParams());
+  const {
+    titulo,
+    subTitulo,
+    tipo,
+    tags,
+    thumbs,
+    erro,
+    mensagem,
+    dataEvento,
+    valorEntrada,
+    texto,
+    handleThumb,
+    uploadingThumb,
+    navigate,
+    setTitulo,
+    setSubTitulo,
+    setTipo,
+    setTags,
+    setThumbs,
+    setTexto,
+    setDataEvento,
+    setValorEntrada,
+    publicarEditarConteudo,
+    excluirConteudo,
+  } = useConteudo(id, modoEdicao);
+
+  const handleImagens = async(e) => {
     const file = e.target.files[0]
     console.log(file);
 
     if (!file) return;
-    setUploadingThumb(true);
+    setUploadingImagens(true);
     try {
-      const url = await cloudinaryUpload(file, "thumbs");
-      console.log("URL da thumb:", url); // 👈 teste
+      const url = await cloudinaryUpload(file, "imagesConteudo");
+      console.log("URL das imagens:", url); // 👈 teste
 
-      setThumbs(url);
+      setImagens(url);
     } catch (err) {
-      console.error("Erro ao subir thumb:", err);
+      console.error("Erro ao subir imagens:", err);
     } finally {
-      setUploadingThumb(false);
+      setUploadingImagens(false);
     }
   };
 
-  // const handleThumb = async (e) => {
-  //   const file = e.target.files[0];
-  //   console.log(file);
-  //   if (!file) return;
-  //   setUploadingThumb(true);
-  //   try {
-  //     const thumb = new FormData();
-  //     thumb.append("file", file);
-  //     thumb.append("upload_preset", "ilm-upload-preset");
-  //     thumb.append("folder", "thumbs");
-  //     thumb.append("cloud_name", cloudName);
-
-  //     const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
-
-  //     const res = await cloudinaryAPI.post(url, thumb);
-
-  //     console.log(res);
-  //     setThumbs(thumb);
-  //     // setThumbs(file);
-  //     return res.data.secure_url;
-
-  //   } catch (err) {
-  //     console.error("Erro ao subir thumb:", err);
-  //   } finally {
-  //     setUploadingThumb(false);
-  //   }
-  // };
-
-  // const handleImagens = (e) => {
-  //   setImagens(e.target.files[0]);
-  // };
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   if (!tipo) return setErro("Escolha um tipo de conteúdo");
-  //   if (!thumbs) {
-  //     alert("Aguarde o upload da thumb terminar.");
-  //     return;
-  //   }
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("titulo", titulo);
-  //     formData.append("subTitulo", subTitulo);
-  //     formData.append("conteudo", conteudo);
-  //     if (imagens)
-  //       formData.append(
-  //         "imagem",
-  //         JSON.stringify(imagens.length ? imagens.map((img) => img.value) : []),
-  //       );
-  //     formData.append(
-  //       "tags",
-  //       JSON.stringify(tags.length ? tags.map((t) => t.value) : []),
-  //     );
-  //     formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
-
-  //     //transformar String em Number
-  //     const valorLimpo = valorEntrada
-  //       .replace("R$", "")
-  //       .trim()
-  //       .replace(",", ".");
-  //     const valorNumerico = parseFloat(valorLimpo);
-
-  //     // depois no formData:
-  //     formData.append("valorEntrada", isNaN(valorNumerico) ? 0 : valorNumerico);
-
-  //     const token = localStorage.getItem("token");
-
-  //     console.log("Enviando dados:", formData);
-
-  //     const result = await axios.post(
-  //       `https://illusoes-bootstrap.onrender.com/conteudos/${tipo.value}`,
-  //       formData,
-  //       thumbs,
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       },
-  //     );
-
-  //     console.log("Resposta do servidor:", result.data);
-  //     console.log("Thumb no submit:", thumbs);
-
-  //     setMensagem(`Publicação realizada com sucesso! ${result.data}`);
-  //     setErro(null);
-  //     setTimeout(() => navigate("/"), 2000);
-  //   } catch (err) {
-  //     console.error(err);
-  //     console.log(`Erro: ${err.data}`);
-  //     setErro("Erro ao publicar conteúdo");
-  //   }
-  // };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!tipo) return setErro("Escolha um tipo de conteúdo");
-    // teste de thumb,
-    if (!thumbs) {
-      alert("Aguarde o upload da thumb terminar!");
-      return;
-    }
-
-    //formatar valor de entrada, caso exista
-    const valorLimpo = valorEntrada.replace("R$", "").trim().replace(",", ".");
-    const valorNumerico = parseFloat(valorLimpo);
-
-    const token = localStorage.getItem("token");
-
-    try {
-      const payload = {
-        titulo,
-        subTitulo,
-        tipo: tipo.value,
-        tags: JSON.stringify(tags.length ? tags.map((t) => t.value) : []),
-        conteudo,
-        dataEvento: dataEvento ? dataEvento.toISOString() : "",
-        valorEntrada: isNaN(valorNumerico) ? 0 : valorNumerico,
-        thumbs,
-      };
-      const result = await api.post(
-        `/conteudos/${tipo.value}`,payload
+  //setar automaticamente o tipo
+  useEffect(()=>{
+    if(tipoParams && !modoEdicao){
+      const tipoEncontrado = tipoOptions.find(
+        (t)=> t.value === tipoParams
       );
 
-      console.log("dados enviados:", payload);
-
-      setMensagem(`Publicação realizada com sucesso! ${result.data}`);
-      setErro(null);
-      setTimeout(() => navigate("/"), 2000);
-    } catch (err) {
-      console.error(err);
-      console.log(`Erro: ${err.data}`);
-      setErro("Erro ao publicar conteúdo");
+      if(tipoEncontrado){
+        setTipo(tipoEncontrado);
+      }
     }
-  };
+  },[tipoParams, modoEdicao])
 
   // TOOLBAR CUSTOMIZADA DO QUILL
   // const modules = useMemo(
@@ -223,10 +118,12 @@ export const CriarConteudo = () => {
             { label: "Publicar" },
           ]}
         />
-        <h2 className="mb-4 fs-1 fw-bold">Publicar Conteúdo</h2>
+        <h2 className="mb-4 fs-1 fw-bold">
+          {modoEdicao ? `Editar ${tipoParams}` : `Publicar ${tipoParams}`}
+        </h2>
         {mensagem && <Alert variant="success">{mensagem}</Alert>}
         {erro && <Alert variant="danger">{erro}</Alert>}
-        <Form onSubmit={handleSubmit} encType="multipart/form-data">
+        <Form onSubmit={publicarEditarConteudo} encType="multipart/form-data">
           <Row>
             <Col md={6}>
               <Form.Group className="mb-4 px-5 justify-content-center align-items-center">
@@ -273,6 +170,7 @@ export const CriarConteudo = () => {
                   className="w-100"
                   style={{ width: "250px" }}
                   placeholder="Escolha o tipo"
+                  isDisabled={!!tipoParams && !modoEdicao}
                 />
               </Form.Group>
             </Col>
@@ -363,8 +261,8 @@ export const CriarConteudo = () => {
             </Form.Label>
             <ReactQuill
               // ref={quillRef}
-              value={conteudo}
-              onChange={setConteudo}
+              value={texto}
+              onChange={setTexto}
               // modules={modules}
               style={{
                 height: "300px",
@@ -384,13 +282,23 @@ export const CriarConteudo = () => {
             >
               Cancelar
             </Button>
-            <Button
-              className="p-5 fw-bold fs-3 bg-black w-50"
-              type="submit"
-              disabled={uploadingThumb}
-            >
-              {uploadingThumb ? "Enviando imagem..." : "Publicar"}
-            </Button>
+            {modoEdicao ? (
+              <Button
+                className="p-5 fw-bold fs-3 bg-black w-50"
+                type="submit"
+                disabled={uploadingThumb}
+              >
+                {uploadingThumb ? "Enviando imagem..." : "Editar"}
+              </Button>
+            ) : (
+              <Button
+                className="p-5 fw-bold fs-3 bg-black w-50"
+                type="submit"
+                disabled={uploadingThumb}
+              >
+                {uploadingThumb ? "Enviando imagem..." : "Publicar"}
+              </Button>
+            )}
           </div>
         </Form>
       </Container>

@@ -12,7 +12,7 @@ export const useListarConteudo = (tipo) => {
   useEffect(() => {
     const buscarConteudo = async () => {
       try {
-        const response = await api.get(`/${tipo}`);
+        const response = await api.get(`/conteudos/${tipo}`);
         setConteudos(response.data);
       } catch (error) {
         setErro("Erro ao buscar conteúdo.");
