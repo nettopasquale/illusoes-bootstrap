@@ -1,128 +1,80 @@
 import { useState, useEffect} from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
+import {
+  ArrowLeft,
+  PlusCircle,
+  PencilSquare,
+  Trash3,
+  Collection,
+} from "react-bootstrap-icons";
 import CreatableSelect from "react-select/creatable";
 import ReactQuill from "react-quill";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { ModalEditarConteudo } from "../../components/ModalEditarConteudo/ModalEditarConteudo";
 import DatePicker from "react-datepicker";
-import axios from "axios";
-import api from "../../services/api";
 import "react-quill/dist/quill.snow.css";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+import { useContext } from "react";
+import { AuthContext } from "../../context/AuthContext";
+import { useConteudo } from "../../hooks/useConteudo";
 
 export const EditarConteudo = () => {
-  const { id, tipo } = useParams();
-  const navigate = useNavigate();
-
-  const [titulo, setTitulo] = useState("");
-  const [subTitulo, setSubTitulo] = useState("");
-  const [tags, setTags] = useState([]);
-  const [thumbs, setThumbs] = useState(null);
+  const { id, tipo:tipoParams } = useParams();
   const [imagems, setImagens] = useState(null);
-  const [conteudo, setConteudo] = useState("");
-  const [tipoSelecionado, setTipoSelecionado] = useState({
-    value: tipo,
-    label: tipo,
-  });
+  const [uploadingImagens, setUploadingImagens] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-  const [dataEvento, setDataEvento] = useState(null);
-  const [valorEntrada, setValorEntrada] = useState("");
-  const [mensagem, setMensagem] = useState(null);
-  const [erro, setErro] = useState(null);
 
-  useEffect(() => {
-    const carregarConteudo = async () => {
-      try {
-        const response = await api.get(`/conteudos/${tipo}/${id}`);
-        const dados = response.data;
+  const modoEdicao = !!id;
+  console.log("É edição: ", modoEdicao);
+  console.log("id: ", id);
+  console.log("Tipo Params: ", tipoParams);
+  console.log("Params: ", useParams());
 
-        setTitulo(dados.titulo);
-        setSubTitulo(dados.subTitulo);
-        setTipoSelecionado({ value: dados.tipo, label: dados.tipo });
-        setConteudo(dados.conteudo);
-        setDataEvento(dados.dataEvento ? new Date(dados.dataEvento) : null);
-        setValorEntrada(
-          dados.valorEntrada != null 
-          ? dados.valorEntrada.toString() 
-          : ""
-        );
+  const {
+    titulo,
+    subTitulo,
+    tipo,
+    tags,
+    thumbs,
+    erro,
+    mensagem,
+    dataEvento,
+    valorEntrada,
+    texto,
+    handleThumb,
+    uploadingThumb,
+    navigate,
+    setTitulo,
+    setSubTitulo,
+    setTipo,
+    setTags,
+    setThumbs,
+    setTexto,
+    setDataEvento,
+    setValorEntrada,
+    publicarEditarConteudo,
+    excluirConteudo,
+  } = useConteudo(id, modoEdicao);
 
-        setTags(dados.tags?.map((tag) => ({ value: tag, label: tag })) || []);
+  //setar automaticamente o tipo
+  useEffect(()=>{
+    if(tipoParams && !modoEdicao){
+      const tipoEncontrado = tipoOptions.find(
+        (t)=> t.value === tipoParams
+      );
 
-      } catch (err) {
-        console.error(err);
-        setErro("Erro ao carregar o conteúdo para edição");
+      if(tipoEncontrado){
+        setTipo(tipoEncontrado);
       }
-    };
-
-    carregarConteudo();
-  }, [id]);
-
-
-  //edição de conteúdo
-  const handleSalvarAlteracoes = async (e) => {
-    e.preventDefault();
-    if (!tipoSelecionado) return setErro("Escolha um tipo de conteúdo");
-    try {
-      const formData = new FormData();
-      formData.append("titulo", titulo);
-      formData.append("subTitulo", subTitulo);
-      formData.append("tags", tags.length ? tags.map((tag) => tag.value) : []);
-      formData.append("conteudo", conteudo);
-      formData.append("dataEvento", dataEvento ? dataEvento.toISOString() : "");
-      
-      //transformar String em Number
-      let valorLimpo =
-      typeof valorEntrada === "string"
-      ? valorEntrada.replace("R$", "").trim().replace(",", ".")
-      : valorEntrada;
-      
-      const valorNumerico = parseFloat(valorLimpo);
-      
-      formData.append("valorEntrada", isNaN(valorNumerico) ? 0 : valorNumerico);
-      formData.append("thumbs", thumbs);
-
-      console.log(formData);
-
-      const token = localStorage.getItem("token");
-
-      await api.put(`/conteudos/${tipoSelecionado.value}/${id}`,formData);
-
-      setMensagem(`Alterações realizadas com sucesso!`);
-      setErro("");
-      setTimeout(() => navigate("/dashboard"), 2000);
-    } catch (err) {
-      console.error(err);
-      setErro("Erro ao publicar conteúdo");
     }
-  };
+  },[tipoParams, modoEdicao]);
 
-  // Excluir conteúdo
-  const handleConfirmarExclusao = async () => {
-    try {
-      const token = localStorage.getItem("token");
-
-      await api.delete(`/conteudos/${tipoSelecionado.value}/${id}`);
-
-      setMensagem("Conteúdo excluído com sucesso!");
-      setErro(null);
+    const handleConfirmarExclusao = async () => {
+      await excluirConteudo();
       setShowConfirmDelete(false);
-      setTimeout(() => navigate("/usuario"), 2000);
-    } catch (err) {
-      console.error(err);
-      setErro("Erro ao excluir conteúdo");
-    }
-  };
-
-  const handleThumb = (e) => {
-    setThumbs(e.target.file);
-  };
-
-  //   const handleImagens = (e) => {
-  //   setImagens(e.target.files[0]);
-  // };
+    };
 
   // TOOLBAR CUSTOMIZADA DO QUILL
   // const modules = useMemo(
@@ -157,11 +109,11 @@ export const EditarConteudo = () => {
           ]}
         />
         <h2 className="mb-4 fs-1 fw-bold mb-2">
-          Editar {tipoSelecionado?.label || "conteúdo"}
+          Editar {tipo?.label || "conteúdo"}
         </h2>
         {mensagem && <Alert variant="success">{mensagem}</Alert>}
         {erro && <Alert variant="danger">{erro}</Alert>}
-        <Form onSubmit={handleSalvarAlteracoes} encType="multipart/form-data">
+        <Form onSubmit={publicarEditarConteudo} encType="multipart/form-data">
           <Row>
             <Col md={6}>
               <Form.Group className="mb-4 px-5">
@@ -209,9 +161,9 @@ export const EditarConteudo = () => {
                     { value: "evento", label: "Evento" },
                     { value: "campeonato", label: "Campeonato" },
                   ]}
-                  onChange={setTipoSelecionado}
+                  value={tipo}
+                  onChange={setTipo}
                   className="w-100"
-                  value={tipoSelecionado}
                   placeholder="Escolha o tipo"
                 />
               </Form.Group>
@@ -224,17 +176,17 @@ export const EditarConteudo = () => {
                 </Form.Label>
                 <CreatableSelect
                   isMulti
+                  value={tags}
                   onChange={setTags}
                   className="w-100"
                   style={{ fontSize: "1.4rem" }}
-                  value={tags}
                   placeholder="Adicione tags"
                 />
               </Form.Group>
             </Col>
           </Row>
 
-          {["evento", "campeonato"].includes(tipoSelecionado?.value) && (
+          {["evento", "campeonato"].includes(tipo?.value) && (
             <Row>
               <Col md={6}>
                 <Form.Group className="my-4 px-5">
@@ -281,34 +233,20 @@ export const EditarConteudo = () => {
             <Form.Control
               type="file"
               accept="image/*"
+              name="thumbs"
               className="w-100"
               style={{ height: "30px" }}
-              name="thumbs"
               onChange={handleThumb}
             />
-            <Form.Text className="text-muted">
-              Você pode substituir a imagem atual.
-            </Form.Text>
           </Form.Group>
-
-          {/* REVER AQUI GALERIA */}
-          {/* <Form.Group className="mb-4 px-5">
-            <Form.Label className="fs-3 fw-bold text-start w-100">
-              Imagens da Galeria
-            </Form.Label>
-            <Form.Control
-              type="file"
-              multiple
-              accept="image/*"
-              className="w-100"
-              style={{ height: "30px" }}
-              value={imagems}
-              onChange={setImagens}
+          {/* prévia da thumb */}
+          {thumbs && (
+            <img
+              src={thumbs}
+              alt="preview"
+              style={{ width: "200px", marginTop: "10px" }}
             />
-            <Form.Text className="text-muted">
-              Você pode substituir a imagem atual.
-            </Form.Text>
-          </Form.Group> */}
+          )}
 
           <Form.Group className="mb-4 p-5">
             <Form.Label className="fs-3 fw-bold text-start w-100">
@@ -316,9 +254,9 @@ export const EditarConteudo = () => {
             </Form.Label>
             <ReactQuill
               // ref={quillRef}
-              value={conteudo}
-              onChange={setConteudo}
               // modules={modules}
+              value={texto}
+              onChange={setTexto}
               className="w-100"
               style={{
                 height: "300px",
@@ -342,32 +280,40 @@ export const EditarConteudo = () => {
               Salvar Alterações
             </Button>
           </div>
+          <div className="d-flex justify-content-between mt-4 gap-5">
+            <Button
+              className="p-5 fw-bold fs-3 bg-danger w-50"
+              onClick={() => excluirConteudo()}
+            >
+              Excluir
+            </Button>
+          </div>
         </Form>
       </Container>
 
       {/* Modal */}
-      <ModalEditarConteudo
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        onSave={handleSalvarAlteracoes}
-        onDelete={() => {
-          setShowModal(false);
-          setShowConfirmDelete(true);
-        }}
-        titulo={titulo}
-        setTitulo={setTitulo}
-        subTitulo={subTitulo}
-        setSubTitulo={setSubTitulo}
-        tags={tags}
-        setTags={setTags}
-        thumb={thumbs}
-        setThumb={setThumbs}
-        conteudo={conteudo}
-        setConteudo={setConteudo}
-      />
+      {modoEdicao && (
+        <ModalEditarConteudo
+          show={showModal}
+          onClose={() => setShowModal(false)}
+          onDelete={() => {
+            setShowModal(false);
+            setShowConfirmDelete(true);
+          }}
+          titulo={titulo}
+          setTitulo={setTitulo}
+          setSubTitulo={setSubTitulo}
+          tags={tags}
+          setTags={setTags}
+          thumb={thumbs}
+          setThumb={setThumbs}
+          conteudo={texto}
+          setConteudo={setTexto}
+        />
+      )}
 
       {/* Modal de confirmação de exclusão simples */}
-      {showConfirmDelete && (
+      {modoEdicao && showConfirmDelete && (
         <ModalEditarConteudo
           show={showConfirmDelete}
           onClose={() => setShowConfirmDelete(false)}
