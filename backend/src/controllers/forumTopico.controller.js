@@ -1,149 +1,178 @@
-import ForumTopico from "../models/forumTopico.model.js";
-import ForumPost from "../models/forumPost.model.js";
-import forumCategoria from "../models/forumCategoria.model.js";
-import forumSubForum from "../models/forumSubForum.model.js";
+import ForumTopico from "../models/forumTopico.model";
+import ForumPost from "../models/forumPost.model";
 
-//criar novo Tópico
-export const criarTopico = async (req, res) => {
+//Lista tópicos com paginação -> GET /forum/topicos
+export const buscarTopicos = async (req, res) => {
   try {
+    const pagina = parseInt(req.query.pagina) || 1;
+    const limite = parseInt(req.query.limite) || 20;
+    const categoria = req.query.categoria || null;
+    const sort = req.query.sort || "recente"; // recente | curtidas | postagens
 
-    const { titulo, categoriaId, subForumId, conteudoInicial } = req.body;
+    const filter = { isDeleted: false };
+    if (categoria) filter.categoria = categoria;
 
-    //verifica se categoria existe
-    const categoria = await forumCategoria.findById(categoriaId);
-    if (!categoria) return res.status(404).json({ message: "Categoria não encontrada" });
+    const sortMap = {
+      recente: { createdAt: -1 },
+      curtidas: { curtidas: -1 },
+      postagens: { "postagens.length": -1 },
+    };
 
-    //caso tenha subForum
-    if (subForumId) {
-      const subForum = await forumSubForum.findById(subForumId);
-      if (!subForum) return res.status(404).json({ message: "Subfórum não encontrado" });
-    }
+    const topicos = await ForumTopico.find(filter)
+      .populate("autor", "nome imagemProfile")
+      .select("-postagens.denuncias -denuncias")
+      .sort(sortMap[sort] || { createdAt: -1 })
+      .skip((page - 1) * limite)
+      .limit(limite);
 
-    //criação do Tópico
-    const novoTopico = new ForumTopico({
-      titulo,
-      criador: req.user.id,
-      categoriaId: categoria,
-      subForumId: subForumId || null,
-      dataCriacao: new Date(),
-      status: "ativo",
-    })
+    const total = await ForumTopico.countDocuments(filter);
 
-    await novoTopico.save();
-
-    //criar o primeiro post
-    if (conteudoInicial && conteudoInicial.trim() !== "") {
-      const primeiroPost = new ForumPost({
-        topicoId: novoTopico._id,
-        autor: req.user.id,
-        conteudo: conteudoInicial,
+    res
+      .status(201)
+      .json({
+        topicos,
+        total,
+        pagina,
+        totalPaginas: Math.ceil(total / limite),
       });
-
-      await primeiroPost.save();
-
-      //vincula ao tópico
-      novoTopico.posts.push(primeiroPost._id);
-      await novoTopico.save();
-    }
-    res.status(201).json(novoTopico);
-
-  } catch (erro) {
-    res.status(500).json({ message: "Erro ao criar tópico", erro });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar tópicos", error: err.message });
   }
 };
 
-
-// Listar tópicos
-export const listarTopicos = async (req, res) => {
-  try {
-    const { categoriaId, subForumId } = req.query;
-    const filtro = {};
-
-    if (categoriaId) filtro.categoria = categoriaId;
-    if (subForumId) filtro.subforum = subForumId;
-
-    const topicos = await ForumTopico.find(filtro)
-      .populate("criador", "nome")
-      .populate("ultimoPost.usuarioId", "nome")
-      .sort({ ultimaPostagem: -1 }); // ver aqui
-
-    res.json(topicos);
-
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao listar tópicos", error });
-  }
-}
-
-// Buscar tópicos por Id
-export const buscarTopicosPorId = async (req, res) => {
+//Detalha um tópico - GET /forum/topicos/:id -
+export const buscarTopicosPorID = async (req, res) => {
   try {
     const topico = await ForumTopico.findById(req.params.id)
-      .populate("criador", "nome")
-      .populate({
-        path: "posts",
-        populate: { path: "autor", select: "nome" },
-      });
+      .populate("autor", "nome imagemProfile")
+      .populate("postagens.autor", "nome avatar");
 
-    if (!topico) return res.status(404).json({ message: "Tópico não encontrado" });
+    if (!topico || topico.deletado) {
+      return res.status(404).json({ message: "Tópico não encontrado" });
+    }
 
-    //atualizar contagem de visualizaçoes
+    // Incrementa views
     topico.visualizacoes += 1;
     await topico.save();
 
-    res.json(topico);
-  } catch (erro) {
-    res.status(500).json({ message: "Erro ao buscar tópico", erro });
+    res.status(201).json(topico);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Erro ao buscar tópico", error: err.message });
   }
 };
 
-//editar tópico
+//Criar Tópico - POST /forum/topicos
+export const criarTopico = async (req, res) => {
+  try {
+    const { titulo, conteudo, categoria, tags } = req.body;
+
+    const topico = new ForumTopico({
+      titulo,
+      conteudo,
+      categoria,
+      tags: tags || [],
+      autor: req.userId,
+    });
+
+    await topico.save();
+    await topico.populate("author", "name avatar");
+
+    res.status(201).json(topico);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Erro ao criar tópico", error: err.message });
+  }
+};
+
+//editar tópico - somente autor - PUT /forum/topicos/:id
 export const editarTopico = async (req, res) => {
   try {
-    const { titulo } = req.body;
     const topico = await ForumTopico.findById(req.params.id);
+    if (!topico || topico.deletado)
+      return res.status(404).json({ message: "Tópico não encontrado" });
 
-    if (!topico) return res.status(404).json({ message: "Tópico não encontrado" });
+    if (topico.autor.toString() !== req.userId.toString())
+      return res.status(403).json({ message: "Sem permissão para editar" });
 
-    if (req.user.id !== topico.criador.toString() && req.userRole !== "admin") return res.status(403).json({ message: "Permissão negada" });
+    const { titulo, conteudo, categoria, tags } = req.body;
+    if (titulo) topico.titulo = titulo;
+    if (conteudo) topico.conteudo = conteudo;
+    if (categoria) topico.categoria = categoria;
+    if (tags) topico.tags = tags;
 
-    topico.titulo = titulo || topico.titulo;
-    topico.dataModificacao = new Date();
     await topico.save();
-
-    res.json(topico);
-  } catch (error) {
-    res.status(500).json({ message: "Erro ao editar tópico", error });
-  }
-}
-
-// Trancar tópicos - Apenas Admin
-export const trancarTopico = async (req, res) => {
-  try {
-    if (req.userRole !== "admin") return res.status(403).json({ erro: "Acesso negado. Apenas administradores." });
-
-    const topico = await ForumTopico.findByIdAndUpdate(req.params.id, { status: "trancado" }, { new: true });
-    
-    if (!topico) return res.status(404).json({ erro: "Tópico não encontrado." });
-
-    res.json({ message: "Tópico trancado com sucesso", topico });
-  } catch (erro) {
-    res.status(500).json({ message: "Erro ao trancar tópico", erro });
+    res.status(201).json(topico);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Erro ao editar tópico", error: err.message });
   }
 };
 
-// Excluir Tópico - Apenas Admin
-export const excluirTopico = async (req, res) => {
+//deletar tópico - somente autor DELETE /forum/topicos/:id
+export const deletarTopico = async (req, res) => {
   try {
-    if (req.userRole !== "admin")
-      return res.status(403).json({ erro: "Acesso negado. Apenas administradores tem permissão." });
+    const topico = await ForumTopico.findById(req.params.id);
+    if (!topico)
+      return res.status(404).json({ message: "Tópico não encontrado" });
 
-    const topico = await ForumTopico.findByIdAndDelete(req.params.id);
-    if (!topico) return res.status(404).json({ erro: "Tópico não encontrado." });
+    if (topico.autor.toString() !== req.userId.toString())
+      return res.status(403).json({ message: "Sem permissão para excluir" });
 
-    //remover posts associados
-    await ForumPost.deleteMany({ topicoId: req.params.id });
-    res.json({message: "Tópico e posts excluídos com sucesso"})
-  } catch (erro) {
-    res.status(500).json({ message: "Erro ao excluir tópico", erro  });
+    topico.deletado = true;
+    await topico.save();
+    res.status(201).json({ message: "Tópico removido com sucesso" });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Erro ao excluir tópico", error: err.message });
+  }
+};
+
+//curtir tópico - POST forum/topicos/:id/curtir
+export const curtirTopico = async (req, res) => {
+  try {
+    const topicos = await ForumTopico.findById(req.params.id);
+    if (!topicos)
+      return res.status(404).json({ message: "Tópico não encontrado" });
+
+    const userId = req.userId.toString();
+    const jaCurtido = topicos.curtidoPor.map(String).includes(userId);
+
+    if (jaCurtido) {
+      topicos.curtidas -= 1;
+      topicos.curtidoPor = topicos.curtidoPor.filter(
+        (id) => id.toString() !== userId,
+      );
+    } else {
+      topicos.curtidas += 1;
+      topicos.curtidoPor.push(req.userId);
+    }
+
+    await topicos.save();
+    res.status(201).json({ votes: topicos.curtidas, curtido: !jaCurtido });
+  } catch (err) {
+    res.status(500).json({ message: "Erro ao votar", error: err.message });
+  }
+};
+
+//deunciar tópico - POST forum/topicos/:id/denunciar
+export const denunciarTopico = async (req, res) => {
+  try {
+    const { motivo } = req.body;
+    const topico = await ForumTopico.findById(req.params.id);
+    if (!topico)
+      return res.status(404).json({ message: "Tópico não encontrado" });
+
+    topico.denuncias.push({ denunciadoPor: req.userId, motivo });
+    await topico.save();
+    res.status(201).json({ message: "Denúncia registrada" });
+  } catch (err) {
+    res.status(500).json({ message: "Erro ao denunciar", error: err.message });
   }
 };

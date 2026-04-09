@@ -1,28 +1,66 @@
 import express from "express";
 import {
-    criarCategoria,
-    listarCategoria,
-    editarCategoria,
-    excluirCategoria,
-    criarSubforum,
-    editarSubforum,
-    excluirSubForum
-} from "../controllers/forum.controller.js";
-import {verificarAdmin } from "../middleware/auth.middleware.js";
+    publicarPostagem,
+    editarPostagem,
+    deletarPostagem,
+    curtirPostagem,
+    denunciarPostagem
+} from "../controllers/forumPost.controller.js"
+import {
+    buscarTopicos,
+    buscarTopicosPorID,
+    criarTopico,
+    editarTopico,
+    deletarTopico,
+    curtirTopico,
+    denunciarTopico
+} from "../controllers/forumTopico.controller.js"
+import {verificarAdmin, verificarToken } from "../middleware/auth.middleware.js";
 
 const forumRouters = express.Router();
 
 
-//Categorias
-forumRouters.get('/forum/categorias', listarCategoria);
-forumRouters.post('/forum/categorias', verificarAdmin, criarCategoria);
-forumRouters.put('/forum/categorias/:id', verificarAdmin, editarCategoria);
-forumRouters.delete('/forum/categorias/:id', verificarAdmin, excluirCategoria);
+//Tópicos
+forumRouters.get('/forum/topicos', buscarTopicos);
+forumRouters.get('/forum/topicos/:topicoId', buscarTopicosPorID);
 
-//subForums
-forumRouters.post('/forum/categorias/:categoriaId/subforums', verificarAdmin, criarSubforum);
-forumRouters.put('/forum/subforums/:id', verificarAdmin, editarSubforum);
-forumRouters.delete('/forum/subforums/:id', verificarAdmin, excluirSubForum);
+forumRouters.post("/forum/topicos", verificarToken, criarTopico);
+forumRouters.post("/forum/topicos/:topicoId/curtir", verificarToken, curtirTopico);
+forumRouters.post("/forum/topicos/:topicoId/denunciar", verificarToken, deletarTopico);
+
+forumRouters.put("/forum/topicos/:topicoId", verificarToken, editarTopico);
+
+forumRouters.delete("/forum/topicos/:topicoId", verificarToken, denunciarTopico);
+
+//Postagens
+forumRouters.post(
+  "/forum/topicos/:topicoId/postagens",
+  verificarToken,
+  publicarPostagem,
+);
+forumRouters.post(
+  "/forum/topicos/:topicoId/postagens/:postagemId/curtir",
+  verificarToken,
+  curtirPostagem,
+);
+forumRouters.post(
+  "/forum/topicos/:topicoId/postagens/:postagemId/denunciar",
+  verificarToken,
+  denunciarPostagem,
+);
+
+forumRouters.put(
+  "/forum/topicos/:topicoId/postagens/:postagemId",
+  verificarToken,
+  editarPostagem,
+);
+forumRouters.delete(
+  "/forum/topicos/:topicoId/postagens/:postagemId",
+  verificarToken,
+  deletarPostagem,
+);
+
+
 
 
 

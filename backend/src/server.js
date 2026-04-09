@@ -10,11 +10,8 @@ import userRouters from "./routes/user.routes.js";
 import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
 import cartasColecaoRouters from "./routes/cartasColecao.routes.js";
-import marketplaceRouters from "./routes/marketplace.routes.js";
 import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
-import forumTopicoRouters from "./routes/forumTopico.routes.js";
-import forumPostRouters from "./routes/forumPost.routes.js";
 import likesRouters from "./routes/likes.routes.js";
 import comentariosRouters from "./routes/comentarios.routes.js";
 
@@ -81,39 +78,10 @@ app.use("/", userRouters);
 app.use("/", userProfileRouters);
 app.use("/", colecaoRouters);
 app.use("/", cartasColecaoRouters);
-app.use("/", marketplaceRouters);
 app.use("/", forumRouters);
-app.use("/", forumTopicoRouters);
-app.use("/", forumPostRouters);
 app.use("/", likesRouters);
 app.use("/", comentariosRouters);
 app.use(fileUpload({useTempFiles: true}));
-
-// Rotas imagens
-
-//rota thumbs
-
-//rota capas(coleções)
-app.post('/uploads', function(req, res){
-  let capaSample;
-  let uploadPath;
-
-  if(!req.files || Object.keys(req.files).length === 0){
-    return res.status(400).send("Nenhum arquivo de capa foi enviado");
-  }
-
-  //nome do input para a capa
-  capaSample = req.files.capa;
-  //rota para upar a imagem
-  uploadPath = `${__dirname}/capas/${capaSample.name}`
-
-  capaSample.mv(uploadPath, (error)=>{
-    if(error) return res.status(500).send(error);
-
-    res.send("Capa enviada com sucesso!")
-  })
-})
-
 
 app.use((req, res, next) => {
   console.log("rota acessada: ", req.method, req.originalUrl);

@@ -1,21 +1,58 @@
 import mongoose from "mongoose";
 
-const forumTopicoSchema = new mongoose.Schema({
-    categoriaId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumCategoria", required: true },
-    subForumId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumSubForum", default: null },
+const forumTopicoSchema = new mongoose.Schema(
+  {
     titulo: { type: String, required: true, trim: true },
-    criador: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    dataCriacao: {type: Date, default: Date.now, required: true},
-    dataModificacao: {type: Date, default: Date.now},
-    primeiroPostId: { type: mongoose.Schema.Types.ObjectId, ref: "ForumPost", }, // controle de contagem de posts
+    conteudo: { type: String, required: true },
+    autor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    categoria: {
+      type: String,
+      enum: [
+        "estrategia",
+        "iniciante",
+        "meta",
+        "trocas",
+        "regras",
+        "torneio",
+        "geral",
+        "bate-papo",
+      ],
+      default: "geral",
+    },
+    tags: [{ type: String, trim: true }],
+    curtidas: { type: Number, default: 0 },
+    curtidoPor: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     visualizacoes: { type: Number, default: 0 },
-    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'ForumPost' }],
-    status: { type: String, enum: ["ativo", "trancado", "removido"], default: "ativo" }, // útil para exclusão lógica
-    fixado: { type: Boolean, default: false }, //opcional
-}, {
+    destaque: { type: Boolean, default: false },
+    trancado: { type: Boolean, default: false },
+    deletado: { type: Boolean, default: false },
+    postagens: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+      },
+    ],
+    denuncias: [
+        {
+        denunciadoPor: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "ForumPost",
+        },
+        motivo: { type: String },
+        criadoEm: { type: Date, default: Date.now },
+        },
+    ],
+  },
+  {
     timestamps: true,
-    toJSON: { virtuals: true }
-});
+    toJSON: { virtuals: true },
+  },
+);
 
 forumTopicoSchema.index({ titulo: "text" });
 forumTopicoSchema.index({ categoriaId: 1, subforumId: 1, ultimaPostagem:1 });

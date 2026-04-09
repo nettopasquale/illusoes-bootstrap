@@ -1,8 +1,13 @@
 import mongoose from "mongoose";
 
 const forumSchema = new mongoose.Schema({
-    categoriaId: [{type: mongoose.Schema.Types.ObjectId, ref: "forumCategoria", required: true}],
-
+  topicos: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "ForumTopico",
+      required: true,
+    },
+  ],
 });
 
 const Forum = mongoose.model("Forum", forumSchema);
