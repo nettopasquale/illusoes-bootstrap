@@ -78,7 +78,7 @@ export default function Login() {
         setErro(formatados);
       } else if (error.response) {
         //erro da resposta
-        setErro(erro.response.data.message || "Erro no Login");
+        setErro({global: erro.response.data.message || "Erro no Login"}); //evita erro undefined
       } else {
         setErro({ global: "Erro inesperado. Tente novamente" });
       }

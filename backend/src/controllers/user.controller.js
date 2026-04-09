@@ -40,15 +40,16 @@ export const login = async (req, res) => {
         _id: user._id.toString(),
         nome: user.usuario,
         email: user.email,
+        tipo: user.tipo,
       },
     });
-    console.log("Requisição de login:");
-    console.log("Login:", login);
-    console.log("Email:", user.email);
-    console.log("Usuário:", user.usuario);
-    console.log("Tipo:", user.tipo);
-    console.log("Senha enviada:", senha);
-    console.log("Senha no banco:", user?.senha);
+    // console.log("Requisição de login:");
+    // console.log("Login:", login);
+    // console.log("Email:", user.email);
+    // console.log("Usuário:", user.usuario);
+    // console.log("Tipo:", user.tipo);
+    // console.log("Senha enviada:", senha);
+    // console.log("Senha no banco:", user?.senha);
   } catch (erro) {
     res.status(500).json({ message: erro.message });
     console.error("Erro ao logar: ", erro.message);

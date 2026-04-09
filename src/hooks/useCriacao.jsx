@@ -5,11 +5,11 @@ import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/useAuth";
+import api from "../services/api";
 
 export default function useCriacao(schema, rotaAPI) {
   const [mensagem, setMensagem] = useState("");
   const navigate = useNavigate();
-  const { token } = useAuth();
 
   const {
     register,
@@ -20,9 +20,7 @@ export default function useCriacao(schema, rotaAPI) {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post(rotaAPI, data, {
-        headers: { Authorization: token },
-      });
+      const response = await api.post(rotaAPI, data);
 
       setMensagem("Cadastro criado com sucesso!");
       reset();

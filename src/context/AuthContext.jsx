@@ -22,38 +22,28 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const tokenSalvo = localStorage.getItem("token");
-    const usuarioSalvo = localStorage.getItem("usuario");
-
-    if (tokenSalvo && usuarioSalvo) {
-      setToken(tokenSalvo);
-      setUsuario(JSON.parse(usuarioSalvo));
-    }
-  }, []);
-
-  useEffect(() => {
     const carregarPerfil = async () => {
       if (token && usuario && !usuario.imagemProfile) {
         try {
           const res = await api.get("/userProfile/me");
           const perfil = res.data;
-
-          const usuarioAtualizado = {
-            ...usuario,
-            imagemProfile: perfil.imagemProfile,
-            nome: perfil.nome,
-          };
-
-          setUsuario(usuarioAtualizado);
-          localStorage.setItem("usuario", JSON.stringify(usuarioAtualizado));
+          setUsuario((prev)=> {
+            //usa função de atualização para evitar loop infinito
+            const usuarioAtualizado = {
+              ...prev,
+              imagemProfile: perfil.imagemProfile,
+              nome: perfil.nome,
+            };
+            localStorage.setItem("usuario", JSON.stringify(usuarioAtualizado));
+            return usuarioAtualizado
+          });
         } catch (err) {
           console.error("Erro ao carregar perfil do usuário:", err);
         }
       }
     };
-
     carregarPerfil();
-  }, [token, usuario]);
+  }, [token]); //retirado depenência de usuario
 
   const login = (token, usuario) => {
     localStorage.setItem("token", token);
@@ -62,7 +52,7 @@ export const AuthProvider = ({ children }) => {
     setUsuario(usuario);
   };
 
-  const logout = () => {
+  const logout = (mensagem) => { //parâmetro mensagem declarado
     localStorage.removeItem("token");
     localStorage.removeItem("usuario");
     setToken(null);
@@ -75,9 +65,12 @@ export const AuthProvider = ({ children }) => {
     }, 2000);
   };
 
+  //isAdmin exposto no contexto
+  const isAdmin = usuario?.tipo === "admin";
+
   return (
-    <AuthContext.Provider
-      value={{ usuario, token, login, logout, autenticado: !!usuario, userId: usuario?._id || null }}
+    <AuthContext.Provider //exposto aqui o isAdmin
+      value={{ usuario, token, login, logout, autenticado: !!usuario, userId: usuario?._id || null, isAdmin }}
     >
       {children}
     </AuthContext.Provider>

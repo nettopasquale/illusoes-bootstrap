@@ -12,7 +12,10 @@ import { Link } from "react-router-dom";
 
 const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, isAdmin, } = useAuth();
+
+  console.log("É admin?", isAdmin);
+  console.log("Tipo do usuário", usuario);
 
   const handleLogout = () => {
     logout();
@@ -86,12 +89,13 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
 
 export default Header;
 
+//header renderiza mesmo sem o usuário logado
 Header.propTypes = {
   onUserClick: PropTypes.func.isRequired,
   autenticado: PropTypes.bool.isRequired,
   usuario: PropTypes.shape({
     _id: PropTypes.string,
-    nome: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
+    nome: PropTypes.string,
+    email: PropTypes.string,
   }),
 };

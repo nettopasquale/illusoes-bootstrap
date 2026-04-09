@@ -6,7 +6,7 @@ import {
   Stack,
 } from "react-bootstrap";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { BsFillPersonFill } from "react-icons/bs";
 import { useAuth } from "../../context/useAuth";
 import { schemaLogin } from "../../schema/schema";
@@ -20,6 +20,7 @@ export default function ModalLoginteste({ show, onClose }) {
   const [sucesso, setSucesso] = useState(false);
 
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -45,7 +46,9 @@ export default function ModalLoginteste({ show, onClose }) {
 
         // Aguarda 2 segundos para mostrar mensagem e depois recarrega
         setTimeout(() => {
-          window.location.reload();
+          onClose();
+          //mais perfomatico do que window.location.reload
+          navigate("/");
         }, 2000);
       }
     } catch (error) {

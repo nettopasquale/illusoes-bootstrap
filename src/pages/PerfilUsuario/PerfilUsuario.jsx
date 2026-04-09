@@ -4,6 +4,8 @@ import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import InputMask from "react-input-mask";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
+import api from "../../services/api";
+import { cloudinaryUpload } from "../../utils/cloudinaryUpload"
 
 export const PerfilUsuario = () => {
   const [perfil, setPerfil] = useState({
@@ -19,6 +21,7 @@ export const PerfilUsuario = () => {
 
   const [mensagem, setMensagem] = useState("");
   const [modoEdicao, setModoEdicao] = useState(false);
+  const [uploadingImgProfile, setUploadingImageProfile] = useState(false);
   const [perfilId, setPerfilId] = useState(null);
   const [erro, setErro] = useState("");
 
@@ -26,10 +29,7 @@ export const PerfilUsuario = () => {
 
   const carregarPerfil = async () => {
     try {
-      const response = await axios.get("http://localhost:8080/userProfile/me", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
+      const response = await api.get("/userProfile/me");
       setPerfil(response.data);
       setPerfilId(response.data._id);
     } catch (err) {
@@ -47,12 +47,22 @@ export const PerfilUsuario = () => {
     carregarPerfil();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "imagemProfile") {
-      setPerfil({ ...perfil, imagemProfile: files[0] });
-    } else {
-      setPerfil({ ...perfil, [name]: value });
+    //handleImageProfile
+  const handleImgProfile = async (e) => {
+    const file = e.target.files[0]
+      console.log(file);
+    
+    if (!file) return;
+    setUploadingImageProfile(true);
+    try {
+      const url = await cloudinaryUpload(file, "imgProfile");
+      console.log("URL da imagem de avatar:", url);
+    
+      setPerfil({ ...perfil, imagemProfile: url });
+    }catch (err) {
+      console.error("Erro ao subir imagem de avatar:", err);
+    }finally {
+      setUploadingThumb(false);
     }
   };
 
@@ -76,16 +86,15 @@ export const PerfilUsuario = () => {
       if (perfilId) {
         // Atualiza perfil existente
         console.log("PerfilID: ", perfilId);
-        await axios.put(
-          `http://localhost:8080/userProfile/${perfilId}`,
+        await api.put(`/userProfile/${perfilId}`,
           formData,
           config,
         );
         setMensagem("Perfil atualizado com sucesso!");
       } else {
         // Cria novo perfil
-        const response = await axios.post(
-          "http://localhost:8080/userProfile",
+        const response = await api.post(
+          "/userProfile",
           formData,
           config,
         );
@@ -111,7 +120,7 @@ export const PerfilUsuario = () => {
           <Row>
             {perfil.imagemProfile && (
               <img
-                src={`http://localhost:8080/imagens/${perfil.imagemProfile}`}
+                src={perfil.imagemProfile}
                 alt="imagemProfile"
                 className="mb-3"
                 style={{ width: "150px", borderRadius: "50%" }}
@@ -131,7 +140,7 @@ export const PerfilUsuario = () => {
                     heigh: "200px",
                     borderRadius: "200px",
                   }}
-                  onChange={handleChange}
+                  onChange={handleImgProfile}
                   disabled={!modoEdicao}
                 />
               </Form.Group>

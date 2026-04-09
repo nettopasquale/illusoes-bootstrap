@@ -3,7 +3,6 @@ import { key } from "../configs/jwtConfig.js";
 
 export function verificarToken(req, res, next) {
   const tokenHeader = req.headers["authorization"];
-  // const tokenHeader = req.headers.authorization;
 
   //se token n existir
   if (!tokenHeader) {
@@ -12,7 +11,6 @@ export function verificarToken(req, res, next) {
   }
 
   const token = tokenHeader.replace("Bearer ", "");
-  // const token = tokenHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, key);
@@ -24,14 +22,15 @@ export function verificarToken(req, res, next) {
       console.log(`usuarioTipo: ${req.userRole} / ${decoded.role}`);
       next();
     } else {
-      res.status(401).json({ message: "Token inválido" });
+      //agora cada com error.response.data?.error === "Token inválido"
+      res.status(401).json({ error: "Token inválido" });
     }
   } catch (error) {
     if (error instanceof Error) {
       console.error("Erro ao verificar token:", error.message);
       res
         .status(401)
-        .json({ message: "Token inválido ou expirado", error: error.message });
+        .json({ error: "Token inválido ou expirado", error: error.message });
     }
   }
 }

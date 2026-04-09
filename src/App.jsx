@@ -6,7 +6,6 @@ import Login from "./pages/Login/Login";
 import { conteudosRoutes } from "./routes/routesConteudos";
 import { colecoesRoutes } from "./routes/routesColecoes";
 import { forumRoutes } from "./routes/routesForum";
-import { MarketplaceRoutes } from "./routes/routesMarketplace";
 import { usuarioRoutes } from "./routes/routesUsuarios";
 import { tokenExp } from "./context/tokenExp";
 import {
@@ -30,9 +29,6 @@ export const App = ()=> {
 
             {/* Conteúdos */}
             {conteudosRoutes}
-
-            {/* Marketplace */}
-            {MarketplaceRoutes}
 
             {/* Colecoes */}
             {colecoesRoutes}

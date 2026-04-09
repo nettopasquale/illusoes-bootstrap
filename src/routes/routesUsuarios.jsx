@@ -5,7 +5,6 @@ import { Route } from "react-router-dom";
 import { PerfilUsuario } from "../pages/PerfilUsuario/PerfilUsuario";
 import { EditarConteudo } from "../pages/Conteudos/EditarConteudo";
 import ColecaoLista from "../pages/Colecoes/ColecaoLista";
-import MarketplaceLista from "../pages/Marketplace/MarketplaceLista";
 import ForumUserProfile from "../pages/Forum/ForumUserProfile";
 
 export const usuarioRoutes = [
@@ -65,14 +64,5 @@ export const usuarioRoutes = [
       </PrivateRoute>
     }
     key="usuario-colecoes"
-  />,
-  <Route
-    path="/user/marketplace/meus-anuncios"
-    element={
-      <PrivateRoute>
-        <MarketplaceLista />
-      </PrivateRoute>
-    }
-    key="usuario-anuncios"
   />,
 ];

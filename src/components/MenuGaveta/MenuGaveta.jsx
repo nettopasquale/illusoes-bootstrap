@@ -1,17 +1,17 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Button, Nav, Offcanvas } from "react-bootstrap";
 import { FaBars, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 
 function MenuGaveta({ autenticado }) {
+  const {usuario, isAdmin} = useContext(AuthContext)
   const [showDrawer, setShowDrawer] = useState(false);
   const [submenuAberto, setSubmenuAberto] = useState({
     noticias: false,
     artigos: false,
     eventos: false,
-    campeonatos: false,
     colecoes: false,
-    cardgames: false,
     forum: false,
   });
 
@@ -167,16 +167,11 @@ function MenuGaveta({ autenticado }) {
                 <Nav.Link as={Link} to={`/colecoes/criar`} className="ps-4">
                   Criar Coleção
                 </Nav.Link>
+                <Nav.Link as={Link} to={`user/colecoes`} className="ps-4">
+                  Editar minhas coleções
+                </Nav.Link>
               </>
             )}
-            <hr />
-            <Nav.Link as={Link} to="/cardgames" className="fs-5">
-              Card Games
-            </Nav.Link>
-            <hr />
-            <Nav.Link as={Link} to="/marketplace/anuncios" className="fs-5">
-              Marketplace
-            </Nav.Link>
             <hr />
             <Nav.Link as={Link} to="/forum" className="fs-5">
               Fórum

@@ -13,7 +13,7 @@ export const createUserProfile = async (req, res) => {
 
       const novoPerfil = new UserProfile({
         ...req.body,
-        imagemProfile: req.file ? `/uploads/${req.file.filename}` : null,
+        imagemProfile,
         usuario: userId
       });
     await novoPerfil.save();
@@ -54,10 +54,6 @@ export const updateUserProfile = async (req, res) => {
 
     // Atualiza os campos
     Object.assign(userProfile, req.body);
-
-    if (req.file) {
-      userProfile.imagemProfile = `/uploads/${req.file.filename}`;
-    }
 
     await userProfile.save();
 

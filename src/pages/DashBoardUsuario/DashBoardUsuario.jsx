@@ -4,6 +4,7 @@ import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import axios from "axios";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import api from "../../services/api";
 
 const menuToRouteMap = {
   "Minhas Notícias": "noticia",
@@ -13,10 +14,6 @@ const menuToRouteMap = {
   "Meus Comentários": "comentario",
   "Minhas Curtidas": "curtida",
   "Minhas Coleções": "colecao",
-  "Meus Anúncios": "anuncio",
-  "Minhas Vendas": "venda",
-  "Minhas Compras": "compra",
-  "Minhas Trocas": "troca",
   "Meus topicos": "topico",
   "Meus posts": "post",
 };
@@ -25,8 +22,6 @@ const DashboardUsuario = () => {
   const [submenus, setSubmenus] = useState({});
   const [conteudos, setConteudos] = useState([]);
   const [tipoSelecionado, setTipoSelecionado] = useState(null);
-
-  const token = localStorage.getItem("token");
 
   const toggleSubmenu = (menu) => {
     const tipo = menuToRouteMap[menu] || null;
@@ -46,10 +41,7 @@ const DashboardUsuario = () => {
   // Buscar conteúdos do usuário
   const buscarConteudos = async (tipo) => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/user/conteudos?tipo=${tipo}`,
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const response = await api.get(`/user/conteudos?tipo=${tipo}`);
       setConteudos(response.data);
     } catch (err) {
       console.error("Erro ao carregar conteúdos do usuário:", err);
@@ -147,42 +139,6 @@ const DashboardUsuario = () => {
             {submenus[menu] && menuToRouteMap[menu] && (
               <div className="ps-3">
                 <Nav.Link as={Link} to={`/user/colecoes`}>
-                  Editar
-                </Nav.Link>
-              </div>
-            )}
-          </div>
-        ))}
-      </Nav>
-
-      <Nav className="flex-column">
-        {[
-          "Meus Anúncios",
-          "Minhas Compras",
-          "Minhas Vendas",
-          "Minhas Trocas",
-        ].map((menu) => (
-          <div key={menu}>
-            <Nav.Link
-              onClick={() => toggleSubmenu(menu)}
-              className="d-flex justify-content-between align-items-center fw-bold"
-            >
-              {menu}
-              {submenus[menu] ? <FaChevronUp /> : <FaChevronDown />}
-            </Nav.Link>
-
-            {submenus[menu] == 0 && !menuToRouteMap[menu] && (
-              <Nav.Link as={Link} to={`/userProfile`}>
-                Editar
-              </Nav.Link>
-            )}
-
-            {submenus[menu] && menuToRouteMap[menu] && (
-              <div className="ps-3">
-                <Nav.Link
-                  as={Link}
-                  to={`/user/marketplace/meus-anuncios`}
-                >
                   Editar
                 </Nav.Link>
               </div>

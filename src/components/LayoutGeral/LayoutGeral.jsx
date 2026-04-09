@@ -20,12 +20,6 @@ function LayoutGeral({ children }) {
   const handleUserClick = useCallback(() => setModalShow(true), []);
   const handleModalClose = useCallback(() => setModalShow(false), []);
 
-    //login persistente - localstorage?
-  // const token = localStorage.getItem("token");
-  //   if (token) {
-  //       axios.defaults.headers.common["Authorization"] = token;
-  //   }
-
   return (
     <div className="d-flex flex-column min-vh-100 bg-body-secondary">
       <div className="position-fixed top-0 w-100 z-3">
