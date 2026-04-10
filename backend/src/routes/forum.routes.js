@@ -4,35 +4,43 @@ import {
     editarPostagem,
     deletarPostagem,
     curtirPostagem,
-    denunciarPostagem
+    denunciarPostagem,
+    criarBookmarkPostagem
 } from "../controllers/forumPost.controller.js"
 import {
     buscarTopicos,
     buscarTopicosPorID,
+    buscarCategorias,
     criarTopico,
     editarTopico,
     deletarTopico,
     curtirTopico,
-    denunciarTopico
+    denunciarTopico,
+    criarBookmarkTopico,
+    listarBookmarkTopico,
 } from "../controllers/forumTopico.controller.js"
 import {verificarAdmin, verificarToken } from "../middleware/auth.middleware.js";
 
 const forumRouters = express.Router();
 
+//Categorias de Tópicos
+forumRouters.get('/forum/topicos/categorias', buscarCategorias);
 
-//Tópicos
+// ── Topicos ───────────────────────────────────────
 forumRouters.get('/forum/topicos', buscarTopicos);
 forumRouters.get('/forum/topicos/:topicoId', buscarTopicosPorID);
+forumRouters.get('/forum/topicos/bookmarks',verificarToken ,buscarTopicosPorID);
 
 forumRouters.post("/forum/topicos", verificarToken, criarTopico);
 forumRouters.post("/forum/topicos/:topicoId/curtir", verificarToken, curtirTopico);
-forumRouters.post("/forum/topicos/:topicoId/denunciar", verificarToken, deletarTopico);
+forumRouters.post("/forum/topicos/:topicoId/denunciar", verificarToken, denunciarTopico);
+forumRouters.post("/forum/topicos/:topicoId/bookmark", verificarToken, criarBookmarkTopico);
 
 forumRouters.put("/forum/topicos/:topicoId", verificarToken, editarTopico);
 
-forumRouters.delete("/forum/topicos/:topicoId", verificarToken, denunciarTopico);
+forumRouters.delete("/forum/topicos/:topicoId", verificarToken, deletarTopico);
 
-//Postagens
+// ── Postagens ───────────────────────────────────────
 forumRouters.post(
   "/forum/topicos/:topicoId/postagens",
   verificarToken,
@@ -49,6 +57,12 @@ forumRouters.post(
   denunciarPostagem,
 );
 
+forumRouters.post(
+  "/forum/topicos/:topicoId/postagens/:postagemId/bookmark",
+  verificarToken,
+  criarBookmarkPostagem,
+);
+
 forumRouters.put(
   "/forum/topicos/:topicoId/postagens/:postagemId",
   verificarToken,
@@ -59,9 +73,5 @@ forumRouters.delete(
   verificarToken,
   deletarPostagem,
 );
-
-
-
-
 
 export default forumRouters;

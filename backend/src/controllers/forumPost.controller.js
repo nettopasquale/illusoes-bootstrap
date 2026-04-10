@@ -1,8 +1,15 @@
-import ForumTopico from "../models/forumTopico.model.js";
-import ForumPost from "../models/forumPost.model.js";
+import TopicoPost from "../models/TopicoPost.model.js";
+
+//helper
+const ehAdminOuUsuario = (docUsuarioId, usuario)=>{
+  String(docUsuarioId) === String(usuario._id) || usuario.tipo === "admin"
+}
+
+
+// ── REPLIES ───────────────────────────────────────
 
 //Publicar Postagen - POST /forum/topicos/:topicoId/postagens
-export const publicarPostagem = async (req, res) => {  
+export const publicarPostagem = async (req, res) => {
   try {
     const {
       conteudo,
@@ -10,28 +17,31 @@ export const publicarPostagem = async (req, res) => {
       conteudoCitacao,
       nomeAutorCitacao,
       parenteResposta,
+      anexos
     } = req.body;
 
-    const topico = await ForumTopico.findById(req.params.id);
+    const topico = await TopicoPost.findById(req.params.id);
     if (!topico || topico.deletado)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
     if (topico.trancado)
       return res.status(403).json({ message: "Tópico fechado para postagens" });
 
-    const postagem = new ForumPost ({
+    //incrementar contagem de posts
+    await TopicoPost.publicarPostESalvar({
       autor: req.userId,
       conteudo,
+      anexos: anexos || [],
       postagemCitacao: postagemCitacaoId || null,
       conteudoCitacao: conteudoCitacao || null,
       nomeAutorCitacao: nomeAutorCitacao || null,
       parenteResposta: parenteResposta || null,
     });
 
-    topico.postagens.push(postagem);
-    await topico.save();
-    await postagem.save();
-    await topico.populate("postagens.autor", "nome imagemProfile");
+    await topico.populate(
+      "postagens.autor",
+      "nome imagemProfile postagensContador criadoEm autor.tipo['admin']", //REVER AQUI
+    );
 
     const novaPostagem = topico.postagens[topico.postagens.length - 1];
     res.status(201).json(novaPostagem);
@@ -40,55 +50,70 @@ export const publicarPostagem = async (req, res) => {
   }
 };
 
-//editar postagem - somente autor - PUT /forum/topicos/:topicoId/postagens/:id/editar
-export const editarPostagem = async (req, res) => {  
-    try {
-        const postagem = await ForumPost.findById(req.params.id);
-        if (!postagem || postagem.status === "removido")
-          return res.status(404).json({ message: "Postagem não encontrada" });
-
-        if (postagem.autor.toString() !== req.userId.toString())
-          return res.status(403).json({ message: "Sem permissão para editar" });
-
-        const postagemAtualizada = await ForumPost.findByIdAndUpdate(
-            req.params.postagemId,
-            {$set: req.body},
-            {new: true, runValidators: true}
-        )
-
-        await postagemAtualizada.save();
-        res.status(201).json(postagemAtualizada);
-    } catch (err) {
-        res.status(500).json({ message: "Erro ao editar tópico", error: err.message });
-    }
-};
-
-//deletar postagem - somente autor DELETE /forum/topicos/:id
-export const deletarPostagem = async (req, res) => {  
+//editar postagem - somente autor - PUT /forum/topicos/:topicoId/postagens/:postagemId/editar
+export const editarPostagem = async (req, res) => {
   try {
-    // const postagem = topico.postagens.id(req.params.postagemId);
-    const postagem = ForumPost.findById(req.params.postagemId);
-    if (!postagem)
-      return res.status(404).json({ message: "Resposta não encontrada" });
+    const topico = await TopicoPost.findById(req.params.topicoId);
 
-    if (postagem.autor.toString() !== req.userId.toString())
-      return res.status(403).json({ message: "Sem permissão para excluir" });
+    if(!topico) return res.status(404).json({message: "Tópico não encontrado"})
+    
+    const postagem = TopicoPost.postagem.id(req.params.postagemId);
+    if (!postagem || postagem.status === "removido")
+      return res.status(404).json({ message: "Postagem não encontrada" });
 
-    postagem.deletado = true;
-    postagem.conteudo = "[Resposta removida pelo autor]";
-    await postagem.save();
-    res.status(201).json({ message: "Resposta removida" });
+    if (!ehAdminOuUsuario(postagem.autor, req.usuario))
+      return res.status(403).json({ message: "Sem permissão para editar" });
+
+    // if (postagem.autor.toString() !== req.userId.toString())
+    //   return res.status(403).json({ message: "Sem permissão para editar" });
+
+    const {conteudo, anexos} = req.body;
+    if (conteudo) postagem.conteudo = conteudo;
+    if(anexos) postagem.anexos = anexos;
+    postagem.editadoEm = new Date();
+    postagem.editadoPor = req.userId;
+
+    await topico.save();
+    res.status(201).json(postagem);
   } catch (err) {
-    res.status(500).json({ message: "Erro ao excluir resposta", error: err.message });
+    res.status(500).json({ message: "Erro ao editar tópico", error: err.message });
   }
 };
 
-//curtir postagem - POST forum/topicos/:topicoId/postagens/:id/curtir
+//deletar postagem - somente autor DELETE /forum/topicos/:topicoId/postagens/:postagemId
+export const deletarPostagem = async (req, res) => {
+  try {
+    const topico = TopicoPost.findById(req.params.topicoId);
+    if(!topico) return res.status(404).json({message: "Tópico não encontrado"});
+
+    const postagem = TopicoPost.postagens(req.params.postagemId);
+    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
+
+    if (!ehAdminOuUsuario(postagem.autor, req.usuario))
+      return res.status(403).json({ message: "Sem permissão para excluir" });
+    // if (postagem.autor.toString() !== req.userId.toString())
+    //   return res.status(403).json({ message: "Sem permissão para excluir" });
+
+    postagem.deletado = true;
+    postagem.conteudo = "[Postagem removida pelo autor]";
+    topico.postagensContador = topico.postagens.filter((r)=> !r.deletado).length;
+    await topico.save();
+    res.status(201).json({ message: "Postagem removida" });
+  } catch (err) {
+    res.status(500).json({ message: "Erro ao excluir postagem", error: err.message });
+  }
+};
+
+//curtir postagem - POST forum/topicos/:topicoId/postagens/:postagemId/curtir
 export const curtirPostagem = async (req, res) => {
   try {
-    const postagem = ForumPost.findById(req.params.postagemId);
+    const topico = TopicoPost.findById(req.params.topicoId);
+    if (!topico)
+      return res.status(404).json({ message: "Tópico não encontrado" });
+
+    const postagem = TopicoPost.postagens(req.params.postagemId);
     if (!postagem)
-      return res.status(404).json({ message: "Resposta não encontrada" });
+      return res.status(404).json({ message: "Postagem não encontrada" });
 
     const userId = req.userId.toString();
     const jaCurtido = postagem.curtidoPor.map(String).includes(userId);
@@ -103,25 +128,57 @@ export const curtirPostagem = async (req, res) => {
       postagem.curtidoPor.push(req.userId);
     }
 
-    await postagem.save();
-    res.status(201).json({ curtidas: postagem.curtidas, curtido: !jaCurtido });
+    await topico.save();
+    res.status(201).json({ curtidas: postagem.curtidas, curtido: jaCurtido === -1 });
   } catch (err) {
     res.status(500).json({ message: "Erro ao votar na resposta", error: err.message });
   }
 };
 
-//deunciar postagem - POST forum/topicos/:topicoId/postagens/:id/denunciar
+//denunciar postagem - POST forum/topicos/:topicoId/postagens/:postagemId/denunciar
 export const denunciarPostagem = async (req, res) => {
   try {
     const { motivo } = req.body;
-    const postagem = await ForumPost.findById(req.params.postagemId);
+    const topico = TopicoPost.findById(req.params.topicoId);
+    if (!topico)
+      return res.status(404).json({ message: "Tópico não encontrado" });
+
+    const postagem = TopicoPost.postagens(req.params.postagemId);
     if (!postagem)
       return res.status(404).json({ message: "Postagem não encontrada" });
 
     postagem.denuncias.push({ denunciadoPor: req.userId, motivo });
-    await postagem.save();
+    await topico.save();
     res.status(201).json({ message: "Denúncia registrada" });
   } catch (err) {
     res.status(500).json({ message: "Erro ao denunciar resposta", error: err.message });
   }
 };
+
+//Bookmark post - POST forum/topicos/:topicoId/postagens/:postagemId/bookmark
+export const criarBookmarkPostagem = async (req, res) => {
+  try {
+    const topico = TopicoPost.findById(req.params.topicoId);
+    if (!topico)
+      return res.status(404).json({ message: "Tópico não encontrado" });
+
+    const postagem = TopicoPost.postagens(req.params.postagemId);
+    if (!postagem)
+      return res.status(404).json({ message: "Postagem não encontrada" });
+
+    const userId = req.userId.toString();
+    const idx = postagem.bookmarkedPor.map(String).includes(userId);
+
+    if (idx > -1) {
+      postagem.bookmarkedPor.splice(idx, 1);
+    } else {
+      postagem.bookmarkedPor.push(req.userId);
+    }
+
+    await topico.save();
+    res.status(201).json({ bookmarked: idx === -1 });
+  } catch (err) {
+    res.status(500).json({ message: "Erro ao salvar bookmark da postagem", error: err.message });
+  }
+};
+
