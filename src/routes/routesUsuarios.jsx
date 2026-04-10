@@ -5,7 +5,6 @@ import { Route } from "react-router-dom";
 import { PerfilUsuario } from "../pages/PerfilUsuario/PerfilUsuario";
 import { EditarConteudo } from "../pages/Conteudos/EditarConteudo";
 import ColecaoLista from "../pages/Colecoes/ColecaoLista";
-import ForumUserProfile from "../pages/Forum/ForumUserProfile";
 
 export const usuarioRoutes = [
   <Route
@@ -27,17 +26,7 @@ export const usuarioRoutes = [
     }
     key="usuario-profile"
   />,
-
-  <Route
-    path="/userForumProfile"
-    element={
-      <PrivateRoute>
-        <ForumUserProfile />
-      </PrivateRoute>
-    }
-    key="usuario-forum-profile"
-  />,
-
+  
   <Route
     path="/user/conteudos/:tipo"
     element={

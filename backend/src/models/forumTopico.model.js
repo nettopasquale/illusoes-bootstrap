@@ -19,7 +19,7 @@ const forumTopicoSchema = new mongoose.Schema(
         "regras",
         "torneio",
         "geral",
-        "bate-papo",
+        "batepapo",
       ],
       default: "geral",
     },
@@ -38,15 +38,17 @@ const forumTopicoSchema = new mongoose.Schema(
       },
     ],
     denuncias: [
-        {
+      {
         denunciadoPor: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "ForumPost",
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ForumPost",
         },
         motivo: { type: String },
         criadoEm: { type: Date, default: Date.now },
-        },
+      },
     ],
+    criadoEm: { type: Date, default: Date.now, required: true },
+    dataModificacao: { type: Date, default: Date.now, required: true },
   },
   {
     timestamps: true,

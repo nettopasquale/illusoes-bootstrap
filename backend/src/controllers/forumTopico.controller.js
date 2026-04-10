@@ -1,5 +1,4 @@
-import ForumTopico from "../models/forumTopico.model";
-import ForumPost from "../models/forumPost.model";
+import ForumTopico from "../models/forumTopico.model.js";
 
 //Lista tópicos com paginação -> GET /forum/topicos
 export const buscarTopicos = async (req, res) => {

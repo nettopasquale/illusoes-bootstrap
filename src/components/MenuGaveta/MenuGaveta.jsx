@@ -173,7 +173,7 @@ function MenuGaveta({ autenticado }) {
               </>
             )}
             <hr />
-            <Nav.Link as={Link} to="/forum" className="fs-5">
+            <Nav.Link as={Link} to="/forum/topicos" className="fs-5">
               Fórum
             </Nav.Link>
             <hr />

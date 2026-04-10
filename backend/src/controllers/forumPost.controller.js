@@ -1,5 +1,5 @@
-import ForumTopico from "../models/forumTopico.model";
-import ForumPost from "../models/forumPost.model";
+import ForumTopico from "../models/forumTopico.model.js";
+import ForumPost from "../models/forumPost.model.js";
 
 //Publicar Postagen - POST /forum/topicos/:topicoId/postagens
 export const publicarPostagem = async (req, res) => {  

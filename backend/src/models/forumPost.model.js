@@ -27,14 +27,14 @@ const forumPostSchema = new mongoose.Schema(
     nomeAutorCitacao: { type: String, default: null },
     deletado: { type: Boolean, default: false },
     denuncias: [
-        {
-          denunciadoPor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-          motivo: { type: String },
-          criadoEm: { type: Date, default: Date.now },
-        },
-      ],
-      //respostas aninhadas
-      parenteResposta:{
+      {
+        denunciadoPor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+        motivo: { type: String },
+        criadoEm: { type: Date, default: Date.now },
+      },
+    ],
+    //respostas aninhadas
+    parenteResposta: {
       type: mongoose.Schema.Types.ObjectId,
       default: null,
     },
@@ -43,6 +43,7 @@ const forumPostSchema = new mongoose.Schema(
     visualizacoes: { type: Number, default: 0 },
     editado: { type: Boolean, default: false },
     status: { type: String, enum: ["ativo", "removido"], default: "ativo" }, // útil para exclusão lógica
+    criadoEm: { type: Date, default: Date.now },
     dataModificacao: { type: Date, default: Date.now, required: true },
   },
   {
