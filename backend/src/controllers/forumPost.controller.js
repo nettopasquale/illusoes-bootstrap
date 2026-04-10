@@ -1,12 +1,11 @@
 import TopicoPost from "../models/TopicoPost.model.js";
 
 //helper
-const ehAdminOuUsuario = (docUsuarioId, usuario)=>{
-  String(docUsuarioId) === String(usuario._id) || usuario.tipo === "admin"
-}
+const ehAdminOuUsuario = (docAutorId, usuario) => {
+  String(docAutorId) === String(usuario._id) || usuario.tipo === "admin";
+};
 
-
-// ── REPLIES ───────────────────────────────────────
+// ── Posts ───────────────────────────────────────
 
 //Publicar Postagen - POST /forum/topicos/:topicoId/postagens
 export const publicarPostagem = async (req, res) => {
@@ -40,7 +39,7 @@ export const publicarPostagem = async (req, res) => {
 
     await topico.populate(
       "postagens.autor",
-      "nome imagemProfile postagensContador criadoEm autor.tipo['admin']", //REVER AQUI
+      "usuario bio reputacao tipo createdAt", //REVER AQUI
     );
 
     const novaPostagem = topico.postagens[topico.postagens.length - 1];

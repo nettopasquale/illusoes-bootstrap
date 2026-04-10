@@ -29,7 +29,7 @@ forumRouters.get('/forum/topicos/categorias', buscarCategorias);
 // ── Topicos ───────────────────────────────────────
 forumRouters.get('/forum/topicos', buscarTopicos);
 forumRouters.get('/forum/topicos/:topicoId', buscarTopicosPorID);
-forumRouters.get('/forum/topicos/bookmarks',verificarToken ,buscarTopicosPorID);
+forumRouters.get('/forum/topicos/bookmarks',verificarToken ,listarBookmarkTopico);
 
 forumRouters.post("/forum/topicos", verificarToken, criarTopico);
 forumRouters.post("/forum/topicos/:topicoId/curtir", verificarToken, curtirTopico);

@@ -2,7 +2,21 @@ import api from "./api";
 
 const BASE = "/forum";
 
-//Topicos
+//── Categorias ──────────────────────────────────────
+export const listarCategorias = () =>
+  api.get(`${BASE}/topicos/categorias`,);
+
+//── Bookmarks ──────────────────────────────────────
+export const listarMeusBookmarks = () =>
+  api.get(`${BASE}/topicos/bookmarks`,);
+
+export const criarBookmarkTopico = (id) =>
+  api.post(`${BASE}/topicos/${id}/bookmarks`,);
+
+export const criarBookmarkPost = (topicoId, postId) =>
+  api.post(`${BASE}/topicos/${topicoId}/postagens/${postId}/bookmarks`);
+
+//── Tópicos ──────────────────────────────────────
 export const listarTopicos = (params = {}) =>
   api.get(`${BASE}/topicos`, { params });
 
@@ -23,6 +37,9 @@ export const denunciarTopico = (id, motivo) =>
 
 export const publicarPostagem = (topicoId, data) =>
   api.post(`${BASE}/topicos/${topicoId}/postagens`, data);
+
+export const editarPostagem = (topicoId, postId, data) =>
+  api.put(`${BASE}/topicos/${topicoId}/postagens/${postId}`, data);
 
 export const deletarPostagem = (topicoId, postId) =>
   api.delete(`${BASE}/topicos/${topicoId}/postagens/${postId}`);

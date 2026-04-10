@@ -2,8 +2,8 @@ import TopicoPost from "../models/TopicoPost.model.js";
 import UserModel from "../models/user.model.js";
 
 //helper
-const ehAdminOuUsuario = (docUsuarioId, usuario)=>{
-  String(docUsuarioId) === String(usuario._id) || usuario.tipo === "admin"
+const ehAdminOuUsuario = (docAutorId, usuario)=>{
+  String(docAutorId) === String(usuario._id) || usuario.tipo === "admin";
 }
 
 // ── TOPICO ───────────────────────────────────────
@@ -27,8 +27,8 @@ export const buscarTopicos = async (req, res) => {
     };
 
     const topicos = await TopicoPost.find(filter)
-      .populate("autor", "nome imagemProfile postagensContador criadoEm")
-      .populate("ultimaPostagemPor", "nome imagemProfile")
+      .populate("autor", "usuario bio reputacao tipo createdAt")
+      .populate("ultimaPostagemPor", "usuario")
       .select("-postagens -denuncias")
       .sort(sortMap[sort] || sortMap.recente)
       .skip((page - 1) * limite)
@@ -51,17 +51,14 @@ export const buscarTopicos = async (req, res) => {
 export const buscarTopicosPorID = async (req, res) => {
   try {
     const topico = await TopicoPost.findById(req.params.id)
-      .populate(
-        "autor",
-        "nome imagemProfile postagensContador criadoEm autor.tipo == 'admin'",
-      ) //MUDAR AQUI
-      .populate("editadoPor", "nome")
-      .populate("ultimaPostagemPor", "nome imagemProfile")
+      .populate("autor", "usuario bio reputacao tipo createdAt") //MUDAR AQUI
+      .populate("editadoPor", "usuario")
+      .populate("ultimaPostagemPor", "usuario")
       .populate(
         "postagens.autor",
-        "nome imagemProfile postagensContador criadoEm autor.tipo == 'admin'",
+        "usuario usuario bio reputacao tipo createdAt",
       )
-      .populate("postagens.editadoPor", "nome");
+      .populate("postagens.editadoPor", "usuario");
 
     if (!topico || topico.deletado) {
       return res.status(404).json({ message: "Tópico não encontrado" });
@@ -102,10 +99,10 @@ export const buscarCategorias = async (req, res) => {
           deletado: false,
         })
           .sort({ ultimaPostagemEm: -1, criadoEm: -1 })
-          .populate("ultimaPostagemEm", "nome")
-          .populate("autor", "nome")
+          .populate("ultimaPostagemEm", "usuario")
+          .populate("autor", "usuario")
           .select(
-            "titulo ultimaPostagemEm ultimaPostagemPor postagensContador criadoEm autor",
+            "titulo ultimaPostagemEm ultimaPostagemPor postagensContador createdAt autor",
           );
         return { categoria: cat, total, ultimoTopico: last };
       }),
@@ -133,10 +130,7 @@ export const criarTopico = async (req, res) => {
     });
 
     await topico.save();
-    await topico.populate(
-      "autor",
-      "nome imagemProfile postagensContador criadoEm",
-    );
+    await topico.populate("autor", "usuario bio reputacao tipo createdAt");
 
     // Incrementa postCount do usuário
     await UserModel.findByIdAndUpdate(req.userId, { $inc: { postCount: 1 } });
@@ -154,8 +148,10 @@ export const editarTopico = async (req, res) => {
     if (!topico || topico.deletado)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
-    if (topico.autor.toString() !== req.userId.toString())
+    if (!isAdminOrAuthor(thread.author, req.usuario))
       return res.status(403).json({ message: "Sem permissão para editar" });
+    // if (topico.autor.toString() !== req.userId.toString())
+    //   return res.status(403).json({ message: "Sem permissão para editar" });
 
     const { titulo, conteudo, categoria, tags, anexos } = req.body;
     if (titulo) topico.titulo = titulo;
@@ -265,7 +261,7 @@ export const listarBookmarkTopico = async (req, res) => {
       bookmarkedPor: uid,
       deletado: false,
     })
-      .populate("autor", "nome imagemProfile")
+      .populate("autor", "usuario imagemProfile")
       .select(
         "titulo categoria curtidas postagensContador visualizacoes criadoEm ultimaPostagemEm",
       )
@@ -275,7 +271,7 @@ export const listarBookmarkTopico = async (req, res) => {
     const topicosComPostsBM = await TopicoPost.find(
       { "postagens.bookmarkedPor": uid, deletado: false },
       { titulo: 1, categoria: 1, "postagens.$": 1 },
-    ).populate("postagens.autor", "nome imagemProfile");
+    ).populate("postagens.autor", "usuario imagemProfile");
 
     const postBookmarks = topicosComPostsBM.flatMap((t) =>
     t.postagens
