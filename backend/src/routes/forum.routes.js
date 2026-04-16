@@ -24,17 +24,17 @@ import {verificarAdmin, verificarToken } from "../middleware/auth.middleware.js"
 const forumRouters = express.Router();
 
 //Categorias de Tópicos
-forumRouters.get('/forum/topicos/categorias', buscarCategorias);
+forumRouters.get('/forum/categorias', buscarCategorias);
 
 // ── Topicos ───────────────────────────────────────
-forumRouters.get('/forum/topicos', buscarTopicos);
-forumRouters.get('/forum/topicos/:topicoId', buscarTopicosPorID);
+forumRouters.get("/forum/categorias/topicos/:topicoId", buscarTopicosPorID);
+forumRouters.get("/forum/categorias/topicos", buscarTopicos);
 forumRouters.get('/forum/topicos/bookmarks',verificarToken ,listarBookmarkTopico);
 
 forumRouters.post("/forum/topicos", verificarToken, criarTopico);
 forumRouters.post("/forum/topicos/:topicoId/curtir", verificarToken, curtirTopico);
 forumRouters.post("/forum/topicos/:topicoId/denunciar", verificarToken, denunciarTopico);
-forumRouters.post("/forum/topicos/:topicoId/bookmark", verificarToken, criarBookmarkTopico);
+forumRouters.post("/forum/topicos/:topicoId/bookmarks", verificarToken, criarBookmarkTopico);
 
 forumRouters.put("/forum/topicos/:topicoId", verificarToken, editarTopico);
 

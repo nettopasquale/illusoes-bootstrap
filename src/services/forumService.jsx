@@ -4,34 +4,37 @@ const BASE = "/forum";
 
 //── Categorias ──────────────────────────────────────
 export const listarCategorias = () =>
-  api.get(`${BASE}/topicos/categorias`,);
+  api.get(`${BASE}/categorias`,);
 
 //── Bookmarks ──────────────────────────────────────
 export const listarMeusBookmarks = () =>
-  api.get(`${BASE}/topicos/bookmarks`,);
+  api.get(`${BASE}/bookmarks`,);
 
-export const criarBookmarkTopico = (id) =>
-  api.post(`${BASE}/topicos/${id}/bookmarks`,);
+export const criarBookmarkTopico = (postId) =>
+  api.post(`${BASE}/topicos/${postId}/bookmarks`);
 
 export const criarBookmarkPost = (topicoId, postId) =>
   api.post(`${BASE}/topicos/${topicoId}/postagens/${postId}/bookmarks`);
 
 //── Tópicos ──────────────────────────────────────
 export const listarTopicos = (params = {}) =>
-  api.get(`${BASE}/topicos`, { params });
+  api.get(`${BASE}/categorias/topicos`, { params });
 
-export const listarTopicosPorId = (id) => api.get(`${BASE}/topicos/${id}`);
+
+export const listarTopicosPorId = (postId) =>
+  api.get(`${BASE}/categorias/topicos/${postId}`);
 
 export const criarTopico = (data) => api.post(`${BASE}/topicos`, data);
 
-export const editarTopico = (id, data) => api.put(`${BASE}/topicos/${id}`, data);
+export const editarTopico = (postId, data) =>
+  api.put(`${BASE}/topicos/${postId}`, data);
 
-export const deletarTopico = (id) => api.delete(`${BASE}/topicos/${id}`);
+export const deletarTopico = (postId) => api.delete(`${BASE}/topicos/${postId}`);
 
-export const curtirTopico = (id) => api.post(`${BASE}/topicos/${id}/curtir`);
+export const curtirTopico = (postId) => api.post(`${BASE}/topicos/${postId}/curtir`);
 
-export const denunciarTopico = (id, motivo) =>
-  api.post(`${BASE}/topicos/${id}/denunciar`, { motivo });
+export const denunciarTopico = (postId, motivo) =>
+  api.post(`${BASE}/topicos/${postId}/denunciar`, { motivo });
 
 // ── Postagens ──────────────────────────────────────
 

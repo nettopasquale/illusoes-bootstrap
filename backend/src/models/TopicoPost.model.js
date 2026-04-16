@@ -3,17 +3,15 @@ import mongoose from "mongoose";
 // Anexos
 const AnexoSchema = new mongoose.Schema(
   {
-    type: {
+    tipo: {
       type: String,
-      enum: ["image", "video", "link", "file"],
+      enum: ["imagem", "video", "link", "arquivo"],
       required: true,
     },
     url: { type: String, required: true },
-    filename: { type: String },
-    mimeType: { type: String },
-    size: { type: Number },
-    thumbnail: { type: String },
-    storageRef: { type: String },
+    nome: { type: String }, // nome original do arquivo
+    tamanho: { type: Number }, // bytes
+    thumbnail: { type: String }, // URL de thumbnail
   },
   { _id: false },
 );
@@ -34,7 +32,6 @@ const PostagemSchema = new mongoose.Schema(
     anexos: { type: [AnexoSchema], default: [] },
     curtidas: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     visualizacoes: { type: Number, default: 0 },
-    status: { type: String, enum: ["ativo", "removido"], default: "ativo" }, // útil para exclusão lógica
     criadoEm: { type: Date, default: Date.now },
     dataModificacao: { type: Date, default: Date.now, required: true },
     //citacao de posts (quotes)
@@ -126,6 +123,13 @@ const TopicoSchema = new mongoose.Schema(
         criadoEm: { type: Date, default: Date.now },
       },
     ],
+    //moderacao
+    editadoEm: { type: Date, default: null },
+    editadoPor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    },
   },
   {
     timestamps: true,

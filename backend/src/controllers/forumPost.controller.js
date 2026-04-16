@@ -1,8 +1,8 @@
 import TopicoPost from "../models/TopicoPost.model.js";
 
 //helper
-const ehAdminOuUsuario = (docAutorId, usuario) => {
-  String(docAutorId) === String(usuario._id) || usuario.tipo === "admin";
+const ehAdminOuUsuario = (autorId, req) => {
+  return String(autorId) === String(req.userId) || req.userRole === "admin";
 };
 
 // ── Posts ───────────────────────────────────────
@@ -19,7 +19,8 @@ export const publicarPostagem = async (req, res) => {
       anexos
     } = req.body;
 
-    const topico = await TopicoPost.findById(req.params.id);
+    const topico = await TopicoPost.findById(req.params.topicoId);
+    console.log("topico existe aqui, em postagem: ", topico)
     if (!topico || topico.deletado)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
@@ -27,7 +28,7 @@ export const publicarPostagem = async (req, res) => {
       return res.status(403).json({ message: "Tópico fechado para postagens" });
 
     //incrementar contagem de posts
-    await TopicoPost.publicarPostESalvar({
+    await topico.publicarPostESalvar({
       autor: req.userId,
       conteudo,
       anexos: anexos || [],
@@ -41,6 +42,7 @@ export const publicarPostagem = async (req, res) => {
       "postagens.autor",
       "usuario bio reputacao tipo createdAt", //REVER AQUI
     );
+    console.log("topico existe aqui em populate:", topico)
 
     const novaPostagem = topico.postagens[topico.postagens.length - 1];
     res.status(201).json(novaPostagem);
@@ -53,14 +55,12 @@ export const publicarPostagem = async (req, res) => {
 export const editarPostagem = async (req, res) => {
   try {
     const topico = await TopicoPost.findById(req.params.topicoId);
-
     if(!topico) return res.status(404).json({message: "Tópico não encontrado"})
     
-    const postagem = TopicoPost.postagem.id(req.params.postagemId);
-    if (!postagem || postagem.status === "removido")
-      return res.status(404).json({ message: "Postagem não encontrada" });
+    const postagem = topico.postagens.id(req.params.postagemId);
+    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
 
-    if (!ehAdminOuUsuario(postagem.autor, req.usuario))
+    if (!ehAdminOuUsuario(postagem.autor, req))
       return res.status(403).json({ message: "Sem permissão para editar" });
 
     // if (postagem.autor.toString() !== req.userId.toString())
@@ -82,19 +82,19 @@ export const editarPostagem = async (req, res) => {
 //deletar postagem - somente autor DELETE /forum/topicos/:topicoId/postagens/:postagemId
 export const deletarPostagem = async (req, res) => {
   try {
-    const topico = TopicoPost.findById(req.params.topicoId);
+    const topico = await TopicoPost.findById(req.params.topicoId);
     if(!topico) return res.status(404).json({message: "Tópico não encontrado"});
 
-    const postagem = TopicoPost.postagens(req.params.postagemId);
+    const postagem = topico.postagens.id(req.params.postagemId);
     if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
 
-    if (!ehAdminOuUsuario(postagem.autor, req.usuario))
+    if (!ehAdminOuUsuario(postagem.autor, req))
       return res.status(403).json({ message: "Sem permissão para excluir" });
     // if (postagem.autor.toString() !== req.userId.toString())
     //   return res.status(403).json({ message: "Sem permissão para excluir" });
 
     postagem.deletado = true;
-    postagem.conteudo = "[Postagem removida pelo autor]";
+    postagem.conteudo = "[Postagem removida]";
     topico.postagensContador = topico.postagens.filter((r)=> !r.deletado).length;
     await topico.save();
     res.status(201).json({ message: "Postagem removida" });
@@ -106,13 +106,11 @@ export const deletarPostagem = async (req, res) => {
 //curtir postagem - POST forum/topicos/:topicoId/postagens/:postagemId/curtir
 export const curtirPostagem = async (req, res) => {
   try {
-    const topico = TopicoPost.findById(req.params.topicoId);
-    if (!topico)
-      return res.status(404).json({ message: "Tópico não encontrado" });
+    const topico = await TopicoPost.findById(req.params.topicoId);
+    if (!topico) return res.status(404).json({ message: "Tópico não encontrado" });
 
-    const postagem = TopicoPost.postagens(req.params.postagemId);
-    if (!postagem)
-      return res.status(404).json({ message: "Postagem não encontrada" });
+    const postagem = topico.postagens.id(req.params.postagemId);
+    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
 
     const userId = req.userId.toString();
     const jaCurtido = postagem.curtidoPor.map(String).includes(userId);
@@ -138,13 +136,11 @@ export const curtirPostagem = async (req, res) => {
 export const denunciarPostagem = async (req, res) => {
   try {
     const { motivo } = req.body;
-    const topico = TopicoPost.findById(req.params.topicoId);
-    if (!topico)
-      return res.status(404).json({ message: "Tópico não encontrado" });
+    const topico = await TopicoPost.findById(req.params.topicoId);
+    if (!topico) return res.status(404).json({ message: "Tópico não encontrado" });
 
-    const postagem = TopicoPost.postagens(req.params.postagemId);
-    if (!postagem)
-      return res.status(404).json({ message: "Postagem não encontrada" });
+    const postagem = topico.postagens.id(req.params.postagemId);
+    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
 
     postagem.denuncias.push({ denunciadoPor: req.userId, motivo });
     await topico.save();
@@ -157,13 +153,11 @@ export const denunciarPostagem = async (req, res) => {
 //Bookmark post - POST forum/topicos/:topicoId/postagens/:postagemId/bookmark
 export const criarBookmarkPostagem = async (req, res) => {
   try {
-    const topico = TopicoPost.findById(req.params.topicoId);
-    if (!topico)
-      return res.status(404).json({ message: "Tópico não encontrado" });
+    const topico = await TopicoPost.findById(req.params.topicoId);
+    if (!topico) return res.status(404).json({ message: "Tópico não encontrado" });
 
-    const postagem = TopicoPost.postagens(req.params.postagemId);
-    if (!postagem)
-      return res.status(404).json({ message: "Postagem não encontrada" });
+    const postagem = topico.postagens.id(req.params.postagemId);
+    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
 
     const userId = req.userId.toString();
     const idx = postagem.bookmarkedPor.map(String).includes(userId);

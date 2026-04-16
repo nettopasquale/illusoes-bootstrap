@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Card, Row, Col, Badge, Button, Dropdown } from "react-bootstrap";
+import { Card, Row, Col, Badge, Button, Dropdown, Form } from "react-bootstrap";
 import { ChatDots, Eye } from "react-bootstrap-icons";
 import { 
   curtirPostagem, 
@@ -9,8 +9,8 @@ import {
   editarPostagem
  } from "../../services/forumService";
 import { AuthContext } from "../../context/AuthContext";
-import api from "../../services/api";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
 
 function Avatar({nome="", size=36}){
   const iniciais = nome
@@ -50,7 +50,7 @@ export default function ForumPostCard({
   onDelete,
   depth = 0,
 }) {
-const { usuario } = useAuth(AuthContext);
+const { usuario } = useContext(AuthContext);
 const [curtidas, setCurtidas] = useState(postagem.curtidas || 0);
 const [curtiu, setCurtiu] = useState(
   postagem.curtidoPor?.map(String).includes(String(atualUserId)),
@@ -61,7 +61,7 @@ const [bookmarked, setBookmarked] = useState(
 const [denunciaMotivo, setDenunciaMotivo] = useState("");
 const [showDenuncia, setShowDenuncia] = useState(false);
 const [editando, setEditando] = useState(false);
-const [editarConteudo, setEditarConteudo] = useState(postagem.content);
+const [editarConteudo, setEditarConteudo] = useState(postagem.conteudo);
 const [salvando, setSalvando] = useState(false);
 
 const ehAutor = String(postagem.autor?._id) === String(atualUserId);
@@ -82,7 +82,7 @@ const handleCurtida = async () => {
 const handleDelete = async () => {
   if (
     !window.confirm(
-      ehAdmin && !ehAutor
+      ehAdmin && ehAutor
         ? "Remover este post como administrador?"
         : "Remover sua resposta?",
     )
@@ -99,8 +99,8 @@ const handleDelete = async () => {
 const handleBookmark = async () => {
   if (!usuario) return;
   try {
-    const { data } = await bookmarkPostagem(threadId, postagem._id);
-      setBookmarked(data.bookmarked);
+    const { data } = await bookmarkPostagem(topicoId, postagem._id);
+      setBookmarked(data.bookmarkedPor);
   } catch {
       /* silencioso */
   }
@@ -128,6 +128,7 @@ const handleSaveEdit = async () => {
     const { data } = await editarPostagem(topicoId, postagem._id, {
       conteudo: editarConteudo.trim(),
     });
+    console.log("texto da postagem a ser editada: ", data.conteudo)
     onUpdate(postagem._id, data);
     setEditando(false);
   } catch {
@@ -170,7 +171,7 @@ if (postagem.deletado) {
           >
             {postagem.autor?.usuario}
           </Link>
-          {postagem.autor?.tipo ==='admin' && (
+          {postagem.autor?.tipo === "admin" && (
             <Badge bg="danger" style={{ fontSize: "0.65rem" }}>
               Admin
             </Badge>
@@ -338,7 +339,7 @@ if (postagem.deletado) {
             className="d-flex align-items-center justify-content-between px-3 py-2 border-top flex-wrap gap-2"
             style={{ background: "#f8f9fa" }}
           >
-            {/* Voto */}
+            {/* Curtida */}
             <div className="d-flex align-items-center gap-2">
               <Button
                 variant={curtiu ? "success" : "outline-secondary"}
@@ -365,7 +366,7 @@ if (postagem.deletado) {
 
             {/* Ações direita */}
             <div className="d-flex align-items-center gap-2 flex-wrap">
-              {usuario && !ehAutor && (
+              {usuario && (
                 <Button
                   variant="link"
                   size="sm"

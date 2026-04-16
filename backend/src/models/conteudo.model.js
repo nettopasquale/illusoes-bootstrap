@@ -19,4 +19,3 @@ const conteudoModel = new Schema({
 const ConteudoModel = mongoose.model("Conteudo", conteudoModel);
 
 export default ConteudoModel;
-

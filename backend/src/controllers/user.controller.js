@@ -154,10 +154,6 @@ export const deleteUser = async (req, res) => {
 
 export const getUserContent = async (req, res) => {
   try {
-    // console.log("Chegou na rota /user/conteudos");
-    // console.log("Query tipo:", req.query.tipo);
-    // console.log("UserID:", req.userId);
-
     const tipo = req.query.tipo;
     const userId = req.userId;
 

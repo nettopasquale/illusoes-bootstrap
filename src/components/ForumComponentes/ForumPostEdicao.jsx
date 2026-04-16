@@ -18,54 +18,52 @@ function ToolbarBotao({ onClick, titulo, children }) {
 
 export default function ForumPostEdicao({ onSubmit, quotedReply, onClearQuote, loading }) {
   const [conteudo, setConteudo] = useState("");
+  const textareaRef = useRef(null);
   const navigate = useNavigate();
 
-    const wrapSelecao = (antes, depois = antes) => {
-      const ta = textareaRef.current;
-      if (!ta) return;
-      const comeco = ta.selectionStart;
-      const fim = ta.selectionEnd;
-      const selecionado = conteudo.slice(comeco, fim);
-      const novoConteudo =
-        conteudo.slice(0, comeco) +
-        antes +
-        selecionado +
-        depois +
-        conteudo.slice(fim);
-      setConteudo(novoConteudo);
-      setTimeout(() => {
-        ta.focus();
-        ta.setSelectionRange(comeco + antes.length, fim + antes.length);
-      }, 0);
-    };
-  
-    const inserirLinha = (prefixo) => {
-      const ta = textareaRef.current;
-      if (!ta) return;
-      const comeco = ta.selectionStart;
-      const comecoLinha = conteudo.lastIndexOf("\n", comeco - 1) + 1;
-      const novoConteudo =
-        conteudo.slice(0, comecoLinha) +
-        prefixo +
-        conteudo.slice(comecoLinha);
-      setConteudo(novoConteudo);
-      setTimeout(() => ta.focus(), 0);
-    };
+  const wrapSelecao = (antes, depois = antes) => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    const comeco = ta.selectionStart;
+    const fim = ta.selectionEnd;
+    const selecionado = conteudo.slice(comeco, fim);
+    const novoConteudo =
+      conteudo.slice(0, comeco) +
+      antes +
+      selecionado +
+      depois +
+      conteudo.slice(fim);
+    setConteudo(novoConteudo);
+    setTimeout(() => {
+      ta.focus();
+      ta.setSelectionRange(comeco + antes.length, fim + antes.length);
+    }, 0);
+  };
 
+  const inserirLinha = (prefixo) => {
+    const ta = textareaRef.current;
+    if (!ta) return;
+    const comeco = ta.selectionStart;
+    const comecoLinha = conteudo.lastIndexOf("\n", comeco - 1) + 1;
+    const novoConteudo =
+      conteudo.slice(0, comecoLinha) + prefixo + conteudo.slice(comecoLinha);
+    setConteudo(novoConteudo);
+    setTimeout(() => ta.focus(), 0);
+  };
 
   const handleSubmit = (e) => {
     if (!conteudo.trim()) return;
     onSubmit({
       conteudo: conteudo.trim(),
-      postagemCitacaoId: postagemCitacao?._id || null,
-      conteudoCitacao: postagemCitacao?.conteudo || null,
-      nomeAutorCitacao: postagemCitacao?.autor?.nome || null,
+      postagemCitacaoId: quotedReply?._id || null,
+      conteudoCitacao: quotedReply?.conteudo || null,
+      nomeAutorCitacao: quotedReply?.autor?.usuario || null,
     });
     setConteudo("");
   };
 
-    const charCount = conteudo.length;
-    const MAX = 5000;
+  const charCount = conteudo.length;
+  const MAX = 5000;
 
   return (
     <Card className="border mt-4">
@@ -114,19 +112,19 @@ export default function ForumPostEdicao({ onSubmit, quotedReply, onClearQuote, l
 
       <Card.Body className="p-3">
         {/* Preview da citação */}
-        {postagemCitacao && (
+        {quotedReply && (
           <div className="mb-3 p-2 rounded border-start border-3 border-primary bg-light d-flex justify-content-between align-items-start">
             <div>
               <p className="mb-1 text-muted" style={{ fontSize: "0.78rem" }}>
-                Citando <strong>{postagemCitacao.autor?.nome}</strong>:
+                Citando <strong>{quotedReply.autor?.usuario}</strong>:
               </p>
               <p
                 className="mb-0 text-secondary"
                 style={{ fontSize: "0.82rem" }}
               >
-                {postagemCitacao.conteudo.length > 150
-                  ? postagemCitacao.conteudo.slice(0, 150) + "…"
-                  : postagemCitacao.conteudo}
+                {quotedReply.conteudo.length > 150
+                  ? quotedReply.conteudo.slice(0, 150) + "…"
+                  : quotedReply.conteudo}
               </p>
             </div>
             <Button

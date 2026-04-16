@@ -1,10 +1,9 @@
 import TopicoPost from "../models/TopicoPost.model.js";
-import UserModel from "../models/user.model.js";
 
 //helper
-const ehAdminOuUsuario = (docAutorId, usuario)=>{
-  String(docAutorId) === String(usuario._id) || usuario.tipo === "admin";
-}
+const ehAdminOuUsuario = (autorId, req) => {
+  return String(autorId) === String(req.userId) || req.userRole === "admin";
+};
 
 // ── TOPICO ───────────────────────────────────────
 
@@ -31,7 +30,7 @@ export const buscarTopicos = async (req, res) => {
       .populate("ultimaPostagemPor", "usuario")
       .select("-postagens -denuncias")
       .sort(sortMap[sort] || sortMap.recente)
-      .skip((page - 1) * limite)
+      .skip((pagina - 1) * limite)
       .limit(limite);
 
     const total = await TopicoPost.countDocuments(filter);
@@ -50,17 +49,15 @@ export const buscarTopicos = async (req, res) => {
 //Detalha um tópico - GET /forum/topicos/:id -
 export const buscarTopicosPorID = async (req, res) => {
   try {
-    const topico = await TopicoPost.findById(req.params.id)
+    const topico = await TopicoPost.findById(req.params.topicoId)
       .populate("autor", "usuario bio reputacao tipo createdAt") //MUDAR AQUI
       .populate("editadoPor", "usuario")
       .populate("ultimaPostagemPor", "usuario")
-      .populate(
-        "postagens.autor",
-        "usuario usuario bio reputacao tipo createdAt",
-      )
+      .populate("postagens.autor", "usuario bio reputacao tipo createdAt")
       .populate("postagens.editadoPor", "usuario");
+    
 
-    if (!topico || topico.deletado) {
+    if (!topico || topico.deletado === true) {
       return res.status(404).json({ message: "Tópico não encontrado" });
     }
 
@@ -119,6 +116,10 @@ export const criarTopico = async (req, res) => {
   try {
     const { titulo, conteudo, categoria, tags, anexos } = req.body;
 
+    if (!titulo || !conteudo || !categoria) {
+      return res.status(400).json({ error: "Campos obrigatórios devem ser preenchidos!" });
+    }
+
     const topico = new TopicoPost({
       titulo,
       conteudo,
@@ -133,7 +134,7 @@ export const criarTopico = async (req, res) => {
     await topico.populate("autor", "usuario bio reputacao tipo createdAt");
 
     // Incrementa postCount do usuário
-    await UserModel.findByIdAndUpdate(req.userId, { $inc: { postCount: 1 } });
+    // await UserModel.findByIdAndUpdate(req.userId, { $inc: { postCount: 1 } });
 
     res.status(201).json(topico);
   } catch (err) {
@@ -144,11 +145,11 @@ export const criarTopico = async (req, res) => {
 //editar tópico - somente autor - PUT /forum/topicos/:id
 export const editarTopico = async (req, res) => {
   try {
-    const topico = await TopicoPost.findById(req.params.id);
+    const topico = await TopicoPost.findById(req.params.topicoId);
     if (!topico || topico.deletado)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
-    if (!isAdminOrAuthor(thread.author, req.usuario))
+    if (!isAdminOrAuthor(topico.autor, req))
       return res.status(403).json({ message: "Sem permissão para editar" });
     // if (topico.autor.toString() !== req.userId.toString())
     //   return res.status(403).json({ message: "Sem permissão para editar" });
@@ -159,6 +160,8 @@ export const editarTopico = async (req, res) => {
     if (categoria) topico.categoria = categoria;
     if (tags) topico.tags = tags;
     if (anexos) topico.anexos = anexos;
+    topico.editadoEm = new Date();
+    topico.editadoPor = req.userId;
 
     await topico.save();
     res.status(201).json(topico);
@@ -170,14 +173,14 @@ export const editarTopico = async (req, res) => {
 //deletar tópico - somente autor DELETE /forum/topicos/:id
 export const deletarTopico = async (req, res) => {
   try {
-    const topico = await TopicoPost.findById(req.params.id);
+    const topico = await TopicoPost.findById(req.params.topicoId);
     if (!topico)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
     // if (topico.autor.toString() !== req.userId.toString())
     //   return res.status(403).json({ message: "Sem permissão para excluir" });
 
-    if (!ehAdminOuUsuario(topico.autor, req.usuario))
+    if (!ehAdminOuUsuario(topico.autor, req))
       return res.status(403).json({ message: "Sem permissão para excluir" });
 
     topico.deletado = true;
@@ -191,7 +194,7 @@ export const deletarTopico = async (req, res) => {
 //curtir tópico - POST forum/topicos/:id/curtir
 export const curtirTopico = async (req, res) => {
   try {
-    const topicos = await TopicoPost.findById(req.params.id);
+    const topicos = await TopicoPost.findById(req.params.topicoId);
     if (!topicos)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
@@ -217,7 +220,7 @@ export const curtirTopico = async (req, res) => {
 export const denunciarTopico = async (req, res) => {
   try {
     const { motivo } = req.body;
-    const topico = await TopicoPost.findById(req.params.id);
+    const topico = await TopicoPost.findById(req.params.topicoId);
     if (!topico)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
@@ -232,7 +235,7 @@ export const denunciarTopico = async (req, res) => {
 //Bookmark tópico - POST forum/topicos/:id/denunciar
 export const criarBookmarkTopico = async (req, res) => {
   try {
-    const topico = await TopicoPost.findById(req.params.id);
+    const topico = await TopicoPost.findById(req.params.topicoId);
     if (!topico)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
@@ -261,7 +264,7 @@ export const listarBookmarkTopico = async (req, res) => {
       bookmarkedPor: uid,
       deletado: false,
     })
-      .populate("autor", "usuario imagemProfile")
+      .populate("autor", "usuario")
       .select(
         "titulo categoria curtidas postagensContador visualizacoes criadoEm ultimaPostagemEm",
       )
@@ -271,7 +274,7 @@ export const listarBookmarkTopico = async (req, res) => {
     const topicosComPostsBM = await TopicoPost.find(
       { "postagens.bookmarkedPor": uid, deletado: false },
       { titulo: 1, categoria: 1, "postagens.$": 1 },
-    ).populate("postagens.autor", "usuario imagemProfile");
+    ).populate("postagens.autor", "usuario");
 
     const postBookmarks = topicosComPostsBM.flatMap((t) =>
     t.postagens
