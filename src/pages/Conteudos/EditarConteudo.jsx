@@ -27,10 +27,6 @@ export const EditarConteudo = () => {
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
 
   const modoEdicao = !!id;
-  console.log("É edição: ", modoEdicao);
-  console.log("id: ", id);
-  console.log("Tipo Params: ", tipoParams);
-  console.log("Params: ", useParams());
 
   const {
     titulo,

@@ -22,17 +22,6 @@ export const colecoesRoutes = [
     key="criar-colecao"
   />,
 
-  // ver as minhas coleções
-  <Route
-    path="user/colecoes"
-    element={
-      <PrivateRoute>
-        <MinhasColecoes />
-      </PrivateRoute>
-    }
-    key="colecoes-id"
-  />,
-
   // editar entidade coleção
   <Route
     path="/colecoes/:colecaoId/editar"

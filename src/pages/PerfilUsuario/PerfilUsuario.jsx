@@ -1,106 +1,79 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useContext, useEffect, useState } from "react";
 import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
+import { Navegacao } from "../../components/Navegacao/Navegacao";
+import { cloudinaryUpload } from "../../utils/cloudinaryUpload"
+import { useParams, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../context/AuthContext";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import InputMask from "react-input-mask";
-import { Navegacao } from "../../components/Navegacao/Navegacao";
 import api from "../../services/api";
-import { cloudinaryUpload } from "../../utils/cloudinaryUpload"
 
 export const PerfilUsuario = () => {
-  const [perfil, setPerfil] = useState({
-    nome: "",
-    sobreNome: "",
-    imagemProfile: "",
-    cpf: "",
-    rg: "",
-    endereco: "",
-    dataNascimento: "",
-    telefone: "",
-  });
-
+  const {id} = useParams();
+  const {usuario, token} = useContext(AuthContext)
+  const [nome, setNome] = useState("");
+  const [sobrenome, setSobrenome] = useState("");
+  const [dataNascimento, setDataNascimento] = useState("");
+  const [avatar, setAvatar] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [modoEdicao, setModoEdicao] = useState(false);
-  const [uploadingImgProfile, setUploadingImageProfile] = useState(false);
-  const [perfilId, setPerfilId] = useState(null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [erro, setErro] = useState("");
-
-  const token = localStorage.getItem("token");
-
-  const carregarPerfil = async () => {
-    try {
-      const response = await api.get("/userProfile/me");
-      setPerfil(response.data);
-      setPerfilId(response.data._id);
-    } catch (err) {
-      if (err.response?.status === 404) {
-        console.log("Perfil ainda não existe. Permitindo criação.");
-        setMensagem("Nenhum perfil encontrado. Você pode criar um.");
-      } else {
-        setErro("Erro ao criar o perfil");
-        console.error(err);
-      }
-    }
-  };
+  const navigate = useNavigate();
 
   useEffect(() => {
+    const carregarPerfil = async () => {
+      try {
+        const response = await api.get(`/user/profile`);
+        setSobrenome(response.data.sobrenome);
+        setAvatar(response.data.avatar);
+        setDataNascimento(response.data.dataNascimento);
+      } catch (err) {
+        if (err.response?.status === 404) {
+          setMensagem("Nenhum perfil encontrado. Você pode criar um.");
+        } else {
+          setErro("Erro ao criar o perfil");
+          console.error(err);
+        }
+      }
+    };
     carregarPerfil();
-  }, []);
+  }, [id]);
 
     //handleImageProfile
-  const handleImgProfile = async (e) => {
+  const handleAvatar = async (e) => {
     const file = e.target.files[0]
       console.log(file);
     
     if (!file) return;
-    setUploadingImageProfile(true);
+    setUploadingAvatar(true);
     try {
-      const url = await cloudinaryUpload(file, "imgProfile");
+      const url = await cloudinaryUpload(file, "avatar");
       console.log("URL da imagem de avatar:", url);
     
-      setPerfil({ ...perfil, imagemProfile: url });
+      setAvatar(url);
     }catch (err) {
       console.error("Erro ao subir imagem de avatar:", err);
     }finally {
-      setUploadingThumb(false);
+      setUploadingAvatar(false);
     }
   };
 
   //Para criar novo Perfil / Editar Perfil
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
-      const formData = new FormData();
-      Object.entries(perfil).forEach(([key, value]) => {
-        formData.append(key, value);
-      });
-
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
+      const payload = {
+        sobrenome,
+        avatar,
+        dataNascimento,
       };
-
-      if (perfilId) {
-        // Atualiza perfil existente
-        console.log("PerfilID: ", perfilId);
-        await api.put(`/userProfile/${perfilId}`,
-          formData,
-          config,
-        );
-        setMensagem("Perfil atualizado com sucesso!");
-      } else {
-        // Cria novo perfil
-        const response = await api.post(
-          "/userProfile",
-          formData,
-          config,
-        );
-        setMensagem("Perfil criado com sucesso!");
-        setPerfilId(response.data._id); // para futuras edições
-      }
+      await api.put(`/user/profile`, payload);
+      setMensagem("Perfil atualizado com sucesso!");
+      setErro(null);
+      toast.success("Perfil cadastrado com sucesso!");
+      setTimeout(() => navigate("/"), 3000);
     } catch (err) {
       setErro("Erro ao salvar o perfil.");
       console.error(err);
@@ -111,17 +84,18 @@ export const PerfilUsuario = () => {
     <LayoutGeral>
       <Container className="my-5 py-5">
         <Navegacao
-          itens={[{ label: "Home", to: "/" }, { label: "Meu Perfil" }]}
+          itens={[{ label: "Home", to: "/" }, 
+          { label: "Meu Perfil", to: `/user/profile/${id}` }]}
         />
         <h2 className="mb-4 fs-1 fw-bold">Meu Perfil</h2>
         {mensagem && <Alert variant="success">{mensagem}</Alert>}
         {erro && <Alert variant="danger">{erro}</Alert>}
         <Form onSubmit={handleSubmit}>
           <Row>
-            {perfil.imagemProfile && (
+            {avatar && (
               <img
-                src={perfil.imagemProfile}
-                alt="imagemProfile"
+                src={avatar}
+                alt="avatar"
                 className="mb-3"
                 style={{ width: "150px", borderRadius: "50%" }}
               />
@@ -132,7 +106,7 @@ export const PerfilUsuario = () => {
                   Avatar
                 </Form.Label>
                 <Form.Control
-                  name="imagemProfile"
+                  name="avatar"
                   type="file"
                   accept="image/*"
                   className="rounded-5 w-100"
@@ -140,7 +114,7 @@ export const PerfilUsuario = () => {
                     heigh: "200px",
                     borderRadius: "200px",
                   }}
-                  onChange={handleImgProfile}
+                  onChange={handleAvatar}
                   disabled={!modoEdicao}
                 />
               </Form.Group>
@@ -149,13 +123,13 @@ export const PerfilUsuario = () => {
             <Col md={6}>
               <Form.Group className="mb-4 px-5">
                 <Form.Label className="fs-3 fw-bold text-start w-100">
-                  Nome
+                  Nome do usuário
                 </Form.Label>
                 <Form.Control
                   name="nome"
                   className="w-100"
-                  value={perfil.nome}
-                  onChange={handleChange}
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
                   disabled={!modoEdicao}
                   style={{ width: "200px", fontSize: "1.2rem" }}
                 />
@@ -170,60 +144,11 @@ export const PerfilUsuario = () => {
                 <Form.Control
                   name="sobreNome"
                   className="w-100"
-                  value={perfil.sobreNome}
-                  onChange={handleChange}
+                  value={sobrenome}
+                  onChange={(e) => setSobrenome(e.target.value)}
                   disabled={!modoEdicao}
                   style={{ width: "200px", fontSize: "1.2rem" }}
                 />
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  CPF
-                </Form.Label>
-                <InputMask
-                  mask="999.999.999-99"
-                  value={perfil.cpf}
-                  onChange={(e) =>
-                    setPerfil({ ...perfil, cpf: e.target.value })
-                  }
-                >
-                  {(inputProps) => <Form.Control {...inputProps} type="text" />}
-                </InputMask>
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  RG
-                </Form.Label>
-                <InputMask
-                  mask="99.999.999-9"
-                  value={perfil.rg}
-                  onChange={(e) => setPerfil({ ...perfil, rg: e.target.value })}
-                >
-                  {(inputProps) => <Form.Control {...inputProps} type="text" />}
-                </InputMask>
-              </Form.Group>
-            </Col>
-
-            <Col md={6}>
-              <Form.Group className="mb-4 px-5">
-                <Form.Label className="fs-3 fw-bold text-start w-100">
-                  Telefone
-                </Form.Label>
-                <InputMask
-                  mask="(99) 99999-9999"
-                  value={perfil.telefone}
-                  onChange={(e) =>
-                    setPerfil({ ...perfil, telefone: e.target.value })
-                  }
-                >
-                  {(inputProps) => <Form.Control {...inputProps} type="text" />}
-                </InputMask>
               </Form.Group>
             </Col>
 
@@ -234,10 +159,9 @@ export const PerfilUsuario = () => {
                 </Form.Label>
                 <InputMask
                   mask="99/99/9999"
-                  value={perfil.dataNascimento}
-                  onChange={(e) =>
-                    setPerfil({ ...perfil, dataNascimento: e.target.value })
-                  }
+                  value={dataNascimento}
+                  onChange={(e) => setDataNascimento(e.target.value)}
+                  disabled={!modoEdicao}
                 >
                   {(inputProps) => <Form.Control {...inputProps} type="text" />}
                 </InputMask>
@@ -260,7 +184,7 @@ export const PerfilUsuario = () => {
                     onClick={handleSubmit}
                     type="submit"
                   >
-                    {perfilId ? "Salvar Alterações" : "Criar Perfil"}
+                    {id ? "Salvar Alterações" : "Criar Perfil"}
                   </Button>
                 )}
               </div>

@@ -26,7 +26,7 @@ export const listarComentarios = async (req, res) => {
   try {
     const { targetId } = req.params;
     const { targetTipo } = req.query;
-    // console.log("Filtro aplicado:", { targetId, targetTipo });
+
 
     const comentarios = await ComentarioModel.find({
       targetId,
@@ -34,7 +34,6 @@ export const listarComentarios = async (req, res) => {
     })
       .populate("autor", "usuario")
       .sort({ createdAt: -1 });
-    // console.log("Comentarios Backend: ", comentarios);
     res.status(201).json(comentarios);
   } catch (error) {
     console.error("Erro ao listar comentários: ", error);

@@ -16,7 +16,7 @@ forumTopicoRouters.get('/forum/topicos', listarTopicos);
 forumTopicoRouters.get('/forum/topicos/:id', buscarTopicosPorId);
 
 //criação e edição
-forumTopicoRouters.post('/forum/categorias/:categoriasId/topicos', verificarToken, criarTopico);
+forumTopicoRouters.post('/forum/topicos', verificarToken, criarTopico);
 forumTopicoRouters.put('/forum/topicos/:id', verificarToken, editarTopico);
 
 //trancar e excluir - Admin

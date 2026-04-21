@@ -105,7 +105,7 @@ export const MeusConteudos = () => {
                 {item.thumbs && (
                   <Card.Img
                     variant="top"
-                    src={`http://localhost:8080${item.thumbs}`}
+                    src={item.thumbs}
                     style={{ height: "150px", objectFit: "cover" }}
                   />
                 )}

@@ -17,8 +17,8 @@ export const criarBookmarkPost = (topicoId, postId) =>
   api.post(`${BASE}/topicos/${topicoId}/postagens/${postId}/bookmarks`);
 
 //── Tópicos ──────────────────────────────────────
-export const listarTopicos = (params = {}) =>
-  api.get(`${BASE}/categorias/topicos`, { params });
+export const listarTopicos = (categoria, params = {}) =>
+  api.get(`${BASE}/categorias/${categoria}/topicos`, { params });
 
 
 export const listarTopicosPorId = (postId) =>

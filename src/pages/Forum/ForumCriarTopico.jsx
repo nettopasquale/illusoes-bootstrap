@@ -161,7 +161,7 @@ export default function ForumCriarTopico() {
         tags: tagsArray,
       });
       toast.success("Tópico criado com sucesso!")
-      setTimeout(()=>navigate(`/forum/topico/${data._topicoId}`), 3000);
+      setTimeout(()=>navigate(`/forum`), 3000);
     } catch (err) {
       setError(err.response?.data?.message || "Erro ao publicar tópico.");
       toast.error("Erro ao publicar tópico.");

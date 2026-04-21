@@ -10,7 +10,6 @@ import userRouters from "./routes/user.routes.js";
 import conteudoRouters from "./routes/conteudo.route.js";
 import colecaoRouters from "./routes/colecao.routes.js";
 import cartasColecaoRouters from "./routes/cartasColecao.routes.js";
-import userProfileRouters from "./routes/userProfile.router.js";
 import forumRouters from "./routes/forum.routes.js";
 import likesRouters from "./routes/likes.routes.js";
 import comentariosRouters from "./routes/comentarios.routes.js";
@@ -75,7 +74,6 @@ try {
 //rotas do app
 app.use("/", conteudoRouters);
 app.use("/", userRouters);
-app.use("/", userProfileRouters);
 app.use("/", colecaoRouters);
 app.use("/", cartasColecaoRouters);
 app.use("/", forumRouters);

@@ -15,7 +15,7 @@ export const forumRoutes = [
   />,
 
   <Route
-    path="/forum/categorias/topicos"
+    path="/forum/categorias/:categoria/topicos"
     element={<ForumPaginaCategoria />}
     key="forum-topico-view"
   />,
@@ -25,7 +25,7 @@ export const forumRoutes = [
   element={
     <PrivateRoute>
         <ForumCriarTopico />
-      </PrivateRoute>
+    </PrivateRoute>
     }
     key="forum-topico-criar"
     />,

@@ -5,13 +5,9 @@ export const criarConteudo = async (req,res) => {
         const { titulo, subTitulo, texto, tags, dataEvento, valorEntrada,thumbs } = req.body;
         const { tipo } = req.params;
 
-
-        console.log("THUMBS RECEBIDO:", thumbs);
-
         const imagens = req.files?.imagem
             ? req.files.imagem.map(img => img.filename)
             : [];
-
 
         // Validação simples para evitar valores inválidos
         if (!["noticia", "artigo", "evento", "campeonato"].includes(tipo)) {

@@ -6,6 +6,7 @@ import { listarMeusBookmarks, criarBookmarkTopico, criarBookmarkPost} from "../.
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import { toast } from "react-toastify";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import { Avatar } from "../../components/ForumComponentes/Avatar";
 
 const CATEGORIA_META = {
   estrategia: { label: "Estratégia", color: "#0d6efd" },
@@ -18,27 +19,6 @@ const CATEGORIA_META = {
   batepapo: { label: "Bate-papo", color: "#6f42c1" },
 };
 
-function Avatar({ name = "", size = 32 }) {
-  const initials = name
-    .split(" ")
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-  return (
-    <div
-      className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0"
-      style={{
-        width: size,
-        height: size,
-        fontSize: size * 0.36,
-        background: `hsl(${[...name].reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 55%, 42%)`,
-      }}
-    >
-      {initials || "?"}
-    </div>
-  );
-}
 
 export default function ForumListaBookmark() {
 const [tab, setTab] = useState("topicos");
@@ -48,12 +28,12 @@ const [loading, setLoading] = useState(true);
 const [error, setError] = useState(null);
 const [removendoId, setRemovendoId] = useState(null);
 
-//traz os bookmarks se já existire
+//traz os bookmarks se já existirem
 useEffect(() => {
     listarMeusBookmarks()
       .then(({ data }) => {
-        setTopicoBMs(data.criarBookmarkTopico);
-        setPostBMs(data.criarBookmarkPost);
+        setTopicoBMs(data.topicoBookmarks);
+        setPostBMs(data.postBookmarks);
       })
       .catch(() => setError("Erro ao carregar bookmarks."))
       .finally(() => setLoading(false));
@@ -182,7 +162,7 @@ useEffect(() => {
                             {catLabel}
                           </Badge>
                           <Link
-                            to={`/forum/topico/${topico._id}`}
+                            to={`/forum/categorias/topicos/${topico._id}`}
                             className="text-decoration-none text-body fw-medium text-truncate"
                             style={{ fontSize: "0.88rem" }}
                           >
@@ -244,7 +224,7 @@ useEffect(() => {
                         {CATEGORIA_META[post.categoria]?.label || post.categoria}
                       </Badge>
                       <Link
-                        to={`/forum/topico/${post.topicoId}/postagens/${post._id}`}
+                        to={`/forum/topicos/${post.topicoId}/postagens/${post._id}`}
                         className="text-decoration-none text-muted fw-medium"
                         style={{ fontSize: "0.78rem" }}
                       >
@@ -260,7 +240,11 @@ useEffect(() => {
 
                     {/* Autor + conteudo */}
                     <div className="d-flex gap-2 align-items-start">
-                      <Avatar name={post.autor?.usuario || "?"} size={30} />
+                      <Avatar 
+                        name={post.autor?.usuario || "?"} 
+                        size={30} 
+                        img={post.autor?.avatar}
+                      />
                       <div className="flex-grow-1 overflow-hidden">
                         <span
                           className="fw-semibold"

@@ -1,5 +1,5 @@
 import { useContext, useState } from "react";
-import { Button, Nav, Offcanvas } from "react-bootstrap";
+import { Button, Nav, Offcanvas, Accordion } from "react-bootstrap";
 import { FaBars, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -8,6 +8,7 @@ function MenuGaveta({ autenticado }) {
   const {usuario, isAdmin} = useContext(AuthContext)
   const [showDrawer, setShowDrawer] = useState(false);
   const [submenuAberto, setSubmenuAberto] = useState({
+    conteudos: false,
     noticias: false,
     artigos: false,
     eventos: false,
@@ -56,98 +57,163 @@ function MenuGaveta({ autenticado }) {
             </Nav.Link>
             <hr />
 
-            {/* NOTÍCIAS */}
             <Nav.Link
-              onClick={() => toggleSubmenu("noticias")}
+              as={Link}
               className="fs-5 d-flex justify-content-between align-items-center"
+              onClick={() => toggleSubmenu("conteudos")}
             >
-              Notícias{" "}
-              {submenuAberto.noticias ? <FaChevronUp /> : <FaChevronDown />}
+              Conteúdos{" "}
+              {submenuAberto.conteudos ? <FaChevronUp /> : <FaChevronDown />}
             </Nav.Link>
-            {submenuAberto.noticias && (
-              <>
-                <Nav.Link as={Link} to="/conteudos/noticia" className="ps-4">
-                  Todas as Notícias
-                </Nav.Link>
-                <Nav.Link
-                  as={Link}
-                  to={`/conteudos/noticia/criar`}
-                  className="ps-4"
-                >
-                  Publicar Notícia
-                </Nav.Link>
-              </>
-            )}
-            <hr />
 
-            {/* ARTIGOS */}
-            <Nav.Link
-              onClick={() => toggleSubmenu("artigos")}
-              className="fs-5 d-flex justify-content-between align-items-center"
-            >
-              Artigos{" "}
-              {submenuAberto.artigos ? <FaChevronUp /> : <FaChevronDown />}
-            </Nav.Link>
-            {submenuAberto.artigos && (
+            {submenuAberto.conteudos && (
               <>
-                <Nav.Link as={Link} to="/conteudos/artigo" className="ps-4">
-                  Todos os Artigos
-                </Nav.Link>
+                {/* Notícias */}
                 <Nav.Link
-                  as={Link}
-                  to={`/conteudos/artigo/criar`}
-                  className="ps-4"
+                  onClick={() => toggleSubmenu("noticias")}
+                  className="fs-6 d-flex align-items-center"
                 >
-                  Publicar Artigo
+                  Notícias{" "}
+                  {submenuAberto.noticias ? <FaChevronUp /> : <FaChevronDown />}
                 </Nav.Link>
-              </>
-            )}
-            <hr />
+                {submenuAberto.noticias && (
+                  <>
+                    {isAdmin ? (
+                      <Nav.Link
+                        as={Link}
+                        to={`/conteudos/noticia`}
+                        className="ps-4"
+                      >
+                        Moderar Notícias
+                      </Nav.Link>
+                    ) : (
+                      <Nav.Link
+                        as={Link}
+                        to="/conteudos/noticia"
+                        className="ps-4"
+                      >
+                        Gerenciar Notícias
+                      </Nav.Link>
+                    )}
+                    <Nav.Link
+                      as={Link}
+                      to={`/conteudos/noticia/criar`}
+                      className="ps-4"
+                    >
+                      Publicar Notícia
+                    </Nav.Link>
+                  </>
+                )}
+                <hr />
+                {/* ARTIGOS */}
+                <Nav.Link
+                  onClick={() => toggleSubmenu("artigos")}
+                  className="fs-6 d-flex align-items-center"
+                >
+                  Artigos{" "}
+                  {submenuAberto.artigos ? <FaChevronUp /> : <FaChevronDown />}
+                </Nav.Link>
+                {submenuAberto.artigos && (
+                  <>
+                    {isAdmin ? (
+                      <Nav.Link
+                        as={Link}
+                        to="/conteudos/artigo"
+                        className="ps-4"
+                      >
+                        Moderar Artigos
+                      </Nav.Link>
+                    ) : (
+                      <Nav.Link
+                        as={Link}
+                        to="/conteudos/artigo"
+                        className="ps-4"
+                      >
+                        Gerenciar Artigos
+                      </Nav.Link>
+                    )}
+                    <Nav.Link
+                      as={Link}
+                      to={`/conteudos/artigo/criar`}
+                      className="ps-4"
+                    >
+                      Publicar Artigo
+                    </Nav.Link>
+                  </>
+                )}
+                <hr />
 
-            {/* EVENTOS */}
-            <Nav.Link
-              onClick={() => toggleSubmenu("eventos")}
-              className="fs-5 d-flex justify-content-between align-items-center"
-            >
-              Eventos{" "}
-              {submenuAberto.eventos ? <FaChevronUp /> : <FaChevronDown />}
-            </Nav.Link>
-            {submenuAberto.eventos && (
-              <>
-                <Nav.Link as={Link} to="/conteudos/evento" className="ps-4">
-                  Todos os Eventos
-                </Nav.Link>
+                {/* EVENTOS */}
                 <Nav.Link
-                  as={Link}
-                  to={`/conteudos/evento/criar`}
-                  className="ps-4"
+                  onClick={() => toggleSubmenu("eventos")}
+                  className="fs-6 d-flex align-items-center"
                 >
-                  Criar Evento
+                  Eventos{" "}
+                  {submenuAberto.eventos ? <FaChevronUp /> : <FaChevronDown />}
                 </Nav.Link>
-              </>
-            )}
-            <hr />
+                {submenuAberto.eventos && (
+                  <>
+                  {isAdmin ? (
+                    <Nav.Link as={Link} to="/conteudos/evento" className="ps-4">
+                      Moderar Eventos
+                    </Nav.Link>
+                  ): (
+                    <Nav.Link as={Link} to="/conteudos/evento" className="ps-4">
+                      Gerenciar Eventos
+                    </Nav.Link>
+                  )}
+                    <Nav.Link
+                      as={Link}
+                      to={`/conteudos/evento/criar`}
+                      className="ps-4"
+                    >
+                      Publicar Evento
+                    </Nav.Link>
+                  </>
+                )}
+                <hr />
 
-            {/* CAMPEONATOS */}
-            <Nav.Link
-              onClick={() => toggleSubmenu("campeonatos")}
-              className="fs-5 d-flex justify-content-between align-items-center"
-            >
-              Campeonatos{" "}
-              {submenuAberto.campeonatos ? <FaChevronUp /> : <FaChevronDown />}
-            </Nav.Link>
-            {submenuAberto.campeonatos && (
-              <>
-                <Nav.Link as={Link} to="/conteudos/campeonato" className="ps-4">
-                  Todos os Campeonatos
-                </Nav.Link>
+                {/* CAMPEONATOS */}
                 <Nav.Link
-                  as={Link}
-                  to={`/conteudos/campeonato/criar`}
-                  className="ps-4"
+                  onClick={() => toggleSubmenu("campeonatos")}
+                  className="fs-6 d-flex align-items-center"
                 >
-                  Criar Campeonato
+                  Campeonatos{" "}
+                  {submenuAberto.campeonatos ? (
+                    <FaChevronUp />
+                  ) : (
+                    <FaChevronDown />
+                  )}
                 </Nav.Link>
+                {submenuAberto.campeonatos && (
+                  <>
+                  {isAdmin ? (
+                     <Nav.Link
+                      as={Link}
+                      to="/conteudos/campeonato"
+                      className="ps-4"
+                    >
+                      Moderar Campeonatos
+                    </Nav.Link>                   
+                  ):(
+                    <Nav.Link
+                      as={Link}
+                      to="/conteudos/campeonato"
+                      className="ps-4"
+                    >
+                      Gerenciar Campeonatos
+                    </Nav.Link>
+                  )}
+                    <Nav.Link
+                      as={Link}
+                      to={`/conteudos/campeonato/criar`}
+                      className="ps-4"
+                    >
+                      Publicar Campeonato
+                    </Nav.Link>
+                    <hr />
+                  </>
+                )}
               </>
             )}
             <hr />
@@ -173,9 +239,26 @@ function MenuGaveta({ autenticado }) {
               </>
             )}
             <hr />
-            <Nav.Link as={Link} to="/forum" className="fs-5">
-              Fórum
+            <Nav.Link
+              as={Link}
+              className="fs-5 d-flex justify-content-between align-items-center"
+              onClick={() => toggleSubmenu("forum")}
+            >
+              Fórum {submenuAberto.forum ? <FaChevronUp /> : <FaChevronDown />}
             </Nav.Link>
+            {submenuAberto.forum && (
+              <>
+                <Nav.Link as={Link} to="/forum" className="ps-4">
+                  Acessar Fórum
+                </Nav.Link>
+                <Nav.Link as={Link} to="/forum/topicos/criar" className="ps-4">
+                  Publicar Tópico
+                </Nav.Link>
+                <Nav.Link as={Link} to={`/forum/bookmarks`} className="ps-4">
+                  Meus bookmarks
+                </Nav.Link>
+              </>
+            )}
             <hr />
             <Nav.Link as={Link} to="/about" className="fs-5">
               Sobre nós

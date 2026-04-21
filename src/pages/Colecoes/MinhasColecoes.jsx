@@ -1,22 +1,61 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Card, Button, Form } from "react-bootstrap";
+import { Container, Row, Col, Card, Button, Form, Modal } from "react-bootstrap";
 import { PlusCircle, Collection, Search } from "react-bootstrap-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import { useColecao } from "../../hooks/useColecao";
+import api from "../../services/api";
 
 export default function MinhasColecoes() {
   const [busca, setBusca] = useState("");
+  const [colecoes, setColecoes] = useState([]);
+  const [modalShow, setModalShow] = useState(false);
+  const [colecaoSelecionada, setColecaoSelecionada] = useState(null);
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(null);
+  const navigate = useNavigate();
 
-  const { colecoes, erro, carregando, navigate } = useColecao();
+  // const { colecoes, erro, carregando, navigate } = useColecao();
 
-  const colecoesFiltradas = colecoes.filter((c) =>
-    c.nome.toLowerCase().includes(busca.toLowerCase()),
-  );
-  if(carregando) return <p>Carregando...</p>;
-  if (erro)  return <p>{erro}</p>
-  return (
+  //busca as coleções do usuário
+  useEffect(()=> {
+    const buscarColecoes = async()=>{
+      try{
+        const response = await api.get(`/user/colecoes`);
+        console.log("Minhas coleções: ", response.data)
+        setColecoes(response.data)
+      }catch(error){
+      console.error("Erro ao buscar coleções:", error);
+      }
+    };
+    buscarColecoes();
+  },[]);
+
+  const abrirModal = (colecao) => {
+    colecaoSelecionada(colecao);
+    setModalShow(true);
+  };
+
+  const confirmarExclusao = async () => {
+    try {
+      const colecaoId = colecaoSelecionada._id;
+
+      await api.delete(`/user/colecoes/${colecaoId}`);
+      setModalShow(true);
+      buscarColecoes();
+    } catch (err) {
+      console.error("Erro ao excluir coleção:", err);
+    }
+  };
+
+  const irParaEdicao = () => {
+    const id = colecaoSelecionada._id;
+    navigate(`user/colecoes/${id}/editar`);
+  };
+
+
+  if(carregando) return (
     <LayoutGeral>
       <section id="artigo" className="block artigo-block">
         <Container className="my-5">
@@ -25,6 +64,51 @@ export default function MinhasColecoes() {
               itens={[
                 { label: "Home", to: "/" },
                 { label: "Todoas as coleções", to: "/colecoes" },
+              ]}
+            />
+            <p>Carregando...</p>;
+          </Row>
+        </Container>
+      </section>
+    </LayoutGeral>
+  );
+
+  if (erro || colecoes === null)  return (
+    <LayoutGeral>
+      <section id="artigo" className="block artigo-block">
+        <Container className="my-5">
+          <Row className="mb-4 align-items-center">
+            <Navegacao
+              itens={[
+                { label: "Home", to: "/" },
+                { label: "Minhas coleções", to: "/user/colecoes" },
+              ]}
+            />
+            <p>{erro || "Não existem coleções para este usuário"}</p>
+            <Col className="text-end">
+              <Button
+                variant="primary"
+                onClick={() => navigate(`/colecoes/criar`)}
+              >
+                <PlusCircle className="me-2" size={18} />
+                Nova Coleção
+              </Button>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+    </LayoutGeral>
+  );
+
+  return (
+    <LayoutGeral>
+      <section id="artigo" className="block artigo-block">
+        <Container className="my-5">
+          <Row className="mb-4 align-items-center">
+            <Navegacao
+              itens={[
+                { label: "Home", to: "/" },
+                { label: "Minhas coleções", to: "/user/colecoes" },
               ]}
             />
             <Col xs={12} md={8}>
@@ -55,8 +139,8 @@ export default function MinhasColecoes() {
           </Row>
 
           <Row className="gy-4">
-            {colecoesFiltradas.length > 0 ? (
-              colecoesFiltradas.map((colecao) => (
+            {colecoes.length > 0 ? (
+              colecoes.map((colecao) => (
                 <Col
                   xs={12}
                   md={6}
@@ -96,6 +180,27 @@ export default function MinhasColecoes() {
               </p>
             )}
           </Row>
+          {/* Modal de Ações */}
+          <Modal show={modalShow} onHide={() => setModalShow(false)} centered>
+            <Modal.Header closeButton>
+              <Modal.Title>Ações da Coleção</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p className="fw-bold">{colecaoSelecionada?.nome}</p>
+              <p>Deseja editar ou excluir esta coleção?</p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={() => setModalShow(false)}>
+                Cancelar
+              </Button>
+              <Button variant="danger" onClick={confirmarExclusao}>
+                Excluir
+              </Button>
+              <Button variant="primary" onClick={irParaEdicao}>
+                Editar
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </Container>
       </section>
     </LayoutGeral>

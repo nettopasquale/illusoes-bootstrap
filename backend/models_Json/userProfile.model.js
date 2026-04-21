@@ -4,7 +4,7 @@ const userProfileModel = new mongoose.Schema({
     usuario: { type: mongoose.Schema.Types.ObjectId, ref: "User", unique: true},
     nome: {type: String},
     sobreNome: {type: String},
-    imagemProfile: { type: String },
+    avatar: { type: String },
     cpf: { type: String },
     rg: { type: String },
     endereco: { type: String },

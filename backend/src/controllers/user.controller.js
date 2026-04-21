@@ -3,6 +3,8 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { key } from "../configs/jwtConfig.js";
 import ConteudoModel from "../models/conteudo.model.js";
+import ColecaoModel from "../models/colecao.model.js";
+import TopicoPost from "../models/TopicoPost.model.js";
 
 // rota do Login
 
@@ -43,13 +45,6 @@ export const login = async (req, res) => {
         tipo: user.tipo,
       },
     });
-    // console.log("Requisição de login:");
-    // console.log("Login:", login);
-    // console.log("Email:", user.email);
-    // console.log("Usuário:", user.usuario);
-    // console.log("Tipo:", user.tipo);
-    // console.log("Senha enviada:", senha);
-    // console.log("Senha no banco:", user?.senha);
   } catch (erro) {
     res.status(500).json({ message: erro.message });
     console.error("Erro ao logar: ", erro.message);
@@ -63,7 +58,6 @@ export const funcaoProtegida = (req, res) => {
 };
 
 //Criar usuário
-
 export const createUser = async (req, res) => {
   const { usuario, email, senha } = req.body;
 
@@ -90,7 +84,6 @@ export const createUser = async (req, res) => {
 };
 
 // listar usuários
-
 export const getAllUsers = async (req, res) => {
   try {
     const users = await UserModel.find();
@@ -101,7 +94,6 @@ export const getAllUsers = async (req, res) => {
 };
 
 // listar usuários por ID
-
 export const getUserByID = async (req, res) => {
   try {
     const user = await UserModel.findById(req.params.id);
@@ -115,7 +107,6 @@ export const getUserByID = async (req, res) => {
 };
 
 // atualizar usuário
-
 export const updateUser = async (req, res) => {
   try {
     const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, {
@@ -137,7 +128,6 @@ export const updateUser = async (req, res) => {
 };
 
 // deletar usuario
-
 export const deleteUser = async (req, res) => {
   try {
     const user = await UserModel.findByIdAndDelete(req.params.id);
@@ -151,8 +141,7 @@ export const deleteUser = async (req, res) => {
 };
 
 //listar conteúdo do usuário
-
-export const getUserContent = async (req, res) => {
+export const getUserConteudo = async (req, res) => {
   try {
     const tipo = req.query.tipo;
     const userId = req.userId;
@@ -167,9 +156,130 @@ export const getUserContent = async (req, res) => {
       .sort({ dataPublicacao: -1 })
       .lean();
 
-    res.status(200).json(conteudos);
+    return res.status(200).json(conteudos);
   } catch (erro) {
     console.error("Erro ao buscar conteúdos do usuário:", erro);
-    res.status(500).json({ erro: erro.message });
+    return res.status(500).json({ erro: erro.message });
   }
 };
+
+//listar coleções do usuário
+export const getUserColecoes = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const colecoes = await ColecaoModel.findById(userId)
+      .sort({ dataPublicacao: -1 })
+      .lean();
+
+    return res.status(200).json(colecoes);
+  } catch (erro) {
+    console.error("Erro ao buscar coleções do usuário:", erro);
+    return res.status(500).json({ erro: erro.message });
+  }
+};
+
+//listar tópicos do usuário
+export const getUserTopicos = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const filtroBase = { autor: userId };
+
+    const topicos = await TopicoPost.find(filtroBase)
+      .sort({ dataPublicacao: -1 })
+      .lean();
+
+    return res.status(200).json(topicos);
+  } catch (erro) {
+    console.error("Erro ao buscar conteúdos do usuário:", erro);
+    return res.status(500).json({ erro: erro.message });
+  }
+};
+
+//listar postagens do usuário
+export const getUserPosts = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const filtroBase = { autor: userId };
+
+    const topicos = await TopicoPost.find(filtroBase);
+    const posts = topicos.postagens.autor(filtroBase)
+
+    return res.status(200).json(conteudos);
+  } catch (erro) {
+    console.error("Erro ao buscar conteúdos do usuário:", erro);
+    return res.status(500).json({ erro: erro.message });
+  }
+};
+
+
+// listar Profile de usuários por ID
+export const getUserProfile = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const perfil = await UserModel.findById(userId);
+    console.log("Perfil: ", perfil)
+
+    if (!perfil) return res.status(404).json({ erro: "Perfil não encontrado" });
+
+    return res.status(200).json(perfil);
+  } catch (erro) {
+    return res.status(500).json({ erro: erro.message });
+  }
+}
+
+// atualizar Profile do usuário
+export const updateUserProfile = async (req, res) => {
+  try {
+    const userId = req.userId;
+    const { usuario, ...rest } = req.body;
+
+    if(usuario){
+      const usuarioExistente = await UserModel.findOne({usuario});
+
+      if(usuarioExistente && usuarioExistente._id.toString() !== userId)
+        return res.status(400).json({erro: "Nome do usuário já em uso"})
+    }
+
+    // tenta encontrar o perfil do usuário logado
+    let userProfile = await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        ...rest,
+        ...(usuario && { usuario }),
+      },
+      { new: true, runValidators: true },
+    );
+
+    if(!userProfile)
+      return res.status(404).json({erro: "Usuário não encontrado"})
+
+    return res.status(200).json({ userProfile });
+  } catch (erro) {
+    console.error("Erro ao atualizar perfil:", erro);
+    return res.status(500).json({ erro: erro.message });
+  }
+};
+
+// deletar Profile do usuario
+export const deleteUserProfile = async (req, res) => {
+    try {
+      const userId = req.userId;
+      const userProfile = await UserModel.findById(userId);
+
+      if (!userProfile)
+        return res.status(404).json({ message: "Perfil de Usuário não foi encontrado!" });
+
+      if(userProfile.usuario.toString() !== req.userId || req.userRole !== "admin")
+        return res.status(403).json({error: "Não autorizado"});
+
+      await userProfile.deleteOne()
+
+      return res.status(200).json({ message: "Perfil de Usuário deletado com sucesso!" })
+    }
+    catch (erro) {
+      return res.status(500).json({ erro: erro.message })
+    }
+}

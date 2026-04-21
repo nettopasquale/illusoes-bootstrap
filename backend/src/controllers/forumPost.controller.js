@@ -1,9 +1,9 @@
 import TopicoPost from "../models/TopicoPost.model.js";
 
 //helper
-const ehAdminOuUsuario = (autorId, req) => {
-  return String(autorId) === String(req.userId) || req.userRole === "admin";
-};
+const ehAdminOuUsuario = (autorId, req) => 
+  String(autorId) === String(req.userId) || req.userRole === "admin";
+
 
 // ── Posts ───────────────────────────────────────
 
@@ -20,7 +20,6 @@ export const publicarPostagem = async (req, res) => {
     } = req.body;
 
     const topico = await TopicoPost.findById(req.params.topicoId);
-    console.log("topico existe aqui, em postagem: ", topico)
     if (!topico || topico.deletado)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
@@ -40,9 +39,8 @@ export const publicarPostagem = async (req, res) => {
 
     await topico.populate(
       "postagens.autor",
-      "usuario bio reputacao tipo createdAt", //REVER AQUI
+      "usuario bio reputacao tipo createdAt avatar", //REVER AQUI
     );
-    console.log("topico existe aqui em populate:", topico)
 
     const novaPostagem = topico.postagens[topico.postagens.length - 1];
     res.status(201).json(novaPostagem);
@@ -113,7 +111,7 @@ export const curtirPostagem = async (req, res) => {
     if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
 
     const userId = req.userId.toString();
-    const jaCurtido = postagem.curtidoPor.map(String).includes(userId);
+    const jaCurtido = postagem.curtidoPor.map(String).indexOf(userId);
 
     if (jaCurtido) {
       postagem.curtidas -= 1;
@@ -160,7 +158,7 @@ export const criarBookmarkPostagem = async (req, res) => {
     if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
 
     const userId = req.userId.toString();
-    const idx = postagem.bookmarkedPor.map(String).includes(userId);
+    const idx = postagem.bookmarkedPor.map(String).indexOf(userId);
 
     if (idx > -1) {
       postagem.bookmarkedPor.splice(idx, 1);
@@ -174,4 +172,5 @@ export const criarBookmarkPostagem = async (req, res) => {
     res.status(500).json({ message: "Erro ao salvar bookmark da postagem", error: err.message });
   }
 };
+
 

@@ -4,7 +4,9 @@ import DashboardUsuario from "../pages/DashBoardUsuario/DashBoardUsuario";
 import { Route } from "react-router-dom";
 import { PerfilUsuario } from "../pages/PerfilUsuario/PerfilUsuario";
 import { EditarConteudo } from "../pages/Conteudos/EditarConteudo";
+import MinhasColecoes from "../pages/Colecoes/MinhasColecoes";
 import ColecaoLista from "../pages/Colecoes/ColecaoLista";
+import ForumPaginaCategoria from "../pages/Forum/ForumPaginaCategoria";
 
 export const usuarioRoutes = [
   <Route
@@ -18,7 +20,7 @@ export const usuarioRoutes = [
   />,
 
   <Route
-    path="/userProfile"
+    path="/user/profile"
     element={
       <PrivateRoute>
         <PerfilUsuario />
@@ -26,7 +28,7 @@ export const usuarioRoutes = [
     }
     key="usuario-profile"
   />,
-  
+
   <Route
     path="/user/conteudos/:tipo"
     element={
@@ -36,22 +38,35 @@ export const usuarioRoutes = [
     }
     key="usuario-conteudos"
   />,
-  <Route
-    path="/conteudos/:tipo/:id/editar"
-    element={
-      <PrivateRoute>
-        <EditarConteudo />
-      </PrivateRoute>
-    }
-    key="usuario-editar-conteudos"
-  />,
+
+  // ver as minhas coleções
   <Route
     path="/user/colecoes"
     element={
       <PrivateRoute>
-        <ColecaoLista />
+        <MinhasColecoes />
       </PrivateRoute>
     }
-    key="usuario-colecoes"
+    key="colecoes-id"
+  />,
+
+  <Route
+    path="/user/topicos"
+    element={
+      <PrivateRoute>
+        <ForumPaginaCategoria />
+      </PrivateRoute>
+    }
+    key="forum-topico-criar"
+  />,
+
+  <Route
+    path="/user/posts"
+    element={
+      <PrivateRoute>
+        <ForumPaginaCategoria />
+      </PrivateRoute>
+    }
+    key="forum-topico-criar"
   />,
 ];

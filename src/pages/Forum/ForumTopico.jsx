@@ -1,13 +1,11 @@
 import {
   Container,
   Row,
-  Col,
   Card,
   Badge,
   Button,
   Spinner,
   Alert,
-  Breadcrumb,
 } from "react-bootstrap";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
@@ -22,10 +20,12 @@ import {
   deletarTopico,
   publicarPostagem,
  } from "../../services/forumService";
+ import { toast } from "react-toastify";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import ForumPostCard from "../../components/ForumComponentes/ForumPostCard";
 import ForumPostEdicao from "../../components/ForumComponentes/ForumPostEdicao";
-import { toast } from "react-toastify";
+import TopicoPost from "../../components/ForumComponentes/TopicoPost";
+
 
 //Utilitarios
 const CATEGORIA_META = {
@@ -39,235 +39,11 @@ const CATEGORIA_META = {
   batepapo: { label: "Bate-papo", color: "#6f42c1", bg: "secondary" },
 };
 
-function Avatar({ nome = "", size = 44 }) {
-  const iniciais = nome
-    .split(" ")
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-  return (
-    <div
-      className="rounded-circle d-flex align-items-center justify-content-center fw-bold text-white flex-shrink-0"
-      style={{
-        width: size,
-        height: size,
-        fontSize: size * 0.36,
-        background: `hsl(${[...nome].reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 55%, 42%)`,
-      }}
-    >
-      {iniciais || "?"}
-    </div>
-  );
-}
-
-function formatarData(data) {
-  return new Date(data).toLocaleString("pt-BR", {
-    dateStyle: "long",
-    timeStyle: "short",
-  });
-}
-
-// ── Post de abertura do tópico ────────────────────
-function TopicoPost({ 
-  topico, 
-  usuario, 
-  curtidas,
-  curtiu, 
-  bookmarked, 
-  onVote, 
-  onBookmark, 
-  onQuote, 
-  onEdit, 
-  onDelete }) {
-  const ehAutor = String(topico.autor?._id) === String(usuario?._id);
-  const ehAdmin  = usuario?.tipo === "admin";
-  const canEdit  = ehAutor || ehAdmin;
-  const cat      = CATEGORIA_META[topico.categoria] || {};
-
-  return (
-    <div className="card border rounded-3 overflow-hidden mb-0">
-      <div className="d-flex gap-0">
-        {/* Sidebar autor */}
-        <div
-          className="d-flex flex-column align-items-center py-3 px-2 border-end flex-shrink-0 gap-2"
-          style={{ width: 130, background: "#f8f9fa" }}
-        >
-          <Avatar name={topico.autor?.usuario || "?"} size={52} />
-          <Link
-            to={`/perfil/${topico.autor?._id}`}
-            classusuario="fw-semibold text-decoration-none text-body text-center"
-            style={{ fontSize: "0.8rem", wordBreak: "break-word" }}
-          >
-            {topico.autor?.usuario}
-          </Link>
-          {topico.autor?.tipo === "admin" && (
-            <Badge bg="danger" style={{ fontSize: "0.63rem" }}>
-              Admin
-            </Badge>
-          )}
-          <div
-            className="text-center text-muted"
-            style={{ fontSize: "0.67rem", lineHeight: 1.5 }}
-          >
-            <div>💬 {topico.autor?.postagensContador || 0} posts</div>
-            <div>
-              desde{" "}
-              {topico.autor?.createdAt
-                ? new Date(topico.autor.createdAt).toLocaleDateString("pt-BR", {
-                    month: "short",
-                    year: "numeric",
-                  })
-                : "—"}
-            </div>
-          </div>
-        </div>
-
-        {/* Corpo */}
-        <div className="flex-grow-1 d-flex flex-column overflow-hidden">
-          {/* Header */}
-          <div
-            className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom flex-wrap gap-1"
-            style={{
-              background: "#f8f9fa",
-              fontSize: "0.75rem",
-              color: "#6c757d",
-            }}
-          >
-            <span>Postado em {formatarData(topico.createdAt)}</span>
-            {topico.editadoEm && (
-              <span className="fst-italic">
-                · Editado em {formatarData(topico.editadoEm)}
-                {topico.editadoPor?.usuario && ` por ${topico.editadoPor.usuario}`}
-              </span>
-            )}
-            <span className="fw-semibold" style={{ color: "#adb5bd" }}>
-              #1
-            </span>
-          </div>
-
-          {/* Conteúdo */}
-          <div className="px-3 py-3 flex-grow-1">
-            <div
-              className="text-body"
-              style={{
-                fontSize: "0.93rem",
-                whiteSpace: "pre-wrap",
-                lineHeight: 1.75,
-              }}
-            >
-              {topico.conteudo}
-            </div>
-
-            {/* Mídia */}
-            {topico.anexos?.length > 0 && (
-              <div className="mt-3 d-flex flex-wrap gap-2">
-                {topico.anexos.map((m, i) =>
-                  m.type === "image" ? (
-                    <img
-                      key={i}
-                      src={m.url}
-                      alt={m.usuario}
-                      className="rounded border"
-                      style={{
-                        maxWidth: 360,
-                        maxHeight: 260,
-                        objectFit: "cover",
-                        cursor: "pointer",
-                      }}
-                      onClick={() => window.open(m.url, "_blank")}
-                    />
-                  ) : (
-                    <a
-                      key={i}
-                      href={m.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn btn-sm btn-outline-secondary"
-                    >
-                      🔗 {m.usuario || m.url}
-                    </a>
-                  ),
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div
-            className="d-flex align-items-center justify-content-between px-3 py-2 border-top flex-wrap gap-2"
-            style={{ background: "#f8f9fa" }}
-          >
-            <div className="d-flex align-items-center gap-2">
-              <Button
-                variant={curtiu ? "success" : "outline-secondary"}
-                size="sm"
-                onClick={onVote}
-                disabled={!usuario}
-                style={{ fontSize: "0.8rem", padding: "2px 10px" }}
-              >
-                ▲ {curtidas}
-              </Button>
-              <Button
-                variant={bookmarked ? "warning" : "outline-secondary"}
-                size="sm"
-                onClick={onBookmark}
-                disabled={!usuario}
-                title={bookmarked ? "Remover bookmark" : "Salvar tópico"}
-                style={{ fontSize: "0.78rem", padding: "2px 8px" }}
-              >
-                🔖
-              </Button>
-            </div>
-
-            <div className="d-flex gap-2 align-items-center">
-              {usuario && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="p-0 text-secondary text-decoration-none"
-                  style={{ fontSize: "0.78rem" }}
-                  onClick={() => onQuote(topico)}
-                >
-                  ↩ Citar
-                </Button>
-              )}
-              {canEdit && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className="p-0 text-secondary text-decoration-none"
-                  style={{ fontSize: "0.78rem" }}
-                  onClick={onEdit}
-                >
-                  ✏ Editar
-                </Button>
-              )}
-              {canEdit && (
-                <Button
-                  variant="link"
-                  size="sm"
-                  className={`p-0 text-decoration-none ${ehAdmin && ehAutor ? "text-danger fw-semibold" : "text-secondary"}`}
-                  style={{ fontSize: "0.78rem" }}
-                  onClick={onDelete}
-                >
-                  {ehAdmin && ehAutor ? "⚠ Remover (Admin)" : "Excluir"}
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function ForumTopico() {
   const { topicoId } = useParams(); // ID do tópico
   const { usuario } = useContext(AuthContext);
   const navigate = useNavigate();
-  // console.log("Id:", topicoId);
-  // console.log("usuario:", usuario)
 
   const [topico, setTopico] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -278,12 +54,19 @@ export default function ForumTopico() {
   const [quotedPost, setQuotedPost] = useState(null);
   const [postLoading, setPostLoading] = useState(false);
   const [successo, setSuccesso] = useState("");
+  const [denunciaMotivo, setDenunciaMotivo] = useState("");
+  const [showDenuncia, setShowDenuncia] = useState(false);
+  const [salvando, setSalvando] = useState(false);
   const [pagina, setPagina] = useState(1);
+  const [editandoTopico, setEditandoTopico] = useState(false);
+  const [tituloEditado, setTituloEditado] = useState("");
+  const [conteudoEditado, setConteudoEditado] = useState("");
+  const [tagsEditadas, setTagsEditadas] = useState("");
   const POSTS_POR_PAGINA = 20;
 
   //carregar topicos existentes
   useEffect(() => {
-    const buscarTopico = async ()=>{
+    const buscarTopico = async () => {
       try {
         const { data } = await listarTopicosPorId(topicoId);
         setTopico(data);
@@ -299,19 +82,7 @@ export default function ForumTopico() {
       }
     };
     buscarTopico();
-  
   }, [topicoId, usuario]);
-
-  const handleCurtirTopico = async () => {
-    if (!usuario) return navigate("/login");
-    try {
-      const { data } = await curtirTopico(topicoId);
-      setCurtidas(data.curtidas);
-      setCurtiu(data.curtiu);
-    } catch {
-      /* silencioso */
-    }
-  };
 
   const flash = (msg) => {
     setSuccesso(msg);
@@ -321,7 +92,7 @@ export default function ForumTopico() {
   const handleCurtida = async () => {
     if (!usuario) return navigate("/login");
     try {
-      const { data } = await curtirTopico(id);
+      const { data } = await curtirTopico(topicoId);
       setCurtidas(data.curtidas);
       setCurtiu(data.curtiu);
     } catch {
@@ -333,9 +104,10 @@ export default function ForumTopico() {
     if (!usuario) return navigate("/login");
     try {
       const { data } = await criarBookmarkTopico(topicoId);
-      setBookmarked(data.bookmarkedPor);
+      setBookmarked(data.bookmarked);
+      console.log("Bookmarked?: ", data.bookmarked)
       flash(
-        data.bookmarkedPor
+        data.bookmarked
           ? "Tópico salvo nos bookmarks!"
           : "Bookmark removido.",
       );
@@ -344,7 +116,7 @@ export default function ForumTopico() {
     }
   };
 
-  const handleDenunciarTopico = async () => {
+  const handleDeletarTopico = async () => {
     const msg =
       usuario?.tipo === "admin" &&
       String(topico.autor?._id) !== String(usuario?._id)
@@ -356,6 +128,59 @@ export default function ForumTopico() {
       navigate("/forum");
     } catch {
       toast.error("Erro ao excluir.");
+    }
+  };
+
+  const handleDenunciarTopico = async () => {
+    if (!denunciaMotivo.trim()) return;
+    setSalvando(true);
+    try {
+      await denunciarTopico(topicoId, denunciaMotivo);
+      setShowDenuncia(false);
+      setDenunciaMotivo("");
+      toast.success("Denúncia enviada. Obrigado!");
+    } catch {
+      toast.error("Erro ao enviar denúncia.");
+    } finally {
+      setSalvando(false);
+    }
+  };
+
+  // Ativa o modo de edição — popula os states com os valores atuais do tópico
+  const handleAbrirEdicaoTopico = () => {
+    setTituloEditado(topico.titulo);
+    setConteudoEditado(topico.conteudo);
+    setTagsEditadas(topico.tags?.join(", ") || "");
+    setEditandoTopico(true);
+  };
+
+  // Salva as alterações chamando a API
+  const handleSalvarEdicaoTopico = async () => {
+    if (!tituloEditado.trim() || !conteudoEditado.trim()) {
+      toast.error("Título e conteúdo são obrigatórios.");
+      return;
+    }
+    setSalvando(true);
+    try {
+      const tagsArray = tagsEditadas
+        .split(",")
+        .map((t) => t.trim().toLowerCase())
+        .filter(Boolean);
+
+      const { data } = await editarTopico(topicoId, {
+        titulo: tituloEditado.trim(),
+        conteudo: conteudoEditado.trim(),
+        tags: tagsArray,
+      });
+
+      // Atualiza o state local com o retorno da API
+      setTopico((prev) => ({ ...prev, ...data }));
+      setEditandoTopico(false);
+      flash("Tópico editado com sucesso!");
+    } catch {
+      toast.error("Erro ao salvar edição.");
+    } finally {
+      setSalvando(false);
     }
   };
 
@@ -413,27 +238,26 @@ export default function ForumTopico() {
   if (loading)
     return (
       <LayoutGeral>
-          <Container className="py-5 text-center">
-            <Spinner animation="border" variant="primary" />
-          </Container>
+        <Container className="py-5 text-center">
+          <Spinner animation="border" variant="primary" />
+        </Container>
       </LayoutGeral>
     );
   if (error)
     return (
       <LayoutGeral>
-          <Container className="py-5">
-            <Alert variant="danger">{error}</Alert>
-          </Container>
+        <Container className="py-5">
+          <Alert variant="danger">{error}</Alert>
+        </Container>
       </LayoutGeral>
     );
   const cat = CATEGORIA_META[topico.categoria] || {};
   const ehAutor = String(topico.autor?._id) === String(usuario?._id);
   const ehAdmin = usuario?.tipo === "admin";
-    console.log("Autor:", ehAutor);
-    console.log("Admin:", ehAdmin);
 
   // Paginação de replies
-  const postsVisiveis = topico.postagens?.filter((r) => !r.parenteResposta) || [];
+  const postsVisiveis =
+    topico.postagens?.filter((r) => !r.parenteResposta) || [];
   const totalPaginas = Math.ceil(postsVisiveis.length / POSTS_POR_PAGINA);
   const postsPaginados = postsVisiveis.slice(
     (pagina - 1) * POSTS_POR_PAGINA,
@@ -530,9 +354,76 @@ export default function ForumTopico() {
                 autor: t.autor,
               })
             }
-            onEdit={() => navigate(`/forum/topicos/${topico._id}/editar`)}
-            onDelete={handleDenunciarTopico}
+            onEdit={handleAbrirEdicaoTopico}
+            onSave={handleSalvarEdicaoTopico}
+            onDelete={handleDeletarTopico}
           />
+          {/* Formulário de edição do tópico — aparece no lugar do conteúdo */}
+          {editandoTopico && (
+            <div className="card border rounded-3 p-4 mt-2 mb-3">
+              <h6 className="fw-semibold mb-3">Editar tópico</h6>
+
+              <div className="mb-3">
+                <label className="form-label" style={{ fontSize: "0.85rem" }}>
+                  Título
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={tituloEditado}
+                  onChange={(e) => setTituloEditado(e.target.value)}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label" style={{ fontSize: "0.85rem" }}>
+                  Conteúdo
+                </label>
+                <textarea
+                  className="form-control"
+                  rows={8}
+                  value={conteudoEditado}
+                  onChange={(e) => setConteudoEditado(e.target.value)}
+                  style={{ resize: "vertical", fontFamily: "inherit" }}
+                />
+              </div>
+
+              <div className="mb-3">
+                <label className="form-label" style={{ fontSize: "0.85rem" }}>
+                  Tags{" "}
+                  <span className="text-muted fw-normal">
+                    (separadas por vírgula)
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="ex: deck, combo, iniciante"
+                  value={tagsEditadas}
+                  onChange={(e) => setTagsEditadas(e.target.value)}
+                />
+              </div>
+
+              <div className="d-flex gap-2 justify-content-end">
+                <button
+                  className="btn btn-outline-secondary btn-sm"
+                  onClick={() => setEditandoTopico(false)}
+                  disabled={salvando}
+                >
+                  Cancelar
+                </button>
+                <button
+                  className="btn btn-primary btn-sm"
+                  onClick={handleSalvarEdicaoTopico}
+                  disabled={
+                    salvando || !tituloEditado.trim() || !conteudoEditado.trim()
+                  }
+                >
+                  {salvando ? "Salvando..." : "Salvar alterações"}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Separador */}
           <div
@@ -587,7 +478,7 @@ export default function ForumTopico() {
                     <ForumPostCard
                       key={child._id}
                       postagem={child}
-                      topicoId={id}
+                      topicoId={topicoId}
                       atualUserId={usuario?._id}
                       onQuote={setQuotedPost}
                       onDelete={handleDeletarPost}
@@ -649,6 +540,33 @@ export default function ForumTopico() {
                 Entrar
               </Button>
             </Card>
+          )}
+          {/* Campo de denúncia */}
+          {showDenuncia && (
+            <div className="px-3 pb-3 d-flex gap-2 align-items-center flex-wrap">
+              <Form.Control
+                size="sm"
+                placeholder="Motivo da denúncia..."
+                value={denunciaMotivo}
+                onChange={(e) => setDenunciaMotivo(e.target.value)}
+                style={{ maxWidth: 300 }}
+              />
+              <Button
+                size="sm"
+                variant="warning"
+                onClick={handleDenunciarTopico}
+                disabled={salvando}
+              >
+                Enviar
+              </Button>
+              <Button
+                size="sm"
+                variant="outline-secondary"
+                onClick={() => setShowDenuncia(false)}
+              >
+                Cancelar
+              </Button>
+            </div>
           )}
         </Container>
       </section>

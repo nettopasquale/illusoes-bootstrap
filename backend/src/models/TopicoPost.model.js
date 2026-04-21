@@ -30,7 +30,6 @@ const PostagemSchema = new mongoose.Schema(
     curtidoPor: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     bookmarkedPor: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     anexos: { type: [AnexoSchema], default: [] },
-    curtidas: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     visualizacoes: { type: Number, default: 0 },
     criadoEm: { type: Date, default: Date.now },
     dataModificacao: { type: Date, default: Date.now, required: true },
@@ -145,7 +144,7 @@ TopicoSchema.index({ bookmarkedPor: 1 });
 //Incremento de contagem de Posts
 TopicoSchema.methods.publicarPostESalvar = async function (postData) {
   const postNumber = this.postagens.length + 2; // +2: 1 = post de abertura
-  this.postagens.push({ ...postData, postNumber });
+  this.postagens.push({ ...postData, postNumeracao: postNumber });
   this.postagensContador = this.postagens.filter((r) => !r.deletado).length;
   this.ultimaPostagemEm = new Date();
   this.ultimaPostagemPor = postData.autor;

@@ -8,17 +8,17 @@ import {
     criarBookmarkPostagem
 } from "../controllers/forumPost.controller.js"
 import {
-    buscarTopicos,
-    buscarTopicosPorID,
-    buscarCategorias,
-    criarTopico,
-    editarTopico,
-    deletarTopico,
-    curtirTopico,
-    denunciarTopico,
-    criarBookmarkTopico,
-    listarBookmarkTopico,
-} from "../controllers/forumTopico.controller.js"
+  buscarTopicos,
+  buscarTopicosPorID,
+  buscarCategorias,
+  criarTopico,
+  editarTopico,
+  deletarTopico,
+  curtirTopico,
+  denunciarTopico,
+  criarBookmarkTopico,
+  listarBookmarks,
+} from "../controllers/forumTopico.controller.js";
 import {verificarAdmin, verificarToken } from "../middleware/auth.middleware.js";
 
 const forumRouters = express.Router();
@@ -29,7 +29,8 @@ forumRouters.get('/forum/categorias', buscarCategorias);
 // ── Topicos ───────────────────────────────────────
 forumRouters.get("/forum/categorias/topicos/:topicoId", buscarTopicosPorID);
 forumRouters.get("/forum/categorias/topicos", buscarTopicos);
-forumRouters.get('/forum/topicos/bookmarks',verificarToken ,listarBookmarkTopico);
+forumRouters.get("/forum/categorias/:categoria/topicos", buscarTopicos);
+forumRouters.get("/forum/bookmarks", verificarToken, listarBookmarks);
 
 forumRouters.post("/forum/topicos", verificarToken, criarTopico);
 forumRouters.post("/forum/topicos/:topicoId/curtir", verificarToken, curtirTopico);
@@ -58,7 +59,7 @@ forumRouters.post(
 );
 
 forumRouters.post(
-  "/forum/topicos/:topicoId/postagens/:postagemId/bookmark",
+  "/forum/topicos/:topicoId/postagens/:postagemId/bookmarks",
   verificarToken,
   criarBookmarkPostagem,
 );

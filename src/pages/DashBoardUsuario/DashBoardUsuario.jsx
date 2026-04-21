@@ -51,10 +51,7 @@ const DashboardUsuario = () => {
   const MenuLateral = () => (
     <Card className="p-3 shadow">
       <Nav className="flex-column">
-        {[
-          "Meu Perfil",
-          "Meu Perfil do Forum"
-        ].map((menu) => (
+        {["Meu Perfil", "Meu Perfil do Forum"].map((menu) => (
           <div key={menu}>
             <Nav.Link
               onClick={() => toggleSubmenu(menu)}
@@ -65,20 +62,9 @@ const DashboardUsuario = () => {
             </Nav.Link>
 
             {submenus[menu] == 0 && !menuToRouteMap[menu] && (
-              <Nav.Link as={Link} to={`/userProfile`}>
+              <Nav.Link as={Link} to={`/user/profile`}>
                 Editar
               </Nav.Link>
-            )}
-
-            {submenus[menu] && menuToRouteMap[menu] && (
-              <div className="ps-3">
-                <Nav.Link
-                  as={Link}
-                  to={`/userForumProfile`}
-                >
-                  Editar
-                </Nav.Link>
-              </div>
             )}
           </div>
         ))}
@@ -100,7 +86,7 @@ const DashboardUsuario = () => {
             </Nav.Link>
 
             {submenus[menu] == 0 && !menuToRouteMap[menu] && (
-              <Nav.Link as={Link} to={`/userProfile`}>
+              <Nav.Link as={Link} to={`/user/profile`}>
                 Editar
               </Nav.Link>
             )}
@@ -159,17 +145,14 @@ const DashboardUsuario = () => {
             </Nav.Link>
 
             {submenus[menu] == 0 && !menuToRouteMap[menu] && (
-              <Nav.Link as={Link} to={`/userProfile`}>
+              <Nav.Link as={Link} to={`/user/forum/topicos`}>
                 Editar
               </Nav.Link>
             )}
 
             {submenus[menu] && menuToRouteMap[menu] && (
               <div className="ps-3">
-                <Nav.Link
-                  as={Link}
-                  to={`/user/forum?tipo=${menuToRouteMap[menu]}`}
-                >
+                <Nav.Link as={Link} to={`/user/forum/topicos/postagens`}>
                   Editar
                 </Nav.Link>
               </div>
@@ -181,81 +164,73 @@ const DashboardUsuario = () => {
   );
 
   const BotoesCriar = () => (
-    <Card className="p-4 shadow">
-      <h2 className="fw-bold mb-4">Criar Conteúdo</h2>
-      <Row className="g-3">
-        <Col md={6}>
-          <Button
-            as={Link}
-            to="/conteudos/noticia/criar"
-            className="w-100 py-3"
-          >
-            Publicar Notícia
-          </Button>
-        </Col>
-        <Col md={6}>
-          <Button as={Link} to="/conteudos/artigo/criar" className="w-100 py-3">
-            Publicar Artigo
-          </Button>
-        </Col>
-        <Col md={6}>
-          <Button as={Link} to="/conteudos/evento/criar" className="w-100 py-3">
-            Criar Evento
-          </Button>
-        </Col>
-        <Col md={6}>
-          <Button
-            as={Link}
-            to="/conteudos/campeonato/criar"
-            className="w-100 py-3"
-          >
-            Criar Campeonato
-          </Button>
-        </Col>
-      </Row>
-    </Card>
+    <>
+      <Card className="p-4 shadow">
+        <h2 className="fw-bold mb-4">Conteúdos</h2>
+        <Row className="g-3">
+          <Col md={6}>
+            <Button
+              as={Link}
+              to="/conteudos/noticia/criar"
+              className="w-100 py-3"
+            >
+              Publicar Notícia
+            </Button>
+          </Col>
+          <Col md={6}>
+            <Button
+              as={Link}
+              to="/conteudos/artigo/criar"
+              className="w-100 py-3"
+            >
+              Publicar Artigo
+            </Button>
+          </Col>
+          <Col md={6}>
+            <Button
+              as={Link}
+              to="/conteudos/evento/criar"
+              className="w-100 py-3"
+            >
+              Criar Evento
+            </Button>
+          </Col>
+          <Col md={6}>
+            <Button
+              as={Link}
+              to="/conteudos/campeonato/criar"
+              className="w-100 py-3"
+            >
+              Criar Campeonato
+            </Button>
+          </Col>
+        </Row>
+      </Card>
+
+      <Card className="p-4 shadow">
+        <h2 className="fw-bold mt-4 mb-4">Coleções</h2>
+        <Row className="g-3">
+          <Col className="d-flex justify-content-center">
+            <Button as={Link} to="/colecoes/criar" className="w-50 py-3">
+              Cadastrar nova coleção
+            </Button>
+          </Col>
+        </Row>
+      </Card>
+
+      <Card className="p-4 shadow">
+        <h2 className="fw-bold mt-4 mb-4">Fórum</h2>
+        <Row className="g-3">
+          <Col className="d-flex justify-content-center">
+            <Button as={Link} to="/forum/topicos/criar" className="w-50 py-3">
+              Publicar novo tópico
+            </Button>
+          </Col>
+        </Row>
+      </Card>
+    </>
   );
 
-  // return (
-  //   <LayoutGeral>
-  //     <Container fluid className="py-4">
-  //       <Row>
-  //         <Col md={3}>
-  //           <MenuLateral />
-  //         </Col>
-
-  //         <Col md={9}>
-  //           <BotoesCriar />
-
-  //           {/* Conteúdos listados */}
-  //           {tipoSelecionado && (
-  //             <Card className="p-4 shadow my-4">
-  //               <h3 className="fw-bold mb-3">
-  //                 Conteúdos: {tipoSelecionado.toUpperCase()}
-  //               </h3>
-
-  //               {conteudos.length === 0 ? (
-  //                 <p className="text-muted">
-  //                   Nenhum conteúdo encontrado para este tipo.
-  //                 </p>
-  //               ) : (
-  //                 conteudos.map((c) => (
-  //                   <div key={c._id} className="border-bottom py-2">
-  //                     <strong>{c.titulo}</strong>
-  //                     <br />
-  //                     <Link to={`/conteudos/${c.tipo}/${c._id}/editar`}>
-  //                       ✏️ Editar
-  //                     </Link>
-  //                   </div>
-  //                 ))
-  //               )}
-  //             </Card>
-  //           )}
-  //         </Col>
-  //       </Row>
-  //     </Container>
-  //   </LayoutGeral>
-  // );
   return (
     <LayoutGeral>
       <Container fluid className="py-4">

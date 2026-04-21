@@ -1,3 +1,4 @@
+import UserModel from "../models/user.model.js";
 import UserProfile from "../models/userProfile.model.js";
 
 //Criar Profile usuário
@@ -6,20 +7,27 @@ export const createUserProfile = async (req, res) => {
     try {
     const userId = req.userId;
 
-    const perfilExistente = await UserProfile.findOne({ usuario: userId });
+    const perfilExistente = await UserModel.findOne({ usuario: userId });
     if (perfilExistente) {
       return res.status(400).json({ erro: "Perfil já existe para este usuário" });
     }
 
-      const novoPerfil = new UserProfile({
-        ...req.body,
-        imagemProfile,
-        usuario: userId
-      });
+    const {usuario, sobrenome, avatar, dataNascimento} = req.body;
+
+    if(!usuario || !sobrenome || !dataNascimento){
+      return res.status(400).json({error: "Campos obrigatórios não preenchidos!"});
+    }
+
+    const novoPerfil = await perfilExistente.findByIdAndUpdate({
+      usuario: userId,
+      sobrenome,
+      avatar,
+      dataNascimento,
+    });
     await novoPerfil.save();
-    res.status(201).json(novoPerfil);
+    return res.status(201).json(novoPerfil);
   } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+    return res.status(500).json({ erro: erro.message });
   }
 }
 
@@ -32,9 +40,9 @@ export const getUserProfileByOne = async (req, res) => {
 
     if (!perfil) return res.status(404).json({ erro: "Perfil não encontrado" });
 
-    res.json(perfil);
+    return res.status(200).json(perfil);
   } catch (erro) {
-    res.status(500).json({ erro: erro.message });
+    return res.status(500).json({ erro: erro.message });
   }
 }
 
@@ -46,21 +54,23 @@ export const updateUserProfile = async (req, res) => {
     const userId = req.userId;
 
     // tenta encontrar o perfil do usuário logado
-    let userProfile = await UserProfile.findOne({ usuario: userId });
+    let userProfile = await UserModel.findOne({ usuario: userId });
 
     if (!userProfile) {
       return res.status(404).json({ message: "Perfil de usuário não encontrado!" });
     }
 
     // Atualiza os campos
-    Object.assign(userProfile, req.body);
+    const userProfileAtualizado = await userProfile.findByIdAndUpdate(
+      req.params.userId,
+      {$set: req.body},
+      {new: true, runValidators: true}
+    )
 
-    await userProfile.save();
-
-    res.json({ message: "Perfil de usuário atualizado com sucesso!" });
+    return res.status(200).json({ message: "Perfil de usuário atualizado com sucesso!" });
   } catch (erro) {
     console.error("Erro ao atualizar perfil:", erro);
-    res.status(500).json({ erro: erro.message });
+    return res.status(500).json({ erro: erro.message });
   }
 };
 
@@ -69,12 +79,19 @@ export const updateUserProfile = async (req, res) => {
 
 export const deleteUserProfile = async (req, res) => {
     try {
-        const userProfile = await UserProfile.findByIdAndDelete(req.params.id);
+        const userProfile = await UserProfile.findOne({ usuario: userId });
 
-        if (!userProfile) return res.status(404).json({ message: "Perfil de Usuário não foi encontrado!" });
-        res.json({ message: "Perfil de Usuário deletado com sucesso!" })
+        if (!userProfile)
+          return res.status(404).json({ message: "Perfil de Usuário não foi encontrado!" });
+
+        if(userProfile.usuario.toString() !== req.userId || req.userRole !== "admin")
+          return res.status(403).json({error: "Não autorizado"});
+
+        await userProfile.deleteOne()
+
+        return res.status(200).json({ message: "Perfil de Usuário deletado com sucesso!" })
     }
     catch (erro) {
-        res.status(500).json({ erro: erro.message })
+        return res.status(500).json({ erro: erro.message })
     }
 }

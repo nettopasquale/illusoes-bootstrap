@@ -52,8 +52,8 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
               <div className="d-flex align-items-center gap-2 text-white">
                 <img
                   src={
-                    usuario?.imagemProfile
-                      ? `http://localhost:8080${usuario.imagemProfile}`
+                    usuario?.avatar
+                      ? usuario.avatar
                       : dk_profile
                   }
                   alt="profile"

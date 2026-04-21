@@ -23,16 +23,16 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const carregarPerfil = async () => {
-      if (token && usuario && !usuario.imagemProfile) {
+      if (token && usuario && !usuario.avatar) {
         try {
-          const res = await api.get("/userProfile/me");
+          const res = await api.get("/user/profile");
           const perfil = res.data;
           setUsuario((prev)=> {
             //usa função de atualização para evitar loop infinito
             const usuarioAtualizado = {
               ...prev,
-              imagemProfile: perfil.imagemProfile,
-              nome: perfil.nome,
+              avatar: perfil.avatar,
+              sobrenome: perfil.sobrenome,
             };
             localStorage.setItem("usuario", JSON.stringify(usuarioAtualizado));
             return usuarioAtualizado

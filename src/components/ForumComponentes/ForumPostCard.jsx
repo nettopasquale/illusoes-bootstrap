@@ -11,28 +11,7 @@ import {
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-
-function Avatar({nome="", size=36}){
-  const iniciais = nome
-    .split(" ")
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-  return (
-    <div
-      className="rounded-circle d-flex align-items-center justify-content-center fw-semibold text-white flex-shrink-0"
-      style={{
-        width: size,
-        height: size,
-        fontSize: size * 0.38,
-        background: `hsl(${[...nome].reduce((a, c) => a + c.charCodeAt(0), 0) % 360}, 55%, 45%)`,
-      }}
-    >
-      {iniciais || "?"}
-    </div>
-  );
-}
+import { Avatar } from "./Avatar";
 
 function formatarData(d) {
   return new Date(d).toLocaleString("pt-BR", {
@@ -48,6 +27,7 @@ export default function ForumPostCard({
   atualUserId,
   onQuote,
   onDelete,
+  onUpdate,
   depth = 0,
 }) {
 const { usuario } = useContext(AuthContext);
@@ -63,10 +43,16 @@ const [showDenuncia, setShowDenuncia] = useState(false);
 const [editando, setEditando] = useState(false);
 const [editarConteudo, setEditarConteudo] = useState(postagem.conteudo);
 const [salvando, setSalvando] = useState(false);
+const [successo, setSuccesso] = useState("");
 
 const ehAutor = String(postagem.autor?._id) === String(atualUserId);
 const ehAdmin = usuario.tipo === 'admin';
 const modoEdicao = ehAutor || ehAdmin;
+
+const flash = (msg) => {
+  setSuccesso(msg);
+  setTimeout(() => setSuccesso(""), 3500);
+};
 
 const handleCurtida = async () => {
   if (!usuario) return;
@@ -97,10 +83,13 @@ const handleDelete = async () => {
 };
 
 const handleBookmark = async () => {
-  if (!usuario) return;
+  if (!usuario) return navigate("/login");
   try {
-    const { data } = await bookmarkPostagem(topicoId, postagem._id);
-      setBookmarked(data.bookmarkedPor);
+    const { data } = await criarBookmarkPost(topicoId, postagem._id);
+    setBookmarked(data.bookmarked);
+    flash(
+      data.bookmarked ? "Postagem salva nos bookmarks!" : "Bookmark removido.",
+    );
   } catch {
       /* silencioso */
   }
@@ -128,8 +117,8 @@ const handleSaveEdit = async () => {
     const { data } = await editarPostagem(topicoId, postagem._id, {
       conteudo: editarConteudo.trim(),
     });
-    console.log("texto da postagem a ser editada: ", data.conteudo)
     onUpdate(postagem._id, data);
+    toast.success("Postagem editada com sucesso!")
     setEditando(false);
   } catch {
     toast.error("Erro ao salvar edição.");
@@ -163,7 +152,7 @@ if (postagem.deletado) {
           className="d-flex flex-column align-items-center py-3 px-3 border-end flex-shrink-0 gap-2"
           style={{ width: 140, background: "#f8f9fa" }}
         >
-          <Avatar name={postagem.autor?.usuario || "?"} size={48} />
+          <Avatar name={postagem.autor?.usuario || "?"} size={48} img={postagem.autor?.avatar || null}/>
           <Link
             to={`/perfil/${postagem.autor?._id}`}
             className="fw-semibold text-decoration-none text-body text-center"
@@ -408,7 +397,7 @@ if (postagem.deletado) {
                   size="sm"
                   className="p-0 text-warning text-decoration-none"
                   style={{ fontSize: "0.78rem" }}
-                  onClick={() => setShowReport((v) => !v)}
+                  onClick={() => setShowDenuncia((v) => !v)}
                 >
                   ⚑
                 </Button>

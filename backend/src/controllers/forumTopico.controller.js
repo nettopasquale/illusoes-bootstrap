@@ -1,9 +1,9 @@
 import TopicoPost from "../models/TopicoPost.model.js";
 
 //helper
-const ehAdminOuUsuario = (autorId, req) => {
-  return String(autorId) === String(req.userId) || req.userRole === "admin";
-};
+const ehAdminOuUsuario = (autorId, req) =>
+  String(autorId) === String(req.userId) || req.userRole === "admin";
+
 
 // ── TOPICO ───────────────────────────────────────
 
@@ -12,7 +12,7 @@ export const buscarTopicos = async (req, res) => {
   try {
     const pagina = parseInt(req.query.pagina) || 1;
     const limite = parseInt(req.query.limite) || 30;
-    const categoria = req.query.categoria || null;
+    const categoria = req.params.categoria || null;
     const sort = req.query.sort || "recente"; // recente | curtidas | postagens
 
     const filter = { deletado: false };
@@ -26,7 +26,7 @@ export const buscarTopicos = async (req, res) => {
     };
 
     const topicos = await TopicoPost.find(filter)
-      .populate("autor", "usuario bio reputacao tipo createdAt")
+      .populate("autor", "usuario bio reputacao tipo createdAt avatar")
       .populate("ultimaPostagemPor", "usuario")
       .select("-postagens -denuncias")
       .sort(sortMap[sort] || sortMap.recente)
@@ -35,14 +35,14 @@ export const buscarTopicos = async (req, res) => {
 
     const total = await TopicoPost.countDocuments(filter);
 
-    res.status(201).json({
+    return res.status(201).json({
       topicos,
       total,
       pagina,
       totalPaginas: Math.ceil(total / limite),
     });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao buscar tópicos", error: err.message });
+    return res.status(500).json({ message: "Erro ao buscar tópicos", error: err.message });
   }
 };
 
@@ -50,10 +50,10 @@ export const buscarTopicos = async (req, res) => {
 export const buscarTopicosPorID = async (req, res) => {
   try {
     const topico = await TopicoPost.findById(req.params.topicoId)
-      .populate("autor", "usuario bio reputacao tipo createdAt") //MUDAR AQUI
+      .populate("autor", "usuario bio reputacao tipo createdAt avatar") //MUDAR AQUI
       .populate("editadoPor", "usuario")
       .populate("ultimaPostagemPor", "usuario")
-      .populate("postagens.autor", "usuario bio reputacao tipo createdAt")
+      .populate("postagens.autor", "usuario bio reputacao tipo createdAt avatar")
       .populate("postagens.editadoPor", "usuario");
     
 
@@ -65,9 +65,9 @@ export const buscarTopicosPorID = async (req, res) => {
     topico.visualizacoes += 1;
     await topico.save();
 
-    res.status(201).json(topico);
+    return res.status(201).json(topico);
   } catch (err) {
-    res.status(500).json({ message: "Erro ao buscar tópico", error: err.message });
+    return res.status(500).json({ message: "Erro ao buscar tópico", error: err.message });
   }
 };
 
@@ -96,18 +96,18 @@ export const buscarCategorias = async (req, res) => {
           deletado: false,
         })
           .sort({ ultimaPostagemEm: -1, criadoEm: -1 })
-          .populate("ultimaPostagemEm", "usuario")
+          .populate("ultimaPostagemPor", "usuario")
           .populate("autor", "usuario")
           .select(
-            "titulo ultimaPostagemEm ultimaPostagemPor postagensContador createdAt autor",
+            "titulo ultimaPostagemEm ultimaPostagemPor postagensContador createdAt autor avatar",
           );
         return { categoria: cat, total, ultimoTopico: last };
       }),
     );
 
-    res.status(201).json(stats);
+    return res.status(201).json(stats);
   } catch (err) {
-    res.status(500).json({ message: "Erro ao buscar categorias", error: err.message });
+    return res.status(500).json({ message: "Erro ao buscar categorias", error: err.message });
   }
 };
 
@@ -131,14 +131,14 @@ export const criarTopico = async (req, res) => {
     });
 
     await topico.save();
-    await topico.populate("autor", "usuario bio reputacao tipo createdAt");
+    await topico.populate("autor", "usuario bio reputacao tipo createdAt avatar");
 
     // Incrementa postCount do usuário
     // await UserModel.findByIdAndUpdate(req.userId, { $inc: { postCount: 1 } });
 
-    res.status(201).json(topico);
+    return res.status(201).json(topico);
   } catch (err) {
-    res.status(500).json({ message: "Erro ao criar tópico", error: err.message });
+    return res.status(500).json({ message: "Erro ao criar tópico", error: err.message });
   }
 };
 
@@ -149,7 +149,7 @@ export const editarTopico = async (req, res) => {
     if (!topico || topico.deletado)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
-    if (!isAdminOrAuthor(topico.autor, req))
+    if (!ehAdminOuUsuario(topico.autor, req))
       return res.status(403).json({ message: "Sem permissão para editar" });
     // if (topico.autor.toString() !== req.userId.toString())
     //   return res.status(403).json({ message: "Sem permissão para editar" });
@@ -164,9 +164,9 @@ export const editarTopico = async (req, res) => {
     topico.editadoPor = req.userId;
 
     await topico.save();
-    res.status(201).json(topico);
+    return res.status(201).json(topico);
   } catch (err) {
-    res.status(500).json({ message: "Erro ao editar tópico", error: err.message });
+    return res.status(500).json({ message: "Erro ao editar tópico", error: err.message });
   }
 };
 
@@ -185,9 +185,9 @@ export const deletarTopico = async (req, res) => {
 
     topico.deletado = true;
     await topico.save();
-    res.status(201).json({ message: "Tópico removido com sucesso" });
+    return res.status(201).json({ message: "Tópico removido com sucesso" });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao excluir tópico", error: err.message });
+    return res.status(500).json({ message: "Erro ao excluir tópico", error: err.message });
   }
 };
 
@@ -199,7 +199,7 @@ export const curtirTopico = async (req, res) => {
       return res.status(404).json({ message: "Tópico não encontrado" });
 
     const userId = req.userId.toString();
-    const jaCurtido = topicos.curtidoPor.map(String).includes(userId);
+    const jaCurtido = topicos.curtidoPor.map(String).indexOf(userId);
 
     if (jaCurtido > -1) {
       topicos.curtidas -= 1;
@@ -210,9 +210,9 @@ export const curtirTopico = async (req, res) => {
     }
 
     await topicos.save();
-    res.status(201).json({ curtidas: topicos.curtidas, curtido: jaCurtido === -1 });
+    return res.status(201).json({ curtidas: topicos.curtidas, curtido: jaCurtido === -1 });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao votar", error: err.message });
+    return res.status(500).json({ message: "Erro ao votar", error: err.message });
   }
 };
 
@@ -226,9 +226,9 @@ export const denunciarTopico = async (req, res) => {
 
     topico.denuncias.push({ denunciadoPor: req.userId, motivo });
     await topico.save();
-    res.status(201).json({ message: "Denúncia registrada" });
+    return res.status(201).json({ message: "Denúncia registrada" });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao denunciar", error: err.message });
+    return res.status(500).json({ message: "Erro ao denunciar", error: err.message });
   }
 };
 
@@ -239,8 +239,8 @@ export const criarBookmarkTopico = async (req, res) => {
     if (!topico)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
-    const userId = req.userId.toString();
-    const idx = topico.bookmarkedPor.map(String).includes(userId);
+    const userId = String(req.userId);
+    const idx = topico.bookmarkedPor.map(String).indexOf(userId);
 
     if (idx > -1) {
       topico.bookmarkedPor.splice(idx, 1);
@@ -249,14 +249,14 @@ export const criarBookmarkTopico = async (req, res) => {
     }
 
     await topico.save();
-    res.status(201).json({ bookmarked: idx === -1 });
+    return res.status(201).json({ bookmarked: idx === -1 });
   } catch (err) {
-    res.status(500).json({ message: "Erro ao salvar bookmark do tópico", error: err.message });
+    return res.status(500).json({ message: "Erro ao salvar bookmark do tópico", error: err.message });
   }
 };
 
-//listar os bookmarks de tópico - POST forum/topicos/:id/denunciar
-export const listarBookmarkTopico = async (req, res) => {
+//listar os bookmarks de tópico - POST forum/topicos/:id/bookmarks
+export const listarBookmarks = async (req, res) => {
   try {
     const uid = req.userId
     //busca os bookmarks no banco
@@ -264,17 +264,17 @@ export const listarBookmarkTopico = async (req, res) => {
       bookmarkedPor: uid,
       deletado: false,
     })
-      .populate("autor", "usuario")
+      .populate("autor", "usuario avatar")
       .select(
-        "titulo categoria curtidas postagensContador visualizacoes criadoEm ultimaPostagemEm",
+        "titulo categoria curtidas postagensContador visualizacoes criadoEm ultimaPostagemEm avatar",
       )
       .sort({criadoEm: -1});
 
     //
     const topicosComPostsBM = await TopicoPost.find(
       { "postagens.bookmarkedPor": uid, deletado: false },
-      { titulo: 1, categoria: 1, "postagens.$": 1 },
-    ).populate("postagens.autor", "usuario");
+      { titulo: 1, categoria: 1, "postagens": 1 },
+    ).populate("postagens.autor", "usuario avatar");
 
     const postBookmarks = topicosComPostsBM.flatMap((t) =>
     t.postagens
@@ -288,9 +288,9 @@ export const listarBookmarkTopico = async (req, res) => {
     );
 
     // await topicoBookmarks.save();
-    res.status(201).json({ topicoBookmarks, postBookmarks });
+    return res.status(201).json({ topicoBookmarks, postBookmarks });
   } catch (err) {
-    res
+    return res
       .status(500)
       .json({
         message: "Erro ao salvar bookmark do tópico",
