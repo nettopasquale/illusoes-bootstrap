@@ -4,10 +4,10 @@ import { ChatDots, Eye } from "react-bootstrap-icons";
 import { 
   curtirPostagem, 
   deletarPostagem, 
-  denunciarPostagem,
   criarBookmarkPost,
   editarPostagem
  } from "../../services/forumService";
+import {criarDenuncia} from "../../services/denunciasService"
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
@@ -95,11 +95,17 @@ const handleBookmark = async () => {
   }
 };
 
+// REVER AQUI
 const handleDenuncia = async () => {
   if (!denunciaMotivo.trim()) return;
   setSalvando(true);
   try {
-    await denunciarPostagem(topicoId, postagem._id, denunciaMotivo);
+    await criarDenuncia({
+      denunciado: postagem.autor?._id, // ID do autor do post
+      targetId: postagem._id, // ID do post
+      targetTipo: "postagem",
+      motivo: denunciaMotivo,
+    });
     setShowDenuncia(false);
     setDenunciaMotivo("");
     toast.success("Denúncia enviada. Obrigado!");
@@ -109,6 +115,7 @@ const handleDenuncia = async () => {
     setSalvando(false);
   }
 };
+//
 
 const handleSaveEdit = async () => {
   if (!editarConteudo.trim()) return;
@@ -152,7 +159,11 @@ if (postagem.deletado) {
           className="d-flex flex-column align-items-center py-3 px-3 border-end flex-shrink-0 gap-2"
           style={{ width: 140, background: "#f8f9fa" }}
         >
-          <Avatar name={postagem.autor?.usuario || "?"} size={48} img={postagem.autor?.avatar || null}/>
+          <Avatar
+            name={postagem.autor?.usuario || "?"}
+            size={48}
+            img={postagem.autor?.avatar || null}
+          />
           <Link
             to={`/perfil/${postagem.autor?._id}`}
             className="fw-semibold text-decoration-none text-body text-center"
@@ -172,8 +183,8 @@ if (postagem.deletado) {
             <div>💬 {postagem.autor?.postNumeracao || 0} posts</div>
             <div>
               desde{" "}
-              {postagem.autor?.criadoEm
-                ? new Date(postagem.autor.criadoEm).toLocaleDateString(
+              {postagem.autor?.createdAt
+                ? new Date(postagem.autor.createdAt).toLocaleDateString(
                     "pt-BR",
                     {
                       month: "short",

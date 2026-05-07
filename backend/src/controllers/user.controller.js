@@ -5,6 +5,10 @@ import { key } from "../configs/jwtConfig.js";
 import ConteudoModel from "../models/conteudo.model.js";
 import ColecaoModel from "../models/colecao.model.js";
 import TopicoPost from "../models/TopicoPost.model.js";
+import DenunciaModel from "../models/denuncia.model.js";
+import ComentarioModel from "../models/comentario.model.js";
+import LikeModel from "../models/like.model.js"
+import mongoose from "mongoose";
 
 // rota do Login
 
@@ -108,7 +112,7 @@ export const getUserByID = async (req, res) => {
 
 // atualizar usuário
 export const updateUser = async (req, res) => {
-  try {
+  try {    
     const user = await UserModel.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
@@ -168,7 +172,7 @@ export const getUserColecoes = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const colecoes = await ColecaoModel.findById(userId)
+    const colecoes = await ColecaoModel.find({ dono: userId })
       .sort({ dataPublicacao: -1 })
       .lean();
 
@@ -187,7 +191,7 @@ export const getUserTopicos = async (req, res) => {
     const filtroBase = { autor: userId };
 
     const topicos = await TopicoPost.find(filtroBase)
-      .sort({ dataPublicacao: -1 })
+      .sort({ createdAt: -1 })
       .lean();
 
     return res.status(200).json(topicos);
@@ -202,18 +206,216 @@ export const getUserPosts = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const filtroBase = { autor: userId };
+    const topicos = await TopicoPost.find(
+      {
+        "postagens.autor": userId,
+        deletado: false,
+      },
+      { titulo: 1, categoria: 1, postagens: 1 },
+    );
 
-    const topicos = await TopicoPost.find(filtroBase);
-    const posts = topicos.postagens.autor(filtroBase)
+    const posts = topicos.flatMap((t) =>
+      t.postagens
+        .filter((p) => String(p.autor) === String(userId) && !p.deletado)
+        .map((p) => ({
+          ...p.toObject(),
+          topicoId: t._id,
+          topicoTitulo: t.titulo,
+          categoria: t.categoria,
+        })),
+    );
 
-    return res.status(200).json(conteudos);
+    return res.status(200).json(posts);
   } catch (erro) {
     console.error("Erro ao buscar conteúdos do usuário:", erro);
     return res.status(500).json({ erro: erro.message });
   }
 };
 
+//listar curtidas do usuário
+//buscar likes
+// user.controller.js — getUserLikes corrigido
+export const getUserLikes = async (req, res) => {
+  try {
+    const userId = req.userId;
+
+    const likes = await LikeModel.aggregate([
+      { $match: { usuario: new mongoose.Types.ObjectId(userId) } },
+
+      // Busca conteúdos que batem com o targetId
+      {
+        $lookup: {
+          from: "conteudos",
+          let: { tid: "$targetId", tipo: "$targetTipo" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$_id", "$$tid"] },
+                    { $eq: ["$$tipo", "conteudo"] },
+                  ],
+                },
+              },
+            },
+            { $project: { titulo: 1, tipo: 1, thumbs: 1 } },
+          ],
+          as: "conteudoData",
+        },
+      },
+
+      // Busca coleções que batem com o targetId
+      {
+        $lookup: {
+          from: "colecaos", // Mongoose pluraliza "Colecao" como "colecaos"
+          let: { tid: "$targetId", tipo: "$targetTipo" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$_id", "$$tid"] },
+                    { $eq: ["$$tipo", "colecao"] },
+                  ],
+                },
+              },
+            },
+            { $project: { nome: 1, capa: 1 } },
+          ],
+          as: "colecaoData",
+        },
+      },
+
+      // Monta um campo "entidade" com o documento encontrado
+      {
+        $addFields: {
+          entidade: {
+            $cond: {
+              if:   { $eq: ["$targetTipo", "conteudo"] },
+              then: { $arrayElemAt: ["$conteudoData", 0] },
+              else: { $arrayElemAt: ["$colecaoData",  0] },
+            },
+          },
+        },
+      },
+
+      { $sort: { createdAt: -1 } },
+
+      {
+        $project: {
+          targetId:   1,
+          targetTipo: 1,
+          createdAt:  1,
+          entidade:   1,  // título, thumbs, etc já populados
+        },
+      },
+    ]);
+
+    return res.status(200).json(likes);
+  } catch (erro) {
+    return res.status(500).json({ error: erro.message });
+  }
+};
+
+//listar comentários do usuário
+export const getUserComentarios = async(req, res)=>{
+  try {
+    const userId = req.userId;
+
+    const comentarios = await ComentarioModel.aggregate([
+      { $match: { autor: new mongoose.Types.ObjectId(userId) } },
+
+      // Busca conteúdos que batem com o targetId
+      {
+        $lookup: {
+          from: "conteudos",
+          let: { tid: "$targetId", tipo: "$targetTipo" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$_id", "$$tid"] },
+                    { $eq: ["$$tipo", "conteudo"] },
+                  ],
+                },
+              },
+            },
+            { $project: { titulo: 1, tipo: 1, thumbs: 1 } },
+          ],
+          as: "conteudoData",
+        },
+      },
+
+      // Busca coleções que batem com o targetId
+      {
+        $lookup: {
+          from: "colecaos", // Mongoose pluraliza "Colecao" como "colecaos"
+          let: { tid: "$targetId", tipo: "$targetTipo" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$_id", "$$tid"] },
+                    { $eq: ["$$tipo", "colecao"] },
+                  ],
+                },
+              },
+            },
+            { $project: { nome: 1, capa: 1 } },
+          ],
+          as: "colecaoData",
+        },
+      },
+
+      // Monta um campo "entidade" com o documento encontrado
+      {
+        $addFields: {
+          entidade: {
+            $cond: {
+              if: { $eq: ["$targetTipo", "conteudo"] },
+              then: { $arrayElemAt: ["$conteudoData", 0] },
+              else: { $arrayElemAt: ["$colecaoData", 0] },
+            },
+          },
+        },
+      },
+
+      { $sort: { createdAt: -1 } },
+
+      {
+        $project: {
+          targetId: 1,
+          targetTipo: 1,
+          createdAt: 1,
+          entidade: 1, // título, thumbs, etc já populados
+        },
+      },
+    ]);
+
+    return res.status(200).json(comentarios);
+  } catch (erro) {
+    return res.status(500).json({ error: erro.message });
+  }
+}
+
+//listar denuncias do usuário
+// GET /denuncias/minhas
+// Lista as denúncias que o usuário logado criou
+export const getUserDenuncias = async (req, res) => {
+  try {
+    const { targetId } = req.params;
+    const { targetTipo } = req.query;
+    const denuncias = await DenunciaModel.find({ autor: req.userId })
+      .populate("denunciado", "usuario")
+      .sort({ createdAt: -1 });
+
+    return res.status(200).json(denuncias);
+  } catch (erro) {
+    return res.status(500).json({ error: erro.message });
+  }
+};
 
 // listar Profile de usuários por ID
 export const getUserProfile = async (req, res) => {

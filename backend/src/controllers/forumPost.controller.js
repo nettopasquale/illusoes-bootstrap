@@ -1,4 +1,5 @@
 import TopicoPost from "../models/TopicoPost.model.js";
+import UserModel from "../models/user.model.js";
 
 //helper
 const ehAdminOuUsuario = (autorId, req) => 
@@ -16,7 +17,7 @@ export const publicarPostagem = async (req, res) => {
       conteudoCitacao,
       nomeAutorCitacao,
       parenteResposta,
-      anexos
+      anexos,
     } = req.body;
 
     const topico = await TopicoPost.findById(req.params.topicoId);
@@ -53,10 +54,12 @@ export const publicarPostagem = async (req, res) => {
 export const editarPostagem = async (req, res) => {
   try {
     const topico = await TopicoPost.findById(req.params.topicoId);
-    if(!topico) return res.status(404).json({message: "Tópico não encontrado"})
-    
+    if (!topico)
+      return res.status(404).json({ message: "Tópico não encontrado" });
+
     const postagem = topico.postagens.id(req.params.postagemId);
-    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
+    if (!postagem)
+      return res.status(404).json({ message: "Postagem não encontrada" });
 
     if (!ehAdminOuUsuario(postagem.autor, req))
       return res.status(403).json({ message: "Sem permissão para editar" });
@@ -64,9 +67,9 @@ export const editarPostagem = async (req, res) => {
     // if (postagem.autor.toString() !== req.userId.toString())
     //   return res.status(403).json({ message: "Sem permissão para editar" });
 
-    const {conteudo, anexos} = req.body;
+    const { conteudo, anexos } = req.body;
     if (conteudo) postagem.conteudo = conteudo;
-    if(anexos) postagem.anexos = anexos;
+    if (anexos) postagem.anexos = anexos;
     postagem.editadoEm = new Date();
     postagem.editadoPor = req.userId;
 
@@ -104,11 +107,22 @@ export const deletarPostagem = async (req, res) => {
 //curtir postagem - POST forum/topicos/:topicoId/postagens/:postagemId/curtir
 export const curtirPostagem = async (req, res) => {
   try {
+    //verifica se o usuario está banido
+    const usuarioAtual = await UserModel.findById(req.userId).select("banido");
+    if (usuarioAtual?.banido) {
+      return res.status(403).json({
+        error:
+          "Sua conta está banida. Entre em contato com os administradores.",
+      });
+    }
+
     const topico = await TopicoPost.findById(req.params.topicoId);
-    if (!topico) return res.status(404).json({ message: "Tópico não encontrado" });
+    if (!topico)
+      return res.status(404).json({ message: "Tópico não encontrado" });
 
     const postagem = topico.postagens.id(req.params.postagemId);
-    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
+    if (!postagem)
+      return res.status(404).json({ message: "Postagem não encontrada" });
 
     const userId = req.userId.toString();
     const jaCurtido = postagem.curtidoPor.map(String).indexOf(userId);
@@ -124,27 +138,11 @@ export const curtirPostagem = async (req, res) => {
     }
 
     await topico.save();
-    res.status(201).json({ curtidas: postagem.curtidas, curtido: jaCurtido === -1 });
+    res
+      .status(201)
+      .json({ curtidas: postagem.curtidas, curtido: jaCurtido === -1 });
   } catch (err) {
     res.status(500).json({ message: "Erro ao votar na resposta", error: err.message });
-  }
-};
-
-//denunciar postagem - POST forum/topicos/:topicoId/postagens/:postagemId/denunciar
-export const denunciarPostagem = async (req, res) => {
-  try {
-    const { motivo } = req.body;
-    const topico = await TopicoPost.findById(req.params.topicoId);
-    if (!topico) return res.status(404).json({ message: "Tópico não encontrado" });
-
-    const postagem = topico.postagens.id(req.params.postagemId);
-    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
-
-    postagem.denuncias.push({ denunciadoPor: req.userId, motivo });
-    await topico.save();
-    res.status(201).json({ message: "Denúncia registrada" });
-  } catch (err) {
-    res.status(500).json({ message: "Erro ao denunciar resposta", error: err.message });
   }
 };
 
@@ -152,10 +150,12 @@ export const denunciarPostagem = async (req, res) => {
 export const criarBookmarkPostagem = async (req, res) => {
   try {
     const topico = await TopicoPost.findById(req.params.topicoId);
-    if (!topico) return res.status(404).json({ message: "Tópico não encontrado" });
+    if (!topico)
+      return res.status(404).json({ message: "Tópico não encontrado" });
 
     const postagem = topico.postagens.id(req.params.postagemId);
-    if (!postagem) return res.status(404).json({ message: "Postagem não encontrada" });
+    if (!postagem)
+      return res.status(404).json({ message: "Postagem não encontrada" });
 
     const userId = req.userId.toString();
     const idx = postagem.bookmarkedPor.map(String).indexOf(userId);

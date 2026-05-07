@@ -12,30 +12,46 @@ import {
   getUserTopicos,
   getUserPosts,
   getUserProfile,
+  getUserDenuncias,
+  getUserLikes,
   updateUserProfile,
-  deleteUserProfile
+  deleteUserProfile,
+  getUserComentarios,
 } from "../controllers/user.controller.js";
-import {verificarToken, verificarAdmin } from "../middleware/auth.middleware.js";
+import {
+  verificarToken,
+  verificarAdmin,
+  verificarBanido,
+} from "../middleware/auth.middleware.js";
 
 const userRouters = express.Router();
 
+//-------rotas públicas---------------
 userRouters.get('/users', getAllUsers);
-userRouters.get("/user/conteudos", verificarToken, getUserConteudo);
-userRouters.get('/user/colecoes', verificarToken, getUserColecoes);
-userRouters.get('/user/topicos', verificarToken, getUserTopicos);
-userRouters.get('/user/posts', verificarToken, getUserPosts);
-userRouters.get('/user/profile', verificarToken, getUserProfile);
-userRouters.get('/users/:id', getUserByID);
-userRouters.get("/protected", verificarToken, verificarAdmin, funcaoProtegida);
-
 userRouters.post('/users', createUser);
 userRouters.post('/users/login', login);
+userRouters.get('/users/:id', getUserByID);
 
-userRouters.put('/user/profile', verificarToken, updateUserProfile);
+//-------rotas usuario logado--------------------------------------
+userRouters.get("/userProfile/me", verificarToken, getUserProfile);
+userRouters.put("/userProfile/me", verificarToken, updateUserProfile);
+userRouters.delete("/userProfile/me",verificarToken,deleteUserProfile);
 
-userRouters.delete('/user/profile', verificarToken, deleteUserProfile);
+//-------rotas usuario entidade------------------------------------
+userRouters.get("/userProfile/me/conteudos", verificarToken, getUserConteudo);
+userRouters.get("/userProfile/me/colecoes", verificarToken, getUserColecoes);
+userRouters.get("/userProfile/me/topicos", verificarToken, getUserTopicos);
+userRouters.get("/userProfile/me/posts", verificarToken, getUserPosts);
+userRouters.get("/userProfile/me/likes", verificarToken, getUserLikes);
+userRouters.get(
+  "/userProfile/me/comentarios",
+  verificarToken,
+  getUserComentarios,
+);
+// userRouters.get("/userProfile/me/denuncias", verificarToken, getUserDenuncias);
 
-//proteger rotas de edição e exclusão
+//ADMIN
+userRouters.get("/protected", verificarToken, verificarAdmin, funcaoProtegida);
 userRouters.put('/users/:id', verificarToken, verificarAdmin, updateUser);
 userRouters.delete('/users/:id', verificarToken, verificarAdmin, deleteUser);
 

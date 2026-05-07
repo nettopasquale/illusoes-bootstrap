@@ -7,6 +7,9 @@ import { EditarConteudo } from "../pages/Conteudos/EditarConteudo";
 import MinhasColecoes from "../pages/Colecoes/MinhasColecoes";
 import ColecaoLista from "../pages/Colecoes/ColecaoLista";
 import ForumPaginaCategoria from "../pages/Forum/ForumPaginaCategoria";
+import ListarDenuncias from "../pages/Denuncia/ListarDenuncias";
+import MeusTopicosPosts from "../pages/Forum/MeusTopicosPosts";
+import MeusComentariosCurtidas from "../pages/ComentariosCurtidas/MeusComentariosCurtidas";
 
 export const usuarioRoutes = [
   <Route
@@ -20,7 +23,7 @@ export const usuarioRoutes = [
   />,
 
   <Route
-    path="/user/profile"
+    path="/userProfile/me"
     element={
       <PrivateRoute>
         <PerfilUsuario />
@@ -30,7 +33,7 @@ export const usuarioRoutes = [
   />,
 
   <Route
-    path="/user/conteudos/:tipo"
+    path="/userProfile/me/conteudos"
     element={
       <PrivateRoute>
         <MeusConteudos />
@@ -41,32 +44,32 @@ export const usuarioRoutes = [
 
   // ver as minhas coleções
   <Route
-    path="/user/colecoes"
+    path="/userProfile/me/colecoes"
     element={
       <PrivateRoute>
         <MinhasColecoes />
       </PrivateRoute>
     }
-    key="colecoes-id"
+    key="usuario-colecoes"
   />,
 
   <Route
-    path="/user/topicos"
+    path="/userProfile/me/topicos"
     element={
       <PrivateRoute>
-        <ForumPaginaCategoria />
+        <MeusTopicosPosts />
       </PrivateRoute>
     }
-    key="forum-topico-criar"
+    key="usuario-topicos-posts"
   />,
 
   <Route
-    path="/user/posts"
+    path="/userProfile/me/comentarios"
     element={
       <PrivateRoute>
-        <ForumPaginaCategoria />
+        <MeusComentariosCurtidas />
       </PrivateRoute>
     }
-    key="forum-topico-criar"
+    key="usuario-topicos-posts"
   />,
 ];

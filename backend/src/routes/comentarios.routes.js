@@ -2,7 +2,7 @@ import express from "express";
 import { 
     criarComentario,
     listarComentarios,
-    toggleLikeComentario,
+    // toggleLikeComentario,
     deletarComentario
  } from "../controllers/comentario.controller.js";
  import {
@@ -18,11 +18,11 @@ import {
  comentariosRouters.post('/comentarios', verificarToken, criarComentario);
 
 //  comentariosRouters.post('/:id/likes', verificarToken, toggleLikeComentario);
-  comentariosRouters.post(
-    "/comentarios/:targetId/likes",
-    verificarToken,
-    toggleLikeComentario,
-  );
+  // comentariosRouters.post(
+  //   "/comentarios/:targetId/likes",
+  //   verificarToken,
+  //   toggleLikeComentario,
+  // );
 
  comentariosRouters.delete('/comentarios/:id', verificarToken, deletarComentario);
 

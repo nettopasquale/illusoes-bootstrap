@@ -55,7 +55,7 @@ export const useComentarios = (targetId, targetTipo, token) => {
   const curtirComentario = async (id) => {
     console.log("ID: ", id);
     try {
-      const res = await api.post(`/comentarios/${id}/likes`, {});
+      const res = await api.post(`/likes`, {targetId, targetTipo});
 
       //likes: Array(res.data.totalLikes).fill(0)
       setComentarios((prev) =>

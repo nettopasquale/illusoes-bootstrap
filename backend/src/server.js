@@ -12,6 +12,7 @@ import colecaoRouters from "./routes/colecao.routes.js";
 import cartasColecaoRouters from "./routes/cartasColecao.routes.js";
 import forumRouters from "./routes/forum.routes.js";
 import likesRouters from "./routes/likes.routes.js";
+import denunciaRoutes from "./routes/denuncia.routes.js";
 import comentariosRouters from "./routes/comentarios.routes.js";
 
 // necessário para resolver bug do DNS, a partir do node v24.13.1
@@ -79,6 +80,7 @@ app.use("/", cartasColecaoRouters);
 app.use("/", forumRouters);
 app.use("/", likesRouters);
 app.use("/", comentariosRouters);
+app.use("/", denunciaRoutes);
 app.use(fileUpload({useTempFiles: true}));
 
 app.use((req, res, next) => {

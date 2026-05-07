@@ -1,4 +1,5 @@
 import TopicoPost from "../models/TopicoPost.model.js";
+import UserModel from "../models/user.model.js";
 
 //helper
 const ehAdminOuUsuario = (autorId, req) =>
@@ -28,7 +29,7 @@ export const buscarTopicos = async (req, res) => {
     const topicos = await TopicoPost.find(filter)
       .populate("autor", "usuario bio reputacao tipo createdAt avatar")
       .populate("ultimaPostagemPor", "usuario")
-      .select("-postagens -denuncias")
+      .select("-postagens")
       .sort(sortMap[sort] || sortMap.recente)
       .skip((pagina - 1) * limite)
       .limit(limite);
@@ -194,6 +195,14 @@ export const deletarTopico = async (req, res) => {
 //curtir tópico - POST forum/topicos/:id/curtir
 export const curtirTopico = async (req, res) => {
   try {
+    //verifica se o usuario está banido
+    const usuarioAtual = await UserModel.findById(req.userId).select("banido");
+    if (usuarioAtual?.banido) {
+      return res.status(403).json({
+        error:
+          "Sua conta está banida. Entre em contato com os administradores.",
+      });
+    }
     const topicos = await TopicoPost.findById(req.params.topicoId);
     if (!topicos)
       return res.status(404).json({ message: "Tópico não encontrado" });
@@ -213,22 +222,6 @@ export const curtirTopico = async (req, res) => {
     return res.status(201).json({ curtidas: topicos.curtidas, curtido: jaCurtido === -1 });
   } catch (err) {
     return res.status(500).json({ message: "Erro ao votar", error: err.message });
-  }
-};
-
-//denunciar tópico - POST forum/topicos/:id/denunciar
-export const denunciarTopico = async (req, res) => {
-  try {
-    const { motivo } = req.body;
-    const topico = await TopicoPost.findById(req.params.topicoId);
-    if (!topico)
-      return res.status(404).json({ message: "Tópico não encontrado" });
-
-    topico.denuncias.push({ denunciadoPor: req.userId, motivo });
-    await topico.save();
-    return res.status(201).json({ message: "Denúncia registrada" });
-  } catch (err) {
-    return res.status(500).json({ message: "Erro ao denunciar", error: err.message });
   }
 };
 

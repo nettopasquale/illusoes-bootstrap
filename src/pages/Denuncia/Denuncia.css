@@ -1,0 +1,47 @@
+/* ─────────────────────────────────────────────
+   IMPORTAÇÃO DE FONTES — mesmo padrão do projeto
+   ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+/* ─────────────────────────────────────────────
+   VARIÁVEIS — espelha Conteudo.css e Colecao.css
+   ───────────────────────────────────────────── */
+:root {
+    --cor-destaque: #c0392b;
+    --cor-destaque-hover: #a93226;
+    --cor-texto: #1a1a1a;
+    --cor-texto-suave: #555e68;
+    --cor-borda: #e5e7eb;
+    --cor-fundo-pagina: #f4f4f4;
+    --cor-fundo-card: #ffffff;
+    --fonte-titulo: 'Merriweather', Georgia, serif;
+    --fonte-ui: 'Inter', system-ui, sans-serif;
+    --raio: 8px;
+    --sombra-card: 0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* ─────────────────────────────────────────────
+   SEÇÃO GENÉRICA
+   ───────────────────────────────────────────── */
+.pagina-section {
+    background-color: var(--cor-fundo-pagina);
+    min-height: 100vh;
+    padding: 2.5rem 0 4rem;
+    font-family: var(--fonte-ui);
+}
+
+.pagina-titulo {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    font-weight: 900;
+    color: var(--cor-texto);
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+}
+
+.pagina-subtitulo {
+    font-size: 0.82rem;
+    color: var(--cor-texto-suave);
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+}

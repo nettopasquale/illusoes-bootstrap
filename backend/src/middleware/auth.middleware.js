@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { key } from "../configs/jwtConfig.js";
+import UserModel from "../models/user.model.js";
 
 export function verificarToken(req, res, next) {
   const tokenHeader = req.headers["authorization"];
@@ -34,6 +35,23 @@ export function verificarToken(req, res, next) {
     }
   }
 }
+
+//verificar se usuario está banido
+export async function verificarBanido(req, res, next) {
+  try {
+    const usuario = await UserModel.findById(req.userId).select("banido");
+    if (usuario?.banido) {
+      return res.status(403).json({
+        error:
+          "Sua conta está banida. Entre em contato com os administradores.",
+      });
+    }
+    next();
+  } catch (erro) {
+    return res.status(500).json({ error: erro.message });
+  }
+}
+
 
 export function verificarAdmin(req, res, next) {
   if (req.userRole !== "admin") {

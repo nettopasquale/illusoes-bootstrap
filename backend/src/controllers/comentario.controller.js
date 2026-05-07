@@ -1,4 +1,5 @@
 import ComentarioModel from "../models/comentario.model.js";
+import UserModel from "../models/user.model.js";
 
 //criar o comentário
 export const criarComentario = async (req, res) => {
@@ -42,45 +43,46 @@ export const listarComentarios = async (req, res) => {
 };
 
 //curtir comentário
-export const toggleLikeComentario = async (req, res) => {
-  try {
-    const comentario = await ComentarioModel.findById(req.params.targetId);
-    console.log("Comentario a ser curtido: ", comentario);
+// export const toggleLikeComentario = async (req, res) => {
+//   try {
+//     const comentario = await ComentarioModel.findById(req.params.targetId);
+//     console.log("Comentario a ser curtido: ", comentario);
 
-    if (!comentario) {
-      return res.status(404).json({ error: "Comentário não encontrado" });
-    }
+//     if (!comentario) {
+//       return res.status(404).json({ error: "Comentário não encontrado" });
+//     }
 
-    //impede de curtir o próprio comentário
-    if (comentario.autor.toString() === req.userId) {
-      return res.status(403).json({
-        error: "Não pode curtir o próprio comentário",
-      });
-    }
+//     //impede de curtir o próprio comentário
+//     if (comentario.autor.toString() === req.userId) {
+//       return res.status(403).json({
+//         error: "Não pode curtir o próprio comentário",
+//       });
+//     }
 
-    const jaCurtiu = comentario.curtidas.includes(req.userId);
+//     const jaCurtiu = comentario.curtidas.includes(req.userId);
 
-    if (jaCurtiu) {
-      comentario.curtidas.pull(req.userId);
-    } else {
-      comentario.curtidas.push(req.userId);
-    }
+//     if (jaCurtiu) {
+//       comentario.curtidas.pull(req.userId);
+//     } else {
+//       comentario.curtidas.push(req.userId);
+//     }
 
-    await comentario.save();
+//     await comentario.save();
 
-    res.json({
-      curtiu: !jaCurtiu,
-      curtidasTotais: comentario.curtidas.length,
-    });
-  } catch (error) {
-    console.error("Erro ao curtir comentários: ", error);
-    res.status(500).json({ error: error.message });
-  }
-};
+//     res.json({
+//       curtiu: !jaCurtiu,
+//       curtidasTotais: comentario.curtidas.length,
+//     });
+//   } catch (error) {
+//     console.error("Erro ao curtir comentários: ", error);
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 
 //deletar comentário
 export const deletarComentario = async (req, res) => {
   try {
+
     const comentario = await ComentarioModel.findById(req.params.id);
 
     if (!comentario) {

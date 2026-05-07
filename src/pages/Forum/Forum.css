@@ -1,0 +1,722 @@
+/* ─────────────────────────────────────────────
+   Forum.css — estilos compartilhados do Fórum
+   Segue o mesmo sistema de design de Conteudo.css
+   e Colecao.css
+   ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+/* Reutiliza as variáveis globais do projeto.
+   Se ainda não estiverem no :root do index.css,
+   declare aqui como fallback: */
+:root {
+    --cor-destaque: #c0392b;
+    --cor-destaque-hover: #a93226;
+    --cor-texto: #1a1a1a;
+    --cor-texto-suave: #555e68;
+    --cor-borda: #e5e7eb;
+    --cor-fundo-pagina: #f4f4f4;
+    --cor-fundo-card: #ffffff;
+    --fonte-titulo: 'Merriweather', Georgia, serif;
+    --fonte-ui: 'Inter', system-ui, sans-serif;
+    --raio: 8px;
+    --sombra-card: 0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* ─────────────────────────────────────────────
+   SEÇÃO GENÉRICA
+   ───────────────────────────────────────────── */
+.pagina-section {
+    background-color: var(--cor-fundo-pagina);
+    min-height: 100vh;
+    padding: 2.5rem 0 4rem;
+    font-family: var(--fonte-ui);
+}
+
+.pagina-titulo {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    font-weight: 900;
+    color: var(--cor-texto);
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+}
+
+.pagina-subtitulo {
+    font-size: 0.82rem;
+    color: var(--cor-texto-suave);
+    margin-top: -1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Labels de formulário padronizadas */
+.pagina-card{
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+    margin-bottom: 0.375rem;
+}
+
+/* ─────────────────────────────────────────────
+   SEÇÃO WRAPPER — todas as páginas do fórum
+   ───────────────────────────────────────────── */
+.forum-section {
+    background-color: var(--cor-fundo-pagina);
+    min-height: 100vh;
+    padding: 2.5rem 0 4rem;
+    font-family: var(--fonte-ui);
+}
+
+/* ─────────────────────────────────────────────
+   HEADER DE PÁGINA
+   ───────────────────────────────────────────── */
+.forum-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+}
+
+.forum-page-title {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.35rem, 3vw, 1.8rem);
+    font-weight: 900;
+    color: var(--cor-texto);
+    letter-spacing: -0.02em;
+    margin: 0;
+}
+
+.forum-page-subtitulo {
+    font-size: 0.82rem;
+    color: var(--cor-texto-suave);
+    margin: 0.2rem 0 0;
+}
+
+/* ─────────────────────────────────────────────
+   TABELA DE CATEGORIAS (ForumHome)
+   ───────────────────────────────────────────── */
+.forum-categorias-card {
+    background: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card);
+    overflow: hidden;
+}
+
+.forum-categorias-header {
+    display: flex;
+    align-items: center;
+    padding: 0.625rem 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--cor-borda);
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--cor-texto-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+/* ─────────────────────────────────────────────
+   LINHA DE CATEGORIA — CategoriaRow component
+   ───────────────────────────────────────────── */
+.categoria-row {
+    display: flex;
+    align-items: stretch;
+    border-bottom: 1px solid var(--cor-borda);
+    min-height: 70px;
+    transition: background 0.12s;
+}
+
+.categoria-row:last-child {
+    border-bottom: none;
+}
+
+.categoria-row:hover {
+    background: #fafafa;
+}
+
+.categoria-row-info {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+    flex: 0 0 260px;
+}
+
+.categoria-row-icone {
+    width: 42px;
+    height: 42px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.categoria-row-nome {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+    text-decoration: none;
+    display: block;
+    line-height: 1.3;
+}
+
+.categoria-row-nome:hover {
+    color: var(--cor-destaque);
+}
+
+.categoria-row-desc {
+    font-size: 0.75rem;
+    color: var(--cor-texto-suave);
+    line-height: 1.3;
+    margin-top: 0.15rem;
+}
+
+.categoria-row-total {
+    width: 90px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid var(--cor-borda);
+    border-right: 1px solid var(--cor-borda);
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--cor-texto);
+    flex-shrink: 0;
+}
+
+.categoria-row-total small {
+    font-size: 0.65rem;
+    font-weight: 400;
+    color: var(--cor-texto-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.categoria-row-ultimo {
+    flex: 1;
+    padding: 0.875rem 1rem;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.categoria-ultimo-titulo {
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: var(--cor-texto);
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+.categoria-ultimo-titulo:hover {
+    color: var(--cor-destaque);
+}
+
+.categoria-ultimo-meta {
+    font-size: 0.72rem;
+    color: var(--cor-texto-suave);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.2rem;
+    flex-wrap: wrap;
+}
+
+/* ─────────────────────────────────────────────
+   LINKS RÁPIDOS (ForumHome)
+   ───────────────────────────────────────────── */
+.forum-quick-link {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+    background: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card);
+    text-decoration: none;
+    color: var(--cor-texto);
+    height: 100%;
+    transition: border-color 0.15s, transform 0.12s;
+}
+
+.forum-quick-link:hover {
+    border-color: var(--cor-destaque);
+    transform: translateY(-2px);
+    color: var(--cor-texto);
+}
+
+.forum-quick-link-icon {
+    font-size: 1.4rem;
+    flex-shrink: 0;
+}
+
+.forum-quick-link-titulo {
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--cor-texto);
+}
+
+.forum-quick-link-desc {
+    font-size: 0.75rem;
+    color: var(--cor-texto-suave);
+    margin-top: 0.15rem;
+}
+
+/* ─────────────────────────────────────────────
+   LISTA DE TÓPICOS — CategoryPage
+   ───────────────────────────────────────────── */
+.forum-topicos-card {
+    background: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card);
+    overflow: hidden;
+}
+
+.forum-topicos-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--cor-borda);
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--cor-texto-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.topico-row {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--cor-borda);
+    gap: 0.75rem;
+    transition: background 0.12s;
+}
+
+.topico-row:last-child {
+    border-bottom: none;
+}
+
+.topico-row:hover {
+    background: #fafafa;
+}
+
+.topico-row-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.topico-row-titulo {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--cor-texto);
+    text-decoration: none;
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.topico-row-titulo:hover {
+    color: var(--cor-destaque);
+}
+
+.topico-row-meta {
+    font-size: 0.72rem;
+    color: var(--cor-texto-suave);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.2rem;
+}
+
+.topico-row-stat {
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.topico-row-stat-valor {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+    display: block;
+}
+
+.topico-row-stat-label {
+    font-size: 0.65rem;
+    color: var(--cor-texto-suave);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* ─────────────────────────────────────────────
+   PAGINAÇÃO
+   ───────────────────────────────────────────── */
+.forum-paginacao {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    padding: 0.875rem;
+    border-top: 1px solid var(--cor-borda);
+}
+
+.forum-paginacao-btn {
+    min-width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-fundo-card);
+    color: var(--cor-texto-suave);
+    font-size: 0.82rem;
+    font-family: var(--fonte-ui);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s;
+    padding: 0 0.5rem;
+}
+
+.forum-paginacao-btn:hover:not(:disabled) {
+    border-color: var(--cor-destaque);
+    color: var(--cor-destaque);
+}
+
+.forum-paginacao-btn.ativo {
+    background: var(--cor-destaque);
+    border-color: var(--cor-destaque);
+    color: white;
+    font-weight: 600;
+}
+
+.forum-paginacao-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+/* ─────────────────────────────────────────────
+   TOPICO DETAIL — post cards
+   ───────────────────────────────────────────── */
+.forum-post-card {
+    background: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card);
+    overflow: hidden;
+}
+
+.forum-post-sidebar {
+    width: 130px;
+    background: #f8f9fa;
+    border-right: 1px solid var(--cor-borda);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.25rem 0.75rem;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.forum-post-sidebar-nome {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+    text-align: center;
+    text-decoration: none;
+    word-break: break-word;
+}
+
+.forum-post-sidebar-nome:hover {
+    color: var(--cor-destaque);
+}
+
+.forum-post-sidebar-meta {
+    font-size: 0.65rem;
+    color: var(--cor-texto-suave);
+    text-align: center;
+    line-height: 1.6;
+}
+
+.forum-post-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--cor-borda);
+    font-size: 0.73rem;
+    color: var(--cor-texto-suave);
+    flex-wrap: wrap;
+    gap: 0.25rem;
+}
+
+.forum-post-numero {
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #c8c8c8;
+}
+
+.forum-post-corpo {
+    padding: 1rem 1.25rem;
+    font-size: 0.92rem;
+    line-height: 1.75;
+    color: var(--cor-texto);
+    white-space: pre-wrap;
+    flex: 1;
+}
+
+.forum-post-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    background: #f8f9fa;
+    border-top: 1px solid var(--cor-borda);
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.forum-citacao {
+    border-left: 3px solid var(--cor-borda);
+    padding: 0.5rem 0.875rem;
+    margin: 0.75rem 1.25rem;
+    background: #f8f9fa;
+    border-radius: 0 var(--raio) var(--raio) 0;
+}
+
+.forum-citacao-autor {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--cor-texto-suave);
+    margin-bottom: 0.25rem;
+}
+
+.forum-citacao-texto {
+    font-size: 0.82rem;
+    color: var(--cor-texto-suave);
+    white-space: pre-wrap;
+}
+
+/* ─────────────────────────────────────────────
+   EDITOR DE RESPOSTA
+   ───────────────────────────────────────────── */
+.forum-editor-card {
+    background: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card);
+    overflow: hidden;
+    margin-top: 1.5rem;
+}
+
+.forum-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.625rem 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--cor-borda);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+}
+
+.forum-editor-toolbar {
+    display: flex;
+    gap: 0.25rem;
+    flex-wrap: wrap;
+}
+
+.forum-editor-btn {
+    padding: 2px 8px;
+    border-radius: 4px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-fundo-card);
+    color: var(--cor-texto-suave);
+    font-size: 0.75rem;
+    font-family: var(--fonte-ui);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+
+.forum-editor-btn:hover {
+    background: var(--cor-fundo-pagina);
+    color: var(--cor-texto);
+}
+
+.forum-editor-citacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin: 0.75rem 1rem 0;
+    padding: 0.625rem 0.875rem;
+    background: #f0f4ff;
+    border: 1px solid #c7d7f5;
+    border-left: 3px solid #0d6efd;
+    border-radius: 0 var(--raio) var(--raio) 0;
+    font-size: 0.8rem;
+}
+
+.forum-editor-body {
+    padding: 0.875rem 1rem;
+}
+
+.forum-editor-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--cor-borda);
+    background: #f8f9fa;
+    font-size: 0.73rem;
+    color: var(--cor-texto-suave);
+}
+
+/* ─────────────────────────────────────────────
+   DENÚNCIA INLINE
+   ───────────────────────────────────────────── */
+.forum-denuncia-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0.625rem 1rem;
+    background: #fff8f8;
+    border-top: 1px solid #f5c6c6;
+    font-size: 0.82rem;
+}
+
+/* ─────────────────────────────────────────────
+   NOVO TÓPICO — formulário
+   ───────────────────────────────────────────── */
+.forum-form-card {
+    background: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card);
+    padding: 2rem 2.25rem;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.forum-form-card .form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+    margin-bottom: 0.375rem;
+}
+
+.forum-categoria-btn {
+    padding: 5px 14px;
+    border-radius: 99px;
+    border: 1px solid var(--cor-borda);
+    background: var(--cor-fundo-card);
+    color: var(--cor-texto-suave);
+    font-size: 0.8rem;
+    font-family: var(--fonte-ui);
+    cursor: pointer;
+    transition: all 0.12s;
+}
+
+.forum-categoria-btn:hover {
+    border-color: var(--cor-destaque);
+    color: var(--cor-destaque);
+}
+
+.forum-categoria-btn.ativo {
+    background: var(--cor-destaque);
+    border-color: var(--cor-destaque);
+    color: white;
+    font-weight: 500;
+}
+
+/* ─────────────────────────────────────────────
+   BOOKMARKS - FORUM
+   ───────────────────────────────────────────── */
+
+.bookmark-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 0.875rem 1rem;
+    background: var(--cor-fundo-card);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+}
+
+.bookmark-thumb {
+    width: 52px;
+    height: 52px;
+    object-fit: cover;
+    border-radius: 4px;
+    flex-shrink: 0;
+    border: 1px solid var(--cor-borda);
+}
+
+.bookmark-thumb-placeholder {
+    width: 52px;
+    height: 52px;
+    border-radius: 4px;
+    background: #f0f0f0;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 1.25rem;
+}
+
+.bookmark-titulo {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+    margin-bottom: 0.2rem;
+}
+
+.bookmark-meta {
+    font-size: 0.75rem;
+    color: var(--cor-texto-suave);
+}
+
+.bookmark-conteudo {
+    font-size: 0.85rem;
+    color: var(--cor-texto-suave);
+    margin-top: 0.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ─────────────────────────────────────────────
+   ESTADO VAZIO
+   ───────────────────────────────────────────── */
+.forum-vazio {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--cor-texto-suave);
+    font-size: 0.9rem;
+}
+
+.forum-vazio p {
+    margin-bottom: 1rem;
+}

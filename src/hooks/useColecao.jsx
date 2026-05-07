@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { cloudinaryUpload } from "../utils/cloudinaryUpload";
 import api from "../services/api";
 import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
 
 export const useColecao = (colecaoId, edicao) => {
   const [colecoes, setColecoes] = useState([]);
@@ -13,8 +14,11 @@ export const useColecao = (colecaoId, edicao) => {
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
   const [carregando, setCarregando] = useState(true);
-
+  const { usuario, token, isAdmin } = useContext(AuthContext);
   const navigate = useNavigate();
+
+  const colecao = colecoes?.find((c) => c._id === colecaoId);
+  const isDono = usuario?._id === colecao?.dono?._id;
 
   //busca coleção
   useEffect(() => {
@@ -112,8 +116,6 @@ export const useColecao = (colecaoId, edicao) => {
   };
 
   const excluirColecao = async (colecaoId) => {
-    if (!isDono) return;
-
     const confirmacao = window.confirm(
       "Tem certeza que deseja excluir a coleção?",
     );
@@ -133,6 +135,8 @@ export const useColecao = (colecaoId, edicao) => {
     setDescricao,
     capa,
     setCapa,
+    uploadingCapa,
+    setUploadingCapa,
     mensagem,
     setMensagem,
     colecoes,

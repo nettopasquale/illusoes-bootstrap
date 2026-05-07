@@ -1,0 +1,144 @@
+/* ─────────────────────────────────────────────
+   ADICIONAR AO Conteudo.css existente
+   (ou importar separado como ConteudoForm.css)
+   ───────────────────────────────────────────── */
+
+/* ── Formulário de criar/editar conteúdo ──── */
+.conteudo-form-section {
+    background-color: var(--cor-fundo-pagina);
+    min-height: 100vh;
+    padding: 2.5rem 0 4rem;
+    font-family: var(--fonte-ui);
+}
+
+.conteudo-form-card {
+    background: var(--cor-fundo-artigo);
+    border: 1px solid var(--cor-borda);
+    border-radius: var(--raio);
+    box-shadow: var(--sombra-card, 0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.05));
+    padding: 2rem 2.25rem;
+    max-width: 860px;
+    margin: 0 auto;
+}
+
+.conteudo-form-card .form-label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--cor-texto);
+    margin-bottom: 0.375rem;
+    letter-spacing: 0.01em;
+}
+
+/* Editor Quill — altura fixa + margem inferior para a toolbar não sobrepor */
+.conteudo-quill-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.conteudo-quill-wrapper .ql-container {
+    min-height: 280px;
+    font-size: 0.95rem;
+    font-family: var(--fonte-corpo, 'Source Serif 4', Georgia, serif);
+    border-bottom-left-radius: var(--raio);
+    border-bottom-right-radius: var(--raio);
+}
+
+.conteudo-quill-wrapper .ql-toolbar {
+    border-top-left-radius: var(--raio);
+    border-top-right-radius: var(--raio);
+    background: #f8f9fa;
+}
+
+/* Thumb preview */
+.thumb-preview {
+    width: 180px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: var(--raio);
+    border: 1px solid var(--cor-borda);
+    margin-top: 0.75rem;
+    display: block;
+}
+
+/* Evento info box */
+.evento-info-box {
+    background: #fafafa;
+    border: 1px solid var(--cor-borda);
+    border-left: 3px solid var(--cor-destaque);
+    border-radius: var(--raio);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* ── MeusConteudos ──────────────────────────── */
+.meus-conteudos-section {
+    background-color: var(--cor-fundo-pagina);
+    min-height: 100vh;
+    padding: 2.5rem 0 4rem;
+    font-family: var(--fonte-ui);
+}
+
+.conteudo-list-card {
+    background: var(--cor-fundo-artigo);
+    border: 1px solid var(--cor-borda) !important;
+    border-radius: var(--raio) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.conteudo-list-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.09);
+}
+
+.conteudo-list-card-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.conteudo-list-card-body {
+    padding: 0.875rem 1rem;
+}
+
+.conteudo-list-card-tipo {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cor-destaque);
+    margin-bottom: 0.35rem;
+}
+
+.conteudo-list-card-titulo {
+    font-family: var(--fonte-titulo);
+    font-size: 0.92rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    margin-bottom: 0.3rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.conteudo-list-card-subtitulo {
+    font-size: 0.78rem;
+    color: var(--cor-texto-suave);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.conteudo-list-card-meta {
+    font-size: 0.72rem;
+    color: var(--cor-texto-suave);
+    margin-top: 0.625rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--cor-borda);
+    display: flex;
+    justify-content: space-between;
+}

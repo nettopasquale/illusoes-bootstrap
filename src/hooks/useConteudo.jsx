@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { cloudinaryUpload } from "../utils/cloudinaryUpload";
 import api from "../services/api";
 import { toast } from "react-toastify";
+import {criarDenuncia} from "../services/denunciasService"
 
 export const useConteudo = (id, edicao) => {
   const [conteudo, setConteudo] = useState(null);
@@ -17,6 +18,9 @@ export const useConteudo = (id, edicao) => {
   const [imagems, setImagens] = useState(null);
   const [dataEvento, setDataEvento] = useState(null);
   const [valorEntrada, setValorEntrada] = useState("");
+  const [denunciaMotivo, setDenunciaMotivo] = useState("");
+  const [showDenuncia, setShowDenuncia] = useState(false);
+  const [salvando, setSalvando] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
  
@@ -115,7 +119,7 @@ export const useConteudo = (id, edicao) => {
   // Excluir conteúdo
   const excluirConteudo = async () => {
     try {
-      await api.delete(`/conteudos/${tipo.value}/${id}`);
+      await api.delete(`/conteudos/${tipoFinal}/${id}`);
       setMensagem("Conteúdo excluído com sucesso!");
       toast.success("Conteúdo deletado com sucesso!")
       setErro(null);
@@ -165,6 +169,31 @@ export const useConteudo = (id, edicao) => {
       }
     };
 
+  //denuncia
+  const handleDenunciarConteudo = async () => {
+    if (!denunciaMotivo.trim()) return;
+    setSalvando(true);
+
+    const payload = {
+      denunciado: conteudo.autor?._id, // ID do autor do conteudo
+      targetId: conteudo._id, // ID do conteudo em si
+      targetTipo: "conteudo",
+      motivo: denunciaMotivo,
+    };
+
+    try {
+      const denuncia = await criarDenuncia(payload);
+      console.log("Denuncia registrada: ", denuncia)
+      setShowDenuncia(false);
+      setDenunciaMotivo("");
+      toast.success("Denúncia enviada. Obrigado!");
+    } catch {
+      toast.error("Erro ao enviar denúncia.");
+    } finally {
+      setSalvando(false);
+    }
+  };
+
   return {
     titulo,
     setTitulo,
@@ -184,6 +213,12 @@ export const useConteudo = (id, edicao) => {
     setValorEntrada,
     texto,
     setTexto,
+    denunciaMotivo,
+    setDenunciaMotivo,
+    showDenuncia,
+    setShowDenuncia,
+    salvando,
+    setSalvando,
     mensagem,
     setMensagem,
     erro,
@@ -196,5 +231,6 @@ export const useConteudo = (id, edicao) => {
     excluirConteudo,
     handleThumb,
     handleImagens,
+    handleDenunciarConteudo,
   };
 };;;

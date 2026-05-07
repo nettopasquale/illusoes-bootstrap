@@ -15,6 +15,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { criarTopico} from "../../services/forumService";
 import { toast } from "react-toastify";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
+import "./Forum.css";
 
 
 const CATEGORIAS = [
@@ -57,8 +58,8 @@ function EditorConteudo({ value, onChange }) {
       title: "Bloco de código",
       action: () => wrap("```\n", "\n```"),
     },
-    { label: "☰", title: "Lista", action: () => insert("\n- ") },
-    { label: "—", title: "Separador", action: () => insert("\n---\n") },
+    { label: "☰", title: "Lista", action: () => inserir("\n- ") },
+    { label: "—", title: "Separador", action: () => inserir("\n---\n") },
     {
       label: "🔗",
       title: "Link",
@@ -135,7 +136,7 @@ export default function ForumCriarTopico() {
   const [categoria, setCategoria] = useState(defaultCategoria);
   const [tags, setTags] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [erro, setErro] = useState(null);
 
   //
   const tagsArray = tags
@@ -172,163 +173,160 @@ export default function ForumCriarTopico() {
 
   return (
     <LayoutGeral>
-      <section id="artigo" className="block artigo-block">
-        <Container fluid="lg" className="py-4">
-          <Row className="justify-content-center">
-            <Navegacao
-              itens={[
-                { label: "Home", to: "/" },
-                { label: "Forum", to: `/forum` },
-                { label: "Tópicos", to: `/forum/topicos` },
-                { label: "Criar Tópico", to: `/forum/topicos/criar` },
-              ]}
-            />
-            <div className="text-center text-danger mt-5">{error}</div>
-          </Row>
-          {/* Breadcrumb */}
-          <Breadcrumb style={{ fontSize: "0.82rem" }} className="mb-3">
-            <Breadcrumb.Item linkAs={Link} linkProps={{ to: "/" }}>
-              Início
-            </Breadcrumb.Item>
-            <Breadcrumb.Item linkAs={Link} linkProps={{ to: "/forum" }}>
-              Fórum
-            </Breadcrumb.Item>
-            <Breadcrumb.Item
-              linkAs={Link}
-              linkProps={{ to: `/forum/categoria/${categoria}` }}
+      <section className="forum-section">
+        <Container fluid="lg">
+          <Navegacao
+            itens={[
+              { label: "Home", to: "/" },
+              { label: "Fórum", to: "/forum" },
+              { label: "Criar tópico", to: "/forum/topicos/criar" },
+            ]}
+          />
+
+          {/* Header */}
+          <div className="forum-page-header">
+            <div>
+              <h1 className="forum-page-title">Criar novo tópico</h1>
+              <p className="forum-page-subtitulo">
+                Escolha uma categoria e compartilhe com a comunidade
+              </p>
+            </div>
+            <Button
+              variant="outline-secondary"
+              size="sm"
+              onClick={() => navigate(`/forum/categoria/${categoria}/topicos`)}
             >
-              {CATEGORIAS.find((c) => c.value === categoria)?.label || categoria}
-            </Breadcrumb.Item>
-            <Breadcrumb.Item active>Novo tópico</Breadcrumb.Item>
-          </Breadcrumb>
+              ← Voltar
+            </Button>
+          </div>
 
-          <h1 className="h4 fw-bold mb-4">Criar novo tópico</h1>
-
-          {error && (
-            <Alert variant="danger" onClose={() => setError(null)} dismissible>
-              {error}
+          {/* ✅ erro renderizado só uma vez, com dismissible */}
+          {erro && (
+            <Alert
+              variant="danger"
+              onClose={() => setErro(null)}
+              dismissible
+              style={{ fontSize: "0.85rem" }}
+            >
+              {erro}
             </Alert>
           )}
 
           <Form onSubmit={handleSubmit}>
-            <Card className="border mb-3">
-              <Card.Body className="p-4">
-                {/* Categoria */}
-                <Form.Group className="mb-4">
-                  <Form.Label
-                    className="fw-semibold"
-                    style={{ fontSize: "0.85rem" }}
+            <div className="forum-form-card">
+              {/* ── Categoria ── */}
+              <Form.Group className="mb-4">
+                <Form.Label>
+                  Categoria <span className="text-danger">*</span>
+                </Form.Label>
+                {/* ✅ forum-categoria-btn agora no botão, não no wrapper */}
+                <div className="d-flex flex-wrap gap-2 mt-1">
+                  {CATEGORIAS.map((cat) => (
+                    <button
+                      key={cat.value}
+                      type="button"
+                      onClick={() => setCategoria(cat.value)}
+                      className={`forum-categoria-btn ${categoria === cat.value ? "ativo" : ""}`}
+                    >
+                      {cat.icon} {cat.label}
+                    </button>
+                  ))}
+                </div>
+              </Form.Group>
+
+              {/* ── Título ── */}
+              <Form.Group className="mb-4">
+                <Form.Label>
+                  Título <span className="text-danger">*</span>
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Escreva um título claro e objetivo"
+                  value={titulo}
+                  onChange={(e) => setTitulo(e.target.value.slice(0, 200))}
+                  style={{ fontSize: "0.95rem" }}
+                />
+                <Form.Text
+                  className="text-muted"
+                  style={{ fontSize: "0.72rem" }}
+                >
+                  {titulo.length}/200 caracteres
+                </Form.Text>
+              </Form.Group>
+
+              {/* ── Conteúdo ── */}
+              <Form.Group className="mb-4">
+                <Form.Label>
+                  Conteúdo <span className="text-danger">*</span>
+                </Form.Label>
+                <EditorConteudo value={conteudo} onChange={setConteudo} />
+              </Form.Group>
+
+              {/* ── Tags ── */}
+              <Form.Group className="mb-1">
+                <Form.Label>
+                  Tags{" "}
+                  <span
+                    className="text-muted fw-normal"
+                    style={{ fontSize: "0.8rem" }}
                   >
-                    Categoria <span className="text-danger">*</span>
-                  </Form.Label>
-                  <div className="d-flex flex-wrap gap-2">
-                    {CATEGORIAS.map((cat) => (
-                      <button
-                        key={cat.value}
-                        type="button"
-                        onClick={() => setCategoria(cat.value)}
-                        className={`btn btn-sm ${
-                          categoria === cat.value
-                            ? "btn-primary"
-                            : "btn-outline-secondary"
-                        }`}
-                        style={{ fontSize: "0.82rem" }}
+                    (opcional, separadas por vírgula)
+                  </span>
+                </Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="ex: deck, combo, budget"
+                  value={tags}
+                  onChange={(e) => setTags(e.target.value)}
+                  style={{ fontSize: "0.88rem" }}
+                />
+                {tagsArray.length > 0 && (
+                  <div className="d-flex gap-1 mt-2 flex-wrap">
+                    {tagsArray.map((tag) => (
+                      <Badge
+                        key={tag}
+                        bg="light"
+                        text="secondary"
+                        className="border fw-normal"
+                        style={{ fontSize: "0.72rem" }}
                       >
-                        {cat.icon} {cat.label}
-                      </button>
+                        #{tag}
+                      </Badge>
                     ))}
                   </div>
-                </Form.Group>
+                )}
+                <Form.Text
+                  className="text-muted"
+                  style={{ fontSize: "0.72rem" }}
+                >
+                  Máximo de 5 tags
+                </Form.Text>
+              </Form.Group>
+            </div>
 
-                {/* Título */}
-                <Form.Group className="mb-4">
-                  <Form.Label
-                    className="fw-semibold"
-                    style={{ fontSize: "0.85rem" }}
-                  >
-                    Título <span className="text-danger">*</span>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="Escreva um título claro e objetivo"
-                    value={titulo}
-                    onChange={(e) => setTitulo(e.target.value.slice(0, 200))}
-                    style={{ fontSize: "0.95rem" }}
-                  />
-                  <Form.Text
-                    className="text-muted"
-                    style={{ fontSize: "0.72rem" }}
-                  >
-                    {titulo.length}/200 caracteres
-                  </Form.Text>
-                </Form.Group>
-
-                {/* Conteúdo */}
-                <Form.Group className="mb-4">
-                  <Form.Label
-                    className="fw-semibold"
-                    style={{ fontSize: "0.85rem" }}
-                  >
-                    Conteúdo <span className="text-danger">*</span>
-                  </Form.Label>
-                  <EditorConteudo value={conteudo} onChange={setConteudo} />
-                </Form.Group>
-
-                {/* Tags */}
-                <Form.Group className="mb-2">
-                  <Form.Label
-                    className="fw-semibold"
-                    style={{ fontSize: "0.85rem" }}
-                  >
-                    Tags{" "}
-                    <span className="text-muted fw-normal">
-                      (opcional, separadas por vírgula)
-                    </span>
-                  </Form.Label>
-                  <Form.Control
-                    type="text"
-                    placeholder="ex: deck, combo, budget"
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                    style={{ fontSize: "0.88rem" }}
-                  />
-                  {tagsArray.length > 0 && (
-                    <div className="d-flex gap-1 mt-2 flex-wrap">
-                      {tagsArray.map((tag) => (
-                        <Badge
-                          key={tag}
-                          bg="light"
-                          text="secondary"
-                          className="border fw-normal"
-                        >
-                          #{tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                  <Form.Text
-                    className="text-muted"
-                    style={{ fontSize: "0.72rem" }}
-                  >
-                    Máximo de 5 tags
-                  </Form.Text>
-                </Form.Group>
-              </Card.Body>
-            </Card>
-
-            {/* Ações */}
-            <div className="d-flex justify-content-between align-items-center">
+            {/* ── Ações ── */}
+            <div className="d-flex justify-content-between align-items-center mt-3">
               <Button
                 variant="outline-secondary"
-                onClick={() => navigate(`/forum/categoria/${categoria}`)}
+                size="sm"
+                type="button"
+                onClick={() =>
+                  navigate(`/forum/categoria/${categoria}/topicos`)
+                }
               >
                 Cancelar
               </Button>
               <Button
                 type="submit"
                 variant="primary"
+                size="sm"
+                className="px-4"
                 disabled={loading || !titulo.trim() || !conteudo.trim()}
-                style={{ minWidth: 140 }}
+                style={{
+                  background: "var(--cor-destaque)",
+                  border: "none",
+                  minWidth: 140,
+                }}
               >
                 {loading ? "Publicando..." : "Publicar tópico"}
               </Button>

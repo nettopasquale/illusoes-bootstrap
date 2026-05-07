@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     const carregarPerfil = async () => {
       if (token && usuario && !usuario.avatar) {
         try {
-          const res = await api.get("/user/profile");
+          const res = await api.get("/userProfile/me");
           const perfil = res.data;
           setUsuario((prev)=> {
             //usa função de atualização para evitar loop infinito

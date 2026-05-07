@@ -1,4 +1,4 @@
-import {Badge,Button} from "react-bootstrap";
+import {Badge,Button, Form} from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { Avatar } from "./Avatar";
 
@@ -27,19 +27,20 @@ export default function TopicoPost({
   curtidas,
   curtiu,
   bookmarked,
-  denuncia,
   onVote,
+  onSave,
   onBookmark,
   onQuote,
   onEdit,
-  onSave,
   onDelete,
+  onShowDenuncia,
+  denunciaMotivo,
 }) {
   const ehAutor = String(topico.autor?._id) === String(usuario?._id);
   const ehAdmin = usuario?.tipo === "admin";
   const canEdit = ehAutor || ehAdmin;
   const cat = CATEGORIA_META[topico.categoria] || {};
-  console.log("Autor info:", topico.autor.usuario)
+  console.log("Autor info:", topico.autor.usuario);
 
   return (
     <div className="card border rounded-3 overflow-hidden mb-0">
@@ -49,7 +50,11 @@ export default function TopicoPost({
           className="d-flex flex-column align-items-center py-3 px-2 border-end flex-shrink-0 gap-2"
           style={{ width: 130, background: "#f8f9fa" }}
         >
-          <Avatar name={topico.autor?.usuario || "?"} size={52} img={topico.autor?.avatar || null}/>
+          <Avatar
+            name={topico.autor?.usuario || "?"}
+            size={52}
+            img={topico.autor?.avatar || null}
+          />
           <Link
             to={`/user/topicos/${topico.autor?._id}`}
             className="fw-semibold text-decoration-none text-body text-center"
@@ -202,6 +207,19 @@ export default function TopicoPost({
                   ✏ Editar
                 </Button>
               )}
+
+              {usuario && !ehAutor && (
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="p-0 text-warning text-decoration-none"
+                  style={{ fontSize: "0.78rem" }}
+                  onClick={onShowDenuncia}
+                >
+                  ⚑ Denunciar
+                </Button>
+              )}
+
               {canEdit && (
                 <Button
                   variant="link"

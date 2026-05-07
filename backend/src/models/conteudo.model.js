@@ -11,6 +11,9 @@ const conteudoModel = new Schema({
     tipo: { type: String, enum: ["noticia", "artigo","evento", "campeonato"], default: "noticia" },
     dataPublicacao: { type: Date, default: Date.now, required: true },
     tags: [{type: [String], default: [''] }],
+    denuncias: [
+        {type: mongoose.Schema.Types.ObjectId, ref: "Denuncia"},
+    ],
     dataEvento: { type: Date, required: false },
     valorEntrada: { type: Number, required: false },
 

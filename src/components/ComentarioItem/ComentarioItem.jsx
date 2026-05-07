@@ -1,38 +1,75 @@
-import { Card, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { Card, Button, Form } from "react-bootstrap";
 import { formatDistanceToNow } from "date-fns";
+import { FlagFill } from "react-bootstrap-icons";
+import { toast } from "react-toastify";
+import { AuthContext } from "../../context/AuthContext";
+import { useLike } from "../../hooks/useLikes";
+import { criarDenuncia } from "../../services/denunciasService";
 
 export default function ComentarioItem({
-    comentario,
-    usuario,
-    onReply,
-    onDelete,
-    onLike
+  comentario,
+  usuario,
+  onReply,
+  onDelete,
 }) {
+  const { token } = useContext(AuthContext);
   const [resposta, setResposta] = useState("");
   const [mostrarReply, setMostrarReply] = useState(false);
+  const [denunciaMotivo, setDenunciaMotivo] = useState("");
+  const [showDenuncia, setShowDenuncia] = useState(false);
+  const [salvando, setSalvando] = useState(false);
+
+  const { curtido, curtidasTotais, toggleLike, loading } = useLike(
+    comentario._id,
+    "comentario",
+    token,
+  );
+
+  const ehAutor = usuario?._id === comentario.autor?._id;
+
+  const handleDenunciarComentario = async () => {
+    if (!denunciaMotivo.trim()) return;
+    setSalvando(true);
+    try {
+      await criarDenuncia({
+        denunciado: comentario.autor?._id,
+        targetId: comentario._id,
+        targetTipo: "comentario",
+        motivo: denunciaMotivo,
+      });
+      setShowDenuncia(false);
+      setDenunciaMotivo("");
+      toast.success("Denúncia enviada. Obrigado!");
+    } catch {
+      toast.error("Erro ao enviar denúncia.");
+    } finally {
+      setSalvando(false);
+    }
+  };
 
   return (
     <Card className="mb-2 ms-3">
       <Card.Body>
         <Card.Title className="d-flex justify-content-between align-items-center">
           <span>{comentario.autor?.usuario || "Usuário desconhecido"}</span>
-
           <small className="text-muted">
             {formatDistanceToNow(new Date(comentario.createdAt), {
               addSuffix: true,
             })}
           </small>
         </Card.Title>
+
         <Card.Text>{comentario.conteudo}</Card.Text>
 
-        <div className="d-flex gap-2">
+        <div className="d-flex gap-2 align-items-center flex-wrap">
           <Button
             size="sm"
-            variant="outline-primary"
-            onClick={() => onLike(comentario._id)}
+            variant={curtido ? "primary" : "outline-primary"}
+            onClick={toggleLike}
+            disabled={!token || loading}
           >
-            ❤️ {comentario.likes?.length || 0}
+            ❤️ {curtidasTotais}
           </Button>
 
           <Button
@@ -43,7 +80,7 @@ export default function ComentarioItem({
             Responder
           </Button>
 
-          {usuario?._id === comentario.autor?._id && (
+          {ehAutor && (
             <Button
               size="sm"
               variant="outline-danger"
@@ -52,9 +89,53 @@ export default function ComentarioItem({
               Excluir
             </Button>
           )}
+
+          {/* Denúncia */}
+          {usuario && !ehAutor && (
+            <Button
+              variant="link"
+              size="sm"
+              className="p-0 text-warning text-decoration-none"
+              style={{ fontSize: "0.78rem" }}
+              onClick={() => setShowDenuncia((v) => !v)}
+            >
+              <FlagFill />
+            </Button>
+          )}
         </div>
 
-        {/* resposta */}
+        {/* Campo de denúncia */}
+        {showDenuncia && (
+          <div className="mt-2 d-flex gap-2 align-items-center flex-wrap">
+            <Form.Control
+              size="sm"
+              placeholder="Motivo da denúncia..."
+              value={denunciaMotivo}
+              onChange={(e) => setDenunciaMotivo(e.target.value)}
+              style={{ maxWidth: 300 }}
+            />
+            <Button
+              size="sm"
+              variant="warning"
+              onClick={handleDenunciarComentario}
+              disabled={salvando}
+            >
+              Enviar
+            </Button>
+            <Button
+              size="sm"
+              variant="outline-secondary"
+              onClick={() => {
+                setShowDenuncia(false);
+                setDenunciaMotivo("");
+              }}
+            >
+              Cancelar
+            </Button>
+          </div>
+        )}
+
+        {/* Resposta */}
         {mostrarReply && (
           <div className="mt-2">
             <textarea
@@ -62,7 +143,6 @@ export default function ComentarioItem({
               value={resposta}
               onChange={(e) => setResposta(e.target.value)}
             />
-
             <Button
               size="sm"
               onClick={() => {
@@ -76,7 +156,7 @@ export default function ComentarioItem({
           </div>
         )}
 
-        {/* respostas */}
+        {/* Respostas aninhadas */}
         {comentario.respostas?.map((resp) => (
           <ComentarioItem
             key={resp._id}
@@ -84,7 +164,6 @@ export default function ComentarioItem({
             usuario={usuario}
             onReply={onReply}
             onDelete={onDelete}
-            onLike={onLike}
           />
         ))}
       </Card.Body>

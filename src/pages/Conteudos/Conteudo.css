@@ -1,0 +1,340 @@
+/* ─────────────────────────────────────────────
+   IMPORTAÇÃO DE FONTES
+   Merriweather para títulos (editorial, autoridade)
+   Source Serif 4 para o corpo (leitura longa confortável)
+   ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap');
+
+/* ─────────────────────────────────────────────
+   VARIÁVEIS
+   ───────────────────────────────────────────── */
+:root {
+    --cor-destaque: #c0392b;
+    /* vermelho editorial — igual ao GoNintendo */
+    --cor-destaque-hover: #a93226;
+    --cor-texto: #1a1a1a;
+    --cor-texto-suave: #555e68;
+    --cor-borda: #e5e7eb;
+    --cor-fundo-pagina: #f4f4f4;
+    --cor-fundo-artigo: #ffffff;
+    --fonte-titulo: 'Merriweather', Georgia, serif;
+    --fonte-corpo: 'Source Serif 4', Georgia, serif;
+    --fonte-ui: 'Inter', system-ui, sans-serif;
+    --largura-artigo: 720px;
+    --raio: 6px;
+}
+
+/* ─────────────────────────────────────────────
+   SEÇÃO WRAPPER
+   ───────────────────────────────────────────── */
+.conteudo-section {
+    background-color: var(--cor-fundo-pagina);
+    min-height: 100vh;
+    padding: 2.5rem 0 4rem;
+}
+
+/* ─────────────────────────────────────────────
+   HEADER DE PÁGINA (título + botão de ação)
+   ───────────────────────────────────────────── */
+.conteudo-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.75rem;
+}
+
+.conteudo-page-title {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.4rem, 3vw, 1.9rem);
+    font-weight: 900;
+    color: var(--cor-texto);
+    letter-spacing: -0.02em;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* ─────────────────────────────────────────────
+   CARD PRINCIPAL DO ARTIGO
+   ───────────────────────────────────────────── */
+.conteudo-card {
+    background: var(--cor-fundo-artigo);
+    border-radius: var(--raio);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    max-width: var(--largura-artigo);
+    margin: 0 auto;
+}
+
+/* ─────────────────────────────────────────────
+   IMAGEM DE CAPA — ocupa toda a largura do card
+   ───────────────────────────────────────────── */
+.conteudo-capa {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    display: block;
+}
+
+/* ─────────────────────────────────────────────
+   ÁREA DE CONTEÚDO INTERNO
+   ───────────────────────────────────────────── */
+.conteudo-corpo-wrapper {
+    padding: 2.5rem 2.75rem 3rem;
+}
+
+@media (max-width: 600px) {
+    .conteudo-corpo-wrapper {
+        padding: 1.5rem 1.25rem 2rem;
+    }
+}
+
+/* ─────────────────────────────────────────────
+   BADGE DE TIPO (notícia, artigo, evento...)
+   ───────────────────────────────────────────── */
+.conteudo-tipo-badge {
+    display: inline-block;
+    font-family: var(--fonte-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cor-destaque);
+    border: 1.5px solid var(--cor-destaque);
+    border-radius: 3px;
+    padding: 2px 8px;
+    margin-bottom: 1rem;
+}
+
+/* ─────────────────────────────────────────────
+   TÍTULO PRINCIPAL
+   ───────────────────────────────────────────── */
+.conteudo-titulo {
+    font-family: var(--fonte-titulo);
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--cor-texto);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+/* ─────────────────────────────────────────────
+   SUBTÍTULO
+   ───────────────────────────────────────────── */
+.conteudo-subtitulo {
+    font-family: var(--fonte-corpo);
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--cor-texto-suave);
+    margin-bottom: 1.5rem;
+    border-left: 3px solid var(--cor-destaque);
+    padding-left: 1rem;
+}
+
+/* ─────────────────────────────────────────────
+   BARRA DE META (autor, data, tags)
+   ───────────────────────────────────────────── */
+.conteudo-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-family: var(--fonte-ui);
+    font-size: 0.82rem;
+    color: var(--cor-texto-suave);
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.75rem;
+    border-bottom: 1px solid var(--cor-borda);
+}
+
+.conteudo-meta strong {
+    color: var(--cor-texto);
+    font-weight: 600;
+}
+
+.conteudo-meta-separador {
+    color: var(--cor-borda);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.conteudo-tag {
+    font-family: var(--fonte-ui);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cor-destaque);
+    background: rgba(192, 57, 43, 0.07);
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+/* ─────────────────────────────────────────────
+   INFO DE EVENTO (data + valor)
+   ───────────────────────────────────────────── */
+.conteudo-evento-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #fafafa;
+    border: 1px solid var(--cor-borda);
+    border-left: 3px solid var(--cor-destaque);
+    border-radius: var(--raio);
+    padding: 0.875rem 1.125rem;
+    margin-bottom: 1.75rem;
+    font-family: var(--fonte-ui);
+    font-size: 0.88rem;
+    color: var(--cor-texto-suave);
+}
+
+.conteudo-evento-info strong {
+    color: var(--cor-texto);
+}
+
+/* ─────────────────────────────────────────────
+   CORPO DO ARTIGO
+   ───────────────────────────────────────────── */
+.corpo-conteudo {
+    font-family: var(--fonte-corpo);
+    font-size: 1.075rem;
+    line-height: 1.85;
+    color: var(--cor-texto);
+}
+
+.corpo-conteudo p {
+    margin-bottom: 1.4rem;
+}
+
+.corpo-conteudo h2 {
+    font-family: var(--fonte-titulo);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    margin: 2rem 0 0.75rem;
+    letter-spacing: -0.01em;
+}
+
+.corpo-conteudo h3 {
+    font-family: var(--fonte-titulo);
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--cor-texto);
+    margin: 1.5rem 0 0.5rem;
+}
+
+.corpo-conteudo a {
+    color: var(--cor-destaque);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+}
+
+.corpo-conteudo a:hover {
+    border-bottom-color: var(--cor-destaque);
+}
+
+.corpo-conteudo img {
+    max-width: 100%;
+    border-radius: var(--raio);
+    margin: 1.25rem 0;
+}
+
+.corpo-conteudo blockquote {
+    border-left: 3px solid var(--cor-destaque);
+    margin: 1.5rem 0;
+    padding: 0.75rem 1.25rem;
+    font-style: italic;
+    color: var(--cor-texto-suave);
+    background: #fafafa;
+    border-radius: 0 var(--raio) var(--raio) 0;
+}
+
+.corpo-conteudo ul,
+.corpo-conteudo ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+
+.corpo-conteudo li {
+    margin-bottom: 0.4rem;
+}
+
+.corpo-conteudo code {
+    font-size: 0.88em;
+    background: #f0f0f0;
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+}
+
+/* ─────────────────────────────────────────────
+   BARRA DE AÇÕES (like, share, denúncia, editar)
+   ───────────────────────────────────────────── */
+.conteudo-acoes {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.875rem 0;
+    margin-bottom: 1.5rem;
+    border-top: 1px solid var(--cor-borda);
+    border-bottom: 1px solid var(--cor-borda);
+    font-family: var(--fonte-ui);
+}
+
+.conteudo-acoes-direita {
+    margin-left: auto;
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Botão de denúncia */
+.btn-denuncia {
+    font-family: var(--fonte-ui);
+    font-size: 0.78rem;
+    color: var(--cor-texto-suave);
+    background: none;
+    border: none;
+    padding: 4px 8px;
+    border-radius: var(--raio);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.btn-denuncia:hover {
+    color: var(--cor-destaque);
+    background: rgba(192, 57, 43, 0.07);
+}
+
+/* Campo de motivo da denúncia */
+.denuncia-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    background: #fff8f8;
+    border: 1px solid #f5c6c6;
+    border-radius: var(--raio);
+    margin-top: 0.5rem;
+    font-family: var(--fonte-ui);
+    font-size: 0.85rem;
+}
+
+/* ─────────────────────────────────────────────
+   SEÇÃO DE COMENTÁRIOS
+   ───────────────────────────────────────────── */
+.comentarios-wrapper {
+    max-width: var(--largura-artigo);
+    margin: 2rem auto 0;
+}

@@ -7,6 +7,7 @@ import { conteudosRoutes } from "./routes/routesConteudos";
 import { colecoesRoutes } from "./routes/routesColecoes";
 import { forumRoutes } from "./routes/routesForum";
 import { usuarioRoutes } from "./routes/routesUsuarios";
+import {denunciaRoutes} from "./routes/routesDenuncia";
 import { tokenExp } from "./context/tokenExp";
 import {
   BrowserRouter as Router,
@@ -35,6 +36,9 @@ export const App = ()=> {
 
             {/* Forum */}
             {forumRoutes}
+
+            {/* Denúncias */}
+            {denunciaRoutes}
 
             {/* Cadastro */}
             <Route path="/cadastro" element={<CadastroUsuario />} />

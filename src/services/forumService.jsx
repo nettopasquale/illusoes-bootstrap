@@ -31,7 +31,7 @@ export const editarTopico = (postId, data) =>
 
 export const deletarTopico = (postId) => api.delete(`${BASE}/topicos/${postId}`);
 
-export const curtirTopico = (postId) => api.post(`${BASE}/topicos/${postId}/curtir`);
+export const curtirTopico = (postId) => api.post(`${BASE}/topicos/${postId}/curtidas`);
 
 export const denunciarTopico = (postId, motivo) =>
   api.post(`${BASE}/topicos/${postId}/denunciar`, { motivo });
@@ -48,7 +48,7 @@ export const deletarPostagem = (topicoId, postId) =>
   api.delete(`${BASE}/topicos/${topicoId}/postagens/${postId}`);
 
 export const curtirPostagem = (topicoId, postId) =>
-  api.post(`${BASE}/topicos/${topicoId}/postagens/${postId}/curtir`);
+  api.post(`${BASE}/topicos/${topicoId}/postagens/${postId}/curtidas`);
 
 export const denunciarPostagem = (topicoId, postId, motivo) =>
   api.post(`${BASE}/topicos/${topicoId}/postagens/${postId}/denunciar`, {

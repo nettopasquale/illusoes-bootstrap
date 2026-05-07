@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+    --cor-destaque: #c0392b;
+    --cor-destaque-hover: #a93226;
+    --cor-texto: #1a1a1a;
+    --cor-texto-suave: #555e68;
+    --cor-borda: #e5e7eb;
+    --cor-fundo-pagina: #f4f4f4;
+    --cor-fundo-card: #ffffff;
+    --fonte-titulo: 'Merriweather', Georgia, serif;
+    --fonte-ui: 'Inter', system-ui, sans-serif;
+    --raio: 8px;
+    --sombra-card: 0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* ─────────────────────────────────────────────
+   HEADER DE PÁGINA (título + botão de ação)
+   ───────────────────────────────────────────── */
+.listar-page-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+}
+
+.listar-page-title{
+  font-family: var(--fonte-titulo);
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+  font-weight: 900;
+  color: var(--cor-texto);
+  letter-spacing: -0.02em;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Wrapper geral */
+.listar-conteudos-section {
+  background-color: var(--cor-fundo-pagina);
+  /* min-height: 100vh; */
+  /* padding: 2rem 0 3rem; */
+  padding: 2.5rem 0 4rem;
+}
+
+/* ─────────────────────────────────────────────
+   CARD DE LISTAGEM (não sobrescreve .card do bootstrap)
+   ───────────────────────────────────────────── */
+.listar-card {
+    background: var(--cor-fundo-artigo);
+    border-radius: var(--raio);
+    overflow: hidden;
+    max-width: var(--largura-artigo);
+    margin: 0 auto;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    height: 100%;
+}
+
+/* Hover suave (estilo portal moderno) */
+.listar-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07), 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+/* ─────────────────────────────────────────────
+   IMAGEM DO CARD
+   ───────────────────────────────────────────── */
+.listar-card-img {
+    width: 100%;
+    height: 180px;
+    /* max-height: 420px; */
+    /* max-height: 88px; */
+    object-fit: cover;
+    display: block;
+}
+
+/* ─────────────────────────────────────────────
+   CORPO DO CARD
+   ───────────────────────────────────────────── */
+.listar-card-body {
+    padding: 1rem 1.1rem 1.2rem;
+    /* padding: 2.5rem 2.75rem 3rem; */
+}
+
+@media (max-width: 600px) {
+    .listar-card-body {
+        padding: 1.5rem 1.25rem 2rem;
+    }
+}
+
+/* Tipo (badge editorial) */
+.listar-tipo-badge {
+    display: inline-block;
+    font-family: var(--fonte-ui);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cor-destaque);
+    border: 1.5px solid var(--cor-destaque);
+    border-radius: 3px;
+    padding: 2px 8px;
+    margin-bottom: 1rem;
+}
+
+/* Título */
+.listar-titulo {
+    font-family: var(--fonte-titulo);
+    /* font-size: clamp(1rem, 4vw, 1rem); */
+    font-weight: 900;
+    line-height: 1.2;
+    color: var(--cor-texto);
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+}
+
+/* Subtítulo / resumo */
+.listar-subtitulo {
+    font-family: var(--fonte-corpo);
+    /* font-size: clamp(1rem, 2.5vw, 1rem); */
+    font-weight: 400;
+    font-style: italic;
+    line-height: 1.5;
+    color: var(--cor-texto-suave);
+    margin-bottom: 1.5rem;
+    border-left: 3px solid var(--cor-destaque);
+    padding-left: 1rem;
+}
+
+/* Meta */
+.listar-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    font-family: var(--fonte-ui);
+    font-size: 0.82rem;
+    color: var(--cor-texto-suave);
+}
+
+.listar-meta strong {
+    color: var(--cor-texto);
+    font-weight: 600;
+}
+
+.listar-meta-separador {
+    color: var(--cor-borda);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+.listar-tag {
+    font-family: var(--fonte-ui);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--cor-destaque);
+    background: rgba(192, 57, 43, 0.07);
+    padding: 2px 8px;
+    border-radius: 3px;
+}
+
+/* ─────────────────────────────────────────────
+   GRID AJUSTES (RESPONSIVO)
+   ───────────────────────────────────────────── */
+
+/* Espaçamento entre cards */
+.listar-col {
+  margin-bottom: 1.5rem;
+}
+
+/* Mobile refinado */
+@media (max-width: 576px) {
+  .listar-card-img {
+    height: 150px;
+  }
+
+  .listar-titulo {
+    font-size: 1rem;
+  }
+
+  .listar-resumo {
+    font-size: 0.88rem;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   ESTADO VAZIO
+   ───────────────────────────────────────────── */
+.listar-empty {
+  text-align: center;
+  padding: 2rem;
+  font-family: var(--fonte-ui);
+  color: var(--cor-texto-suave);
+}
+
+/* ─────────────────────────────────────────────
+   PAGINAÇÃO / FILTROS (caso use)
+   ───────────────────────────────────────────── */
+.listar-topbar {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* Inputs / selects não quebram bootstrap */
+.listar-topbar .form-control,
+.listar-topbar .form-select {
+  font-family: var(--fonte-ui);
+  font-size: 0.85rem;
+}

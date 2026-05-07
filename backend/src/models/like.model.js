@@ -7,8 +7,15 @@ const LikeSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    targetId: { type: mongoose.Schema.Types.ObjectId, required: true }, //permite relacao com conteudos e colecao
-    targetTipo: { type: String, enum: ["colecao", "conteudo"], required: true },
+    targetId: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      required: true 
+    }, //permite relacao com conteudos e colecao
+    targetTipo: { 
+      type: String, 
+      enum: ["colecao", "conteudo", "postagem", "topico", "comentario"], 
+      required: true 
+    },
   },
   { timestamps: true },
 );

@@ -9,6 +9,7 @@ import {
 import {
   verificarToken,
   verificarAdmin,
+  verificarBanido,
 } from "../middleware/auth.middleware.js";
 
 const cartasColecaoRouters = express.Router();
@@ -27,6 +28,7 @@ cartasColecaoRouters.get("/colecoes/:colecaoId/cartas",
 cartasColecaoRouters.post(
   "/colecoes/:colecaoId/cartas",
   verificarToken,
+  verificarBanido,
   addCartaColecao,
 );
 
@@ -34,6 +36,7 @@ cartasColecaoRouters.post(
 cartasColecaoRouters.put(
   "/colecoes/:colecaoId/cartas",
   verificarToken,
+  verificarBanido,
   editarCartaColecao,
 );
 
@@ -41,6 +44,7 @@ cartasColecaoRouters.put(
 cartasColecaoRouters.patch(
   "/colecoes/:colecaoId/cartas",
   verificarToken,
+  verificarBanido,
   editarCartaColecao,
 );
 
@@ -48,6 +52,7 @@ cartasColecaoRouters.patch(
 cartasColecaoRouters.delete(
   "/colecoes/:colecaoId/cartas",
   verificarToken,
+  verificarBanido,
   deletarCartaColecao,
 );
 
@@ -63,6 +68,7 @@ cartasColecaoRouters.delete(
 cartasColecaoRouters.delete(
   "/colecoes/:colecaoId/cartas",
   verificarToken,
+  verificarBanido,
   deletarCartaColecao,
 );
 

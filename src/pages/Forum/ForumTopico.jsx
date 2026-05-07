@@ -6,6 +6,7 @@ import {
   Button,
   Spinner,
   Alert,
+  Form
 } from "react-bootstrap";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useEffect, useState, useContext } from "react";
@@ -14,7 +15,6 @@ import { AuthContext } from "../../context/AuthContext";
 import { 
   listarTopicosPorId,
   curtirTopico,
-  denunciarTopico,
   criarBookmarkTopico,
   editarTopico,
   deletarTopico,
@@ -25,7 +25,9 @@ import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import ForumPostCard from "../../components/ForumComponentes/ForumPostCard";
 import ForumPostEdicao from "../../components/ForumComponentes/ForumPostEdicao";
 import TopicoPost from "../../components/ForumComponentes/TopicoPost";
-
+import { criarDenuncia } from "../../services/denunciasService";
+import { useForumTopicos } from "../../hooks/useForumTopicos";
+import "./Forum.css";
 
 //Utilitarios
 const CATEGORIA_META = {
@@ -39,18 +41,15 @@ const CATEGORIA_META = {
   batepapo: { label: "Bate-papo", color: "#6f42c1", bg: "secondary" },
 };
 
-
 export default function ForumTopico() {
   const { topicoId } = useParams(); // ID do tópico
   const { usuario } = useContext(AuthContext);
-  const navigate = useNavigate();
-
   const [topico, setTopico] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [curtidas, setCurtidas] = useState(0);
   const [curtiu, setCurtiu] = useState(false);
   const [bookmarked, setBookmarked] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [quotedPost, setQuotedPost] = useState(null);
   const [postLoading, setPostLoading] = useState(false);
   const [successo, setSuccesso] = useState("");
@@ -105,11 +104,9 @@ export default function ForumTopico() {
     try {
       const { data } = await criarBookmarkTopico(topicoId);
       setBookmarked(data.bookmarked);
-      console.log("Bookmarked?: ", data.bookmarked)
+      console.log("Bookmarked?: ", data.bookmarked);
       flash(
-        data.bookmarked
-          ? "Tópico salvo nos bookmarks!"
-          : "Bookmark removido.",
+        data.bookmarked ? "Tópico salvo nos bookmarks!" : "Bookmark removido.",
       );
     } catch {
       /* silencioso */
@@ -125,6 +122,7 @@ export default function ForumTopico() {
     if (!window.confirm(msg)) return;
     try {
       await deletarTopico(topicoId);
+      toast.success("tópico deletado com sucesso")
       navigate("/forum");
     } catch {
       toast.error("Erro ao excluir.");
@@ -135,7 +133,12 @@ export default function ForumTopico() {
     if (!denunciaMotivo.trim()) return;
     setSalvando(true);
     try {
-      await denunciarTopico(topicoId, denunciaMotivo);
+      await criarDenuncia({
+        denunciado: topico.autor?._id, // ID do autor do tópico
+        targetId: topicoId, // ID do tópico em si
+        targetTipo: "topico",
+        motivo: denunciaMotivo,
+      });
       setShowDenuncia(false);
       setDenunciaMotivo("");
       toast.success("Denúncia enviada. Obrigado!");
@@ -145,8 +148,7 @@ export default function ForumTopico() {
       setSalvando(false);
     }
   };
-
-  // Ativa o modo de edição — popula os states com os valores atuais do tópico
+  // // Ativa o modo de edição — popula os states com os valores atuais do tópico
   const handleAbrirEdicaoTopico = () => {
     setTituloEditado(topico.titulo);
     setConteudoEditado(topico.conteudo);
@@ -154,7 +156,7 @@ export default function ForumTopico() {
     setEditandoTopico(true);
   };
 
-  // Salva as alterações chamando a API
+  // // Salva as alterações chamando a API
   const handleSalvarEdicaoTopico = async () => {
     if (!tituloEditado.trim() || !conteudoEditado.trim()) {
       toast.error("Título e conteúdo são obrigatórios.");
@@ -184,7 +186,7 @@ export default function ForumTopico() {
     }
   };
 
-  //VER AQUI
+  // //VER AQUI
   const handlePublicarPost = async (postData) => {
     if (!usuario) return navigate("/login");
     setPostLoading(true);
@@ -275,38 +277,43 @@ export default function ForumTopico() {
 
   return (
     <LayoutGeral>
-      <section id="artigo" className="block artigo-block">
-        <Container fluid="lg" className="py-4">
-          <Row className="justify-content-center">
-            <Navegacao
-              itens={[
-                { label: "Home", to: "/" },
-                { label: "Forum", to: `/forum` },
-                { label: "Tópicos", to: `/forum/topicos` },
-              ]}
-            />
-            <div className="text-center text-danger mt-5">{error}</div>
-          </Row>
+      <section className="forum-section">
+        <Container fluid="lg">
+          <Navegacao
+            itens={[
+              { label: "Home", to: "/" },
+              { label: "Fórum", to: "/forum" },
+              {
+                label: cat.label || topico.categoria,
+                to: `/forum/categoria/${topico.categoria}/topicos`,
+              },
+              { label: topico.titulo },
+            ]}
+          />
 
           {successo && (
-            <Alert variant="success" className="mb-3">
+            <Alert
+              variant="success"
+              className="mb-3"
+              style={{ fontSize: "0.85rem" }}
+            >
               {successo}
             </Alert>
           )}
 
-          {/* Título + badges */}
+          {/* ── Cabeçalho do tópico ── */}
           <div className="mb-3">
             <div className="d-flex align-items-center gap-2 mb-2 flex-wrap">
-              <Badge bg={cat.bg || "secondary"}>
+              <Badge bg={cat.bg || "secondary"} style={{ fontSize: "0.72rem" }}>
                 {cat.label || topico.categoria}
               </Badge>
               {topico.destaque && (
-                <Badge bg="light" text="dark">
+                <Badge bg="light" text="dark" style={{ fontSize: "0.7rem" }}>
                   📌 Fixado
                 </Badge>
               )}
               {topico.trancado && (
-                <Badge bg="warning" text="dark">
+                <Badge bg="warning" text="dark" style={{ fontSize: "0.7rem" }}>
                   🔒 Fechado
                 </Badge>
               )}
@@ -316,29 +323,23 @@ export default function ForumTopico() {
                   bg="light"
                   text="secondary"
                   className="border fw-normal"
-                  style={{ fontSize: "0.7rem" }}
+                  style={{ fontSize: "0.68rem" }}
                 >
                   #{tag}
                 </Badge>
               ))}
             </div>
-            <h1
-              style={{ fontSize: "1.35rem", fontWeight: 700, lineHeight: 1.3 }}
-              className="mb-0"
-            >
-              {topico.titulo}
-            </h1>
-            <div className="text-muted mt-1" style={{ fontSize: "0.78rem" }}>
-              {topico.visualizacoes} views · {topico.postagensContador} posts
-              {totalPaginas > 1 && (
-                <span className="ms-2">
-                  · Página {pagina} de {totalPaginas}
-                </span>
-              )}
+
+            <h1 className="forum-page-title mb-1">{topico.titulo}</h1>
+
+            <div className="forum-page-subtitulo">
+              {topico.visualizacoes} visualizações · {topico.postagensContador}{" "}
+              posts
+              {totalPaginas > 1 && ` · Página ${pagina} de ${totalPaginas}`}
             </div>
           </div>
 
-          {/* Post de abertura */}
+          {/* ── Post de abertura ── */}
           <TopicoPost
             topico={topico}
             usuario={usuario}
@@ -357,93 +358,141 @@ export default function ForumTopico() {
             onEdit={handleAbrirEdicaoTopico}
             onSave={handleSalvarEdicaoTopico}
             onDelete={handleDeletarTopico}
+            onShowDenuncia={() => setShowDenuncia(true)}
           />
-          {/* Formulário de edição do tópico — aparece no lugar do conteúdo */}
-          {editandoTopico && (
-            <div className="card border rounded-3 p-4 mt-2 mb-3">
-              <h6 className="fw-semibold mb-3">Editar tópico</h6>
 
-              <div className="mb-3">
-                <label className="form-label" style={{ fontSize: "0.85rem" }}>
+          {/* ── Formulário de edição do tópico ── */}
+          {editandoTopico && (
+            <div className="forum-post-card p-4 mt-2 mb-3">
+              <h6
+                className="fw-semibold mb-3"
+                style={{ fontFamily: "var(--fonte-titulo)" }}
+              >
+                Editar tópico
+              </h6>
+
+              <Form.Group className="mb-3">
+                <Form.Label style={{ fontSize: "0.82rem", fontWeight: 600 }}>
                   Título
-                </label>
-                <input
+                </Form.Label>
+                <Form.Control
                   type="text"
-                  className="form-control"
                   value={tituloEditado}
                   onChange={(e) => setTituloEditado(e.target.value)}
                 />
-              </div>
+              </Form.Group>
 
-              <div className="mb-3">
-                <label className="form-label" style={{ fontSize: "0.85rem" }}>
+              <Form.Group className="mb-3">
+                <Form.Label style={{ fontSize: "0.82rem", fontWeight: 600 }}>
                   Conteúdo
-                </label>
-                <textarea
-                  className="form-control"
+                </Form.Label>
+                <Form.Control
+                  as="textarea"
                   rows={8}
                   value={conteudoEditado}
                   onChange={(e) => setConteudoEditado(e.target.value)}
                   style={{ resize: "vertical", fontFamily: "inherit" }}
                 />
-              </div>
+              </Form.Group>
 
-              <div className="mb-3">
-                <label className="form-label" style={{ fontSize: "0.85rem" }}>
+              <Form.Group className="mb-3">
+                <Form.Label style={{ fontSize: "0.82rem", fontWeight: 600 }}>
                   Tags{" "}
                   <span className="text-muted fw-normal">
                     (separadas por vírgula)
                   </span>
-                </label>
-                <input
+                </Form.Label>
+                <Form.Control
                   type="text"
-                  className="form-control"
                   placeholder="ex: deck, combo, iniciante"
                   value={tagsEditadas}
                   onChange={(e) => setTagsEditadas(e.target.value)}
                 />
-              </div>
+              </Form.Group>
 
               <div className="d-flex gap-2 justify-content-end">
-                <button
-                  className="btn btn-outline-secondary btn-sm"
+                <Button
+                  variant="outline-secondary"
+                  size="sm"
                   onClick={() => setEditandoTopico(false)}
                   disabled={salvando}
                 >
                   Cancelar
-                </button>
-                <button
-                  className="btn btn-primary btn-sm"
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="px-4"
                   onClick={handleSalvarEdicaoTopico}
                   disabled={
                     salvando || !tituloEditado.trim() || !conteudoEditado.trim()
                   }
                 >
                   {salvando ? "Salvando..." : "Salvar alterações"}
-                </button>
+                </Button>
               </div>
             </div>
           )}
 
-          {/* Separador */}
+          {/* ── Campo de denúncia ── */}
+          {showDenuncia && (
+            <div className="forum-denuncia-form mt-2 mb-3">
+              <Form.Control
+                size="sm"
+                placeholder="Descreva o motivo da denúncia..."
+                value={denunciaMotivo}
+                onChange={(e) => setDenunciaMotivo(e.target.value)}
+                style={{ maxWidth: 320 }}
+              />
+              <Button
+                size="sm"
+                variant="danger"
+                onClick={handleDenunciarTopico}
+                disabled={salvando || !denunciaMotivo.trim()}
+              >
+                {salvando ? "Enviando..." : "Enviar"}
+              </Button>
+              <Button
+                size="sm"
+                variant="outline-secondary"
+                onClick={() => {
+                  setShowDenuncia(false);
+                  setDenunciaMotivo("");
+                }}
+              >
+                Cancelar
+              </Button>
+            </div>
+          )}
+
+          {/* ── Separador com paginação superior ── */}
           <div
-            className="my-0 border-start border-end border-bottom rounded-bottom-3 px-3 py-2 d-flex justify-content-between align-items-center"
+            className="d-flex justify-content-between align-items-center px-3 py-2 mt-0"
             style={{
               background: "#f8f9fa",
+              borderLeft: "1px solid var(--cor-borda)",
+              borderRight: "1px solid var(--cor-borda)",
+              borderBottom: "1px solid var(--cor-borda)",
+              borderRadius: "0 0 var(--raio) var(--raio)",
               fontSize: "0.75rem",
-              color: "#6c757d",
+              color: "var(--cor-texto-suave)",
             }}
           >
-            <span>{topico.postagens?.length || 0} respostas</span>
+            <span>
+              {topico.postagens?.length || 0} resposta
+              {topico.postagens?.length !== 1 ? "s" : ""}
+            </span>
             {totalPaginas > 1 && (
-              <div className="d-flex gap-1">
+              <div
+                className="forum-paginacao"
+                style={{ padding: 0, border: "none" }}
+              >
                 {Array.from({ length: totalPaginas }, (_, i) => i + 1).map(
                   (p) => (
                     <button
                       key={p}
                       onClick={() => setPagina(p)}
-                      className={`btn btn-sm py-0 px-2 ${p === pagina ? "btn-primary" : "btn-outline-secondary"}`}
-                      style={{ fontSize: "0.72rem" }}
+                      className={`forum-paginacao-btn ${p === pagina ? "ativo" : ""}`}
                     >
                       {p}
                     </button>
@@ -453,14 +502,11 @@ export default function ForumTopico() {
             )}
           </div>
 
-          {/* Respostas */}
-          <div className="border rounded-3 overflow-hidden mt-3 mb-3">
+          {/* ── Posts ── */}
+          <div className="forum-topicos-card mt-3 mb-3">
             {postsPaginados.length === 0 ? (
-              <div
-                className="text-center py-4 text-muted"
-                style={{ fontSize: "0.9rem" }}
-              >
-                Nenhuma resposta ainda. Seja o primeiro!
+              <div className="forum-vazio">
+                <p>Nenhuma resposta ainda. Seja o primeiro!</p>
               </div>
             ) : (
               postsPaginados.map((post) => (
@@ -491,37 +537,34 @@ export default function ForumTopico() {
             )}
           </div>
 
-          {/* Paginação inferior */}
+          {/* ── Paginação inferior ── */}
           {totalPaginas > 1 && (
-            <div className="d-flex justify-content-center gap-2 mb-4">
-              <Button
-                variant="outline-secondary"
-                size="sm"
+            <div className="forum-paginacao mb-4">
+              <button
+                className="forum-paginacao-btn"
                 disabled={pagina === 1}
                 onClick={() => setPagina((p) => p - 1)}
               >
                 ‹
-              </Button>
+              </button>
               <span
-                className="text-muted align-self-center"
-                style={{ fontSize: "0.82rem" }}
+                style={{ fontSize: "0.82rem", color: "var(--cor-texto-suave)" }}
               >
                 {pagina} / {totalPaginas}
               </span>
-              <Button
-                variant="outline-secondary"
-                size="sm"
+              <button
+                className="forum-paginacao-btn"
                 disabled={pagina === totalPaginas}
                 onClick={() => setPagina((p) => p + 1)}
               >
                 ›
-              </Button>
+              </button>
             </div>
           )}
 
-          {/* Editor de resposta */}
+          {/* ── Editor de resposta ── */}
           {topico.trancado ? (
-            <Alert variant="warning">
+            <Alert variant="warning" style={{ fontSize: "0.85rem" }}>
               🔒 Este tópico está fechado para novas respostas.
             </Alert>
           ) : usuario ? (
@@ -532,39 +575,21 @@ export default function ForumTopico() {
               loading={postLoading}
             />
           ) : (
-            <Card className="border text-center p-4">
-              <p className="text-muted mb-2">
+            <div
+              className="forum-post-card text-center p-4"
+              style={{ marginTop: "1rem" }}
+            >
+              <p className="text-muted mb-2" style={{ fontSize: "0.88rem" }}>
                 Faça login para responder neste tópico.
               </p>
-              <Button variant="primary" as={Link} to="/login">
+              <Button
+                variant="primary"
+                size="sm"
+                as={Link}
+                to="/login"
+                style={{ background: "var(--cor-destaque)", border: "none" }}
+              >
                 Entrar
-              </Button>
-            </Card>
-          )}
-          {/* Campo de denúncia */}
-          {showDenuncia && (
-            <div className="px-3 pb-3 d-flex gap-2 align-items-center flex-wrap">
-              <Form.Control
-                size="sm"
-                placeholder="Motivo da denúncia..."
-                value={denunciaMotivo}
-                onChange={(e) => setDenunciaMotivo(e.target.value)}
-                style={{ maxWidth: 300 }}
-              />
-              <Button
-                size="sm"
-                variant="warning"
-                onClick={handleDenunciarTopico}
-                disabled={salvando}
-              >
-                Enviar
-              </Button>
-              <Button
-                size="sm"
-                variant="outline-secondary"
-                onClick={() => setShowDenuncia(false)}
-              >
-                Cancelar
               </Button>
             </div>
           )}

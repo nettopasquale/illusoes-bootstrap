@@ -53,13 +53,6 @@ const PostagemSchema = new mongoose.Schema(
       default: null,
     },
     deletado: { type: Boolean, default: false },
-    denuncias: [
-      {
-        denunciadoPor: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-        motivo: { type: String },
-        criadoEm: { type: Date, default: Date.now },
-      },
-    ],
   },
   {
     timestamps: true,
@@ -112,16 +105,6 @@ const TopicoSchema = new mongoose.Schema(
     // Bookmarks do tópico (nível do topico)
     bookmarkedPor: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     postagens: [PostagemSchema],
-    denuncias: [
-      {
-        denunciadoPor: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User",
-        },
-        motivo: { type: String },
-        criadoEm: { type: Date, default: Date.now },
-      },
-    ],
     //moderacao
     editadoEm: { type: Date, default: null },
     editadoPor: {

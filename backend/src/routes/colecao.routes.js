@@ -8,7 +8,7 @@ import {
     deletarColecoesSemCriador,
     deletarTodasColecoes
 } from "../controllers/colecao.controller.js";
-import {verificarToken, verificarAdmin } from "../middleware/auth.middleware.js";
+import {verificarToken, verificarAdmin, verificarBanido } from "../middleware/auth.middleware.js";
 
 
 const colecaoRouters = express.Router();
@@ -18,14 +18,14 @@ colecaoRouters.get('/colecoes', listarColecoes);
 colecaoRouters.get("/colecoes/:id", listarColecaoPorID);
 
 // rota de criação de coleção
-colecaoRouters.post('/colecoes', verificarToken, criarColecao);
+colecaoRouters.post('/colecoes', verificarToken, verificarBanido, criarColecao);
 
 //rotas de edição de coleção
-colecaoRouters.put('/colecoes/:id', verificarToken, editarColecao);
-colecaoRouters.patch('/colecoes/:id', verificarToken, editarColecao);
+colecaoRouters.put('/colecoes/:id', verificarToken, verificarBanido, editarColecao);
+colecaoRouters.patch('/colecoes/:id', verificarToken, verificarBanido, editarColecao);
 
 //rota de exclusão de coleção
-colecaoRouters.delete('/colecoes/:id', verificarToken, deletarColecao);
+colecaoRouters.delete('/colecoes/:id', verificarToken, verificarBanido, deletarColecao);
 
 //rotas admn
 // colecaoRouters.delete('/colecoes/:id', verificarAdmin, deletarTodasColecoes);

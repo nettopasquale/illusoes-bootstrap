@@ -13,6 +13,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { listarTopicos } from "../../services/forumService";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import TopicoRow from "../../components/ForumComponentes/TopicoRow";
+import "./Forum.css";
 
 const CATEGORIA_META = {
   estrategia: { label: "Estratégia", icon: "♟", color: "#0d6efd" },
@@ -40,7 +41,7 @@ export default function ForumPaginaCategoria() {
 
   const [topicos, setTopicos] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [erro, setErro] = useState(null);
   const [sort, setSort] = useState("recente");
   const [pagina, setPagina] = useState(1);
   const [totalPaginas, setTotalPaginas] = useState(1);
@@ -62,7 +63,7 @@ export default function ForumPaginaCategoria() {
       setTotalPaginas(data.totalPaginas);
       setTotal(data.total);
     } catch {
-      setError("Erro ao carregar tópicos.");
+      setErro("Erro ao carregar tópicos.");
       toast.error("Erro ao carregar tópicos")
     } finally {
       setLoading(false);
@@ -79,94 +80,87 @@ export default function ForumPaginaCategoria() {
 
   return (
     <LayoutGeral>
-      <section id="artigo" className="block artigo-block">
-        <Container fluid="lg" className="py-4">
-          <Row className="justify-content-center">
-            <Navegacao
-              itens={[
-                { label: "Home", to: "/" },
-                { label: "Forum", to: `/forum` },
-                { label: "Categorias", to: `/forum/categorias` },
-              ]}
-            />
-          </Row>
+      <section className="forum-section">
+        <Container fluid="lg">
+          <Navegacao
+            itens={[
+              { label: "Home", to: "/" },
+              { label: "Fórum", to: "/forum" },
+              { label: meta.label },
+            ]}
+          />
 
           {/* Header da categoria */}
-          <div className="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+          <div className="forum-page-header">
             <div className="d-flex align-items-center gap-3">
+              {/* Ícone da categoria */}
               <div
-                className="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
+                className="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
                 style={{
                   width: 52,
                   height: 52,
-                  fontSize: "1.5rem",
-                  background: meta.bg || "#f0f0f0",
+                  fontSize: "1.4rem",
+                  background: meta.bg,
                 }}
               >
                 {meta.icon}
               </div>
               <div>
-                <h1 className="h4 fw-bold mb-0">{meta.label}</h1>
-                <span className="text-muted" style={{ fontSize: "0.82rem" }}>
+                <h1 className="forum-page-title mb-0">{meta.label}</h1>
+                <p className="forum-page-subtitulo mb-0">
                   {total} tópico{total !== 1 ? "s" : ""}
-                </span>
+                </p>
               </div>
             </div>
 
-            <Link
-              to={`/forum/topicos/criar?categoria=${categoria}`}
-              className="btn btn-primary btn-sm px-3"
-            >
-              + Novo tópico
-            </Link>
+            {usuario && (
+              <Link
+                to={`/forum/topicos/criar?categoria=${categoria}`}
+                className="btn btn-sm btn-primary px-3"
+              >
+                + Novo tópico
+              </Link>
+            )}
           </div>
 
-          {/* Controles */}
-          <div className="card border rounded-3 overflow-hidden">
+          {erro && (
+            <Alert variant="danger" style={{ fontSize: "0.85rem" }}>
+              {erro}
+            </Alert>
+          )}
+
+          {/* ── Card de tópicos ── */}
+          <div className="forum-topicos-card">
             {/* Toolbar */}
-            <div
-              className="d-flex align-items-center justify-content-between px-3 py-2 border-bottom gap-2 flex-wrap"
-              style={{ background: "#f8f9fa" }}
-            >
-              {/* Cabeçalhos */}
-              <div
-                className="d-flex align-items-center gap-2 flex-grow-1"
-                style={{
-                  fontSize: "0.73rem",
-                  fontWeight: 600,
-                  color: "#6c757d",
-                  textTransform: "uppercase",
-                  letterSpacing: "0.05em",
-                }}
-              >
-                <div style={{ minWidth: 200 }}>Tópico</div>
-                <div
-                  className="ms-auto d-none d-sm-block"
-                  style={{ width: 50, textAlign: "center" }}
+            <div className="forum-topicos-toolbar">
+              <div className="d-flex align-items-center gap-3 flex-grow-1">
+                <span style={{ minWidth: 200 }}>Tópico</span>
+                <span
+                  className="d-none d-sm-block ms-auto"
+                  style={{ width: 60, textAlign: "center" }}
                 >
                   Curtidas
-                </div>
-                <div
+                </span>
+                <span
                   className="d-none d-md-block"
                   style={{ width: 60, textAlign: "center" }}
                 >
                   Posts
-                </div>
-                <div
+                </span>
+                <span
                   className="d-none d-md-block"
-                  style={{ width: 60, textAlign: "center" }}
+                  style={{ width: 70, textAlign: "center" }}
                 >
-                  Visualizações
-                </div>
-                <div
+                  Views
+                </span>
+                <span
                   className="d-none d-lg-block"
                   style={{ width: 120, textAlign: "right" }}
                 >
                   Atividade
-                </div>
+                </span>
               </div>
 
-              {/* Ordenação */}
               <Form.Select
                 size="sm"
                 value={sort}
@@ -182,19 +176,19 @@ export default function ForumPaginaCategoria() {
             {/* Lista */}
             {loading ? (
               <div className="text-center py-5">
-                <Spinner animation="border" size="sm" />
+                <Spinner animation="border" size="sm" variant="secondary" />
               </div>
-            ) : error ? (
-              <div className="alert alert-danger m-3">{error}</div>
             ) : topicos.length === 0 ? (
-              <div className="text-center py-5 text-muted">
-                <p className="mb-2">Nenhum tópico nesta categoria ainda.</p>
-                <Link
-                  to={`/forum/topicos/criar?categoria=${categoria}`}
-                  className="btn btn-sm btn-primary"
-                >
-                  Criar o primeiro tópico
-                </Link>
+              <div className="forum-vazio">
+                <p>Nenhum tópico nesta categoria ainda.</p>
+                {usuario && (
+                  <Link
+                    to={`/forum/topicos/criar?categoria=${categoria}`}
+                    className="btn btn-sm btn-primary"
+                  >
+                    Criar o primeiro tópico
+                  </Link>
+                )}
               </div>
             ) : (
               topicos.map((t) => <TopicoRow key={t._id} topico={t} />)
@@ -202,19 +196,24 @@ export default function ForumPaginaCategoria() {
 
             {/* Paginação */}
             {totalPaginas > 1 && (
-              <div className="d-flex justify-content-center align-items-center gap-2 py-3 border-top">
+              <div className="forum-paginacao">
                 <button
-                  className="btn btn-outline-secondary btn-sm"
+                  className="forum-paginacao-btn"
                   disabled={pagina === 1}
                   onClick={() => setPagina((p) => p - 1)}
                 >
                   ‹ Anterior
                 </button>
-                <span className="text-muted" style={{ fontSize: "0.82rem" }}>
+                <span
+                  style={{
+                    fontSize: "0.82rem",
+                    color: "var(--cor-texto-suave)",
+                  }}
+                >
                   Página {pagina} de {totalPaginas}
                 </span>
                 <button
-                  className="btn btn-outline-secondary btn-sm"
+                  className="forum-paginacao-btn"
                   disabled={pagina === totalPaginas}
                   onClick={() => setPagina((p) => p + 1)}
                 >

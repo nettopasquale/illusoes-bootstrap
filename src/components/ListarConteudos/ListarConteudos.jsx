@@ -8,6 +8,7 @@ import { Navegacao } from "../Navegacao/Navegacao";
 import eldlich from "../../assets/imgs/Yugioh/eldlich_the_golden_lord.jpg";
 import dmg from "../../assets/imgs/Yugioh/dark_magician_girl.jpg";
 import bwvk from "../../assets/imgs/Yugioh/blackwing___vata_the_knave.jpg";
+import "./Home.css";
 
 //MOCKUP TEMPORARIO
 const imgsThumb = [eldlich, dmg, bwvk];
@@ -108,15 +109,19 @@ export const ListarConteudos = ({
 
   //HomePage
   return (
-    <Container fluid className="my-4">
+    <Container fluid className="listar-conteudos-section">
       {conteudos.length > 0 ? (
-        <div
+        <Container
           className="bg-opacity-80 rounded-5 p-4 mx-auto"
           style={{ maxWidth: "1200px" }}
         >
-          <h2 className="text fw-bold text-start fs-3 mb-4">
-            {TITULOS_HOME[tipo] || "Conteúdos Recentes"}
-          </h2>
+          {/* Header */}
+
+          <div className="listar-page-header">
+            <h2 className="listar-page-title">
+              {TITULOS_HOME[tipo] || "Conteúdos Recentes"}
+            </h2>
+          </div>
           <hr></hr>
           <Carousel
             responsive={responsive}
@@ -132,12 +137,11 @@ export const ListarConteudos = ({
             removeArrowOnDeviceType={["mobile"]}
           >
             {conteudos.map((conteudo) => (
-              <div
+              <Col
                 key={conteudo._id}
-                className="rounded overflow-hidden cursor-pointer hover:shadow-xl transition duration-300"
+                className="listar-card"
                 style={{
-                  maxWidth: "300px",
-                  cursor: "pointer", 
+                  cursor: "pointer",
                 }}
                 onClick={() => navigate(`/conteudos/${tipo}/${conteudo._id}`)}
               >
@@ -145,33 +149,25 @@ export const ListarConteudos = ({
                   <img
                     src={conteudo.thumbs}
                     alt={conteudo.titulo}
-                    className="card-img-top"
-                    style={{ height: "88px", objectFit: "cover" }}
+                    className="listar-card-img"
                   />
                 )}
-                {/* <img
-                  className="card-img-top"
-                  style={{ height: "88px", objectFit: "cover" }}
-                  src={eldlich}
-                /> */}
-                <div className="card-body bg-white p-3 rounded-bottom-3 ">
-                  <h5 className="card-title fw-bold text-start">
-                    {conteudo.titulo}
-                  </h5>
-                  <p className="card-text text-multiline-truncate">
-                    {conteudo.subTitulo}
-                  </p>
-                  <small className="text-muted">
-                    Publicado em:{" "}
-                    {new Date(conteudo.dataPublicacao).toLocaleDateString(
-                      "pt-BR"
-                    )}
-                  </small>
+                <div className="listar-card-body">
+                  <div className="listar-titulo">{conteudo.titulo}</div>
+                  <div className="listar-subtitulo">{conteudo.subTitulo}</div>
+                  <div className="listar-meta">
+                    <span>
+                      Publicado em:{" "}
+                      {new Date(conteudo.dataPublicacao).toLocaleDateString(
+                        "pt-BR",
+                      )}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              </Col>
             ))}
           </Carousel>
-        </div>
+        </Container>
       ) : (
         <p className="text-center text fw-bold">
           {TITULOS[tipo] || "Conteúdos não cadastrados ainda."}

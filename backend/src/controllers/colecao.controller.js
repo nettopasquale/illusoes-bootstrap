@@ -117,7 +117,7 @@ export const deletarColecao = async (req, res) => {
     await CartaColecaoModel.deleteMany({ colecaoId: colecao._id });
 
     //remove a coleção
-    await ColecaoModel.deleteOne();
+    await colecao.deleteOne();
 
     console.log("Coleção deletada com sucesso")
     return res.status(200).json({ message: "Coleção deletada" });

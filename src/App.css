@@ -57,4 +57,6 @@
 
 html, body, #root{
   background-color: var(--bs-secondary-bg);
+  font-family: "Inter", "Helvetica", "Arial", sans-serif;
 }
+
