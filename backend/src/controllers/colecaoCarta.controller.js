@@ -136,37 +136,41 @@ export const editarCartaColecao = async(req,res) =>{
   }
 }
 
-// remover Coleção de cartas
+// Deleta UMA carta específica da coleção (pelo _id do CartaColecao)
 export const deletarCartaColecao = async (req, res) => {
   try {
-    const cartaColecao = await CartaColecaoModel.findByIdAndDelete(req.params.id);
-    console.log("CartaColecao", cartaColecao)
-    if (!cartaColecao) return res.status(404).json({ error: "Carta Coleção não encontrada" });
+    const cartaColecao = await CartaColecaoModel.findById(req.params.id);
 
-    await cartaColecao.save();
+    if (!cartaColecao)
+      return res.status(404).json({ error: "Carta Coleção não encontrada" });
 
-    return res.status(200).json({ message: "Carta Colecao removida com sucesso" });
+    // Deleta só o vínculo — Carta e Colecao ficam intactas
+    await cartaColecao.deleteOne();
+
+    return res.status(200).json({ message: "Carta removida da coleção com sucesso" });
   } catch (erro) {
-    res.status(500).json({ error: erro.message });
+    return res.status(500).json({ error: erro.message });
   }
 };
 
-// remover Coleção de cartas
-export const removerCartaColecao = async (req, res) => {
+// Deleta TODAS as cartas de uma coleção (pelo colecaoId)
+export const removerCartasColecao = async (req, res) => {
   try {
-    const { id } = req.params;
-    const carta = await CartaColecaoModel.findByIdAndDelete(id);
+    const { colecaoId } = req.params;
 
-    if (!carta) return res.status(404).json({ error: "Carta Coleção não encontrada" });
+    // Verifica se a coleção existe antes de limpar
+    const resultado = await CartaColecaoModel.deleteMany({ colecaoId });
 
-    await carta.save();
+    if (resultado.deletedCount === 0)
+      return res.status(404).json({ error: "Nenhuma carta encontrada nesta coleção" });
 
-    return res.status(200).json({ message: "Carta removida com sucesso" });
+    return res.status(200).json({
+      message: `${resultado.deletedCount} carta(s) removida(s) da coleção com sucesso`,
+    });
   } catch (erro) {
-    res.status(500).json({ error: erro.message });
+    return res.status(500).json({ error: erro.message });
   }
 };
-
 
 // APENAS PARA CONVENIENCIA
 export const deletarTodasCartas = async (req, res) => {

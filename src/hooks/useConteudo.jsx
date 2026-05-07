@@ -1,10 +1,11 @@
 // src/hooks/useConteudo.js
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { cloudinaryUpload } from "../utils/cloudinaryUpload";
 import api from "../services/api";
 import { toast } from "react-toastify";
 import {criarDenuncia} from "../services/denunciasService"
+import { AuthContext } from "../context/AuthContext";
 
 export const useConteudo = (id, edicao) => {
   const [conteudo, setConteudo] = useState(null);
@@ -23,6 +24,7 @@ export const useConteudo = (id, edicao) => {
   const [salvando, setSalvando] = useState(false);
   const [mensagem, setMensagem] = useState(null);
   const [erro, setErro] = useState(null);
+  const {usuario} = useContext(AuthContext);
  
   const navigate = useNavigate();
   const { tipo: tipoParam } = useParams();
@@ -86,6 +88,11 @@ export const useConteudo = (id, edicao) => {
       thumbs,
     };
 
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
+
     //checa se é edicao, se n vai para a criacao
     if(edicao){
       try {
@@ -118,6 +125,10 @@ export const useConteudo = (id, edicao) => {
 
   // Excluir conteúdo
   const excluirConteudo = async () => {
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
     try {
       await api.delete(`/conteudos/${tipoFinal}/${id}`);
       setMensagem("Conteúdo excluído com sucesso!");
@@ -180,6 +191,11 @@ export const useConteudo = (id, edicao) => {
       targetTipo: "conteudo",
       motivo: denunciaMotivo,
     };
+
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
 
     try {
       const denuncia = await criarDenuncia(payload);

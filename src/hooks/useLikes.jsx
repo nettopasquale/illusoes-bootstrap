@@ -28,6 +28,11 @@ export const useLike = (targetId, targetTipo, token) => {
 
   const toggleLike = async () => {
     if (!token) return toast.error("Você precisa estar logado");
+    
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
 
     setLoading(true);
 

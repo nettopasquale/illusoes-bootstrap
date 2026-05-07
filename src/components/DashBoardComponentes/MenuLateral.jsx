@@ -62,7 +62,7 @@ export default function MenuLateral(){
     return(
         <Card className="p-3 shadow">
             <Nav className="flex-column">
-            {["Meu Perfil", "Meu Perfil do Forum"].map((menu) => (
+            {["Meu Perfil"].map((menu) => (
                 <div key={menu}>
                 <Nav.Link
                     onClick={() => toggleSubmenu(menu)}

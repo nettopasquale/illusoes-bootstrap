@@ -1,5 +1,13 @@
 import { useContext, useEffect, useState } from "react";
-import { Form, Button, Container, Row, Col, Alert } from "react-bootstrap";
+import {
+  Form,
+  Button,
+  Container,
+  Row,
+  Col,
+  Alert,
+  Spinner,
+} from "react-bootstrap";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import { cloudinaryUpload } from "../../utils/cloudinaryUpload"
 import { useParams, useNavigate } from "react-router-dom";
@@ -21,6 +29,7 @@ export const PerfilUsuario = () => {
   const [modoEdicao, setModoEdicao] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [erro, setErro] = useState("");
+  const [salvando, setSalvando] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {

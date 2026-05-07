@@ -71,6 +71,11 @@ export const useColecao = (colecaoId, edicao) => {
       return;
     }
 
+    if(usuario?.banido === true){
+      toast.error("Você está banido. Entre em contato com a moderação.")
+      return;
+    }
+
     const payload = {
       nome,
       descricao,
@@ -120,6 +125,11 @@ export const useColecao = (colecaoId, edicao) => {
       "Tem certeza que deseja excluir a coleção?",
     );
     if (!confirmacao) return;
+
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
     try {
       await api.delete(`/colecoes/${colecaoId}`);
       navigate(`/colecoes`);

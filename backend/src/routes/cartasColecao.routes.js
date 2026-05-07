@@ -5,6 +5,7 @@ import {
   addCartaColecao,
   editarCartaColecao,
   deletarCartaColecao,
+  removerCartasColecao
 } from "../controllers/colecaoCarta.controller.js";
 import {
   verificarToken,
@@ -48,28 +49,20 @@ cartasColecaoRouters.patch(
   editarCartaColecao,
 );
 
-// deleta a coleção de Cartas
-cartasColecaoRouters.delete(
-  "/colecoes/:colecaoId/cartas",
-  verificarToken,
-  verificarBanido,
-  deletarCartaColecao,
-);
-
-// deleta alguma carta da coleção
+// deleta uma carta da coleção de Cartas
 // cartasColecaoRouters.delete(
 //   "/colecoes/:colecaoId/cartas",
 //   verificarToken,
+//   verificarBanido,
 //   deletarCartaColecao,
 // );
 
-
-//Rotas ADMN
+// deleta todas as cartas da coleção
 cartasColecaoRouters.delete(
   "/colecoes/:colecaoId/cartas",
   verificarToken,
   verificarBanido,
-  deletarCartaColecao,
+  removerCartasColecao,
 );
 
 export default cartasColecaoRouters;

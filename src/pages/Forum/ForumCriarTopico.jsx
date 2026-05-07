@@ -149,11 +149,11 @@ export default function ForumCriarTopico() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!titulo.trim() || !conteudo.trim()) {
-      setError("Preencha o título e o conteúdo do tópico.");
+      setErro("Preencha o título e o conteúdo do tópico.");
       return;
     }
     setLoading(true);
-    setError(null);
+    setErro(null);
     try {
       const { data } = await criarTopico({
         titulo: titulo.trim(),
@@ -164,7 +164,7 @@ export default function ForumCriarTopico() {
       toast.success("Tópico criado com sucesso!")
       setTimeout(()=>navigate(`/forum`), 3000);
     } catch (err) {
-      setError(err.response?.data?.message || "Erro ao publicar tópico.");
+      setErro(err.response?.data?.message || "Erro ao publicar tópico.");
       toast.error("Erro ao publicar tópico.");
     } finally {
       setLoading(false);

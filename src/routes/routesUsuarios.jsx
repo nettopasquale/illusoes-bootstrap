@@ -3,7 +3,6 @@ import { MeusConteudos } from "../pages/Conteudos/MeusConteudos";
 import DashboardUsuario from "../pages/DashBoardUsuario/DashBoardUsuario";
 import { Route } from "react-router-dom";
 import { PerfilUsuario } from "../pages/PerfilUsuario/PerfilUsuario";
-import { EditarConteudo } from "../pages/Conteudos/EditarConteudo";
 import MinhasColecoes from "../pages/Colecoes/MinhasColecoes";
 import ColecaoLista from "../pages/Colecoes/ColecaoLista";
 import ForumPaginaCategoria from "../pages/Forum/ForumPaginaCategoria";

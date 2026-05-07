@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import api from "../services/api";
 import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
 
 export const useComentarios = (targetId, targetTipo, token) => {
   const [comentarios, setComentarios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {usuario} = useContext(AuthContext)
   //api.get(`/comentarios/${targetId}?targetTipo=colecao`)
   //busca comentarios existentes
   useEffect(() => {
@@ -27,6 +29,11 @@ export const useComentarios = (targetId, targetTipo, token) => {
   const criarComentario = async (conteudo, parentId = null) => {
     if (!token) return toast.error("Precisa estar logado");
 
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
+
     try {
       const res = await api.post("/comentarios", {
         conteudo,
@@ -43,6 +50,10 @@ export const useComentarios = (targetId, targetTipo, token) => {
   };
 
   const deletarComentario = async (id) => {
+    if (usuario?.banido === true) {
+        toast.error("Você está banido. Entre em contato com a moderação.");
+        return;
+    }
     try {
       await api.delete(`/comentarios/${id}`);
 
@@ -53,7 +64,10 @@ export const useComentarios = (targetId, targetTipo, token) => {
   };
 
   const curtirComentario = async (id) => {
-    console.log("ID: ", id);
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
     try {
       const res = await api.post(`/likes`, {targetId, targetTipo});
 

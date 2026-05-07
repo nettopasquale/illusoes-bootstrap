@@ -62,6 +62,11 @@ export const useForumTopicos = (topicoId) => {
 
   const handleCurtida = async () => {
     if (!usuario) return navigate("/login");
+
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
     try {
       const { data } = await curtirTopico(topicoId);
       setCurtidas(data.curtidas);
@@ -73,6 +78,12 @@ export const useForumTopicos = (topicoId) => {
 
   const handleBookmark = async () => {
     if (!usuario) return navigate("/login");
+
+    if (usuario?.banido === true) {
+          toast.error("Você está banido. Entre em contato com a moderação.");
+          return;
+    }
+
     try {
       const { data } = await criarBookmarkTopico(topicoId);
       setBookmarked(data.bookmarked);
@@ -92,6 +103,11 @@ export const useForumTopicos = (topicoId) => {
         ? "Remover este tópico como administrador?"
         : "Excluir este tópico?";
     if (!window.confirm(msg)) return;
+
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
     try {
       await deletarTopico(topicoId);
       navigate("/forum");
@@ -101,6 +117,11 @@ export const useForumTopicos = (topicoId) => {
   };
 
   const handleDenunciarTopico = async () => {
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
+
     if (!denunciaMotivo.trim()) return;
     setSalvando(true);
     try {
@@ -129,6 +150,11 @@ export const useForumTopicos = (topicoId) => {
 
   // Salva as alterações chamando a API
   const handleSalvarEdicaoTopico = async () => {
+
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
     if (!tituloEditado.trim() || !conteudoEditado.trim()) {
       toast.error("Título e conteúdo são obrigatórios.");
       return;
@@ -160,6 +186,11 @@ export const useForumTopicos = (topicoId) => {
   //VER AQUI
   const handlePublicarPost = async (postData) => {
     if (!usuario) return navigate("/login");
+
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
     setPostLoading(true);
     try {
       const { data } = await publicarPostagem(topicoId, postData);
@@ -188,6 +219,11 @@ export const useForumTopicos = (topicoId) => {
   };
 
   const handleDeletarPost = (postId) => {
+    if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+    }
+
     setTopico((prev) => ({
       ...prev,
       postagens: prev.postagens.map((r) =>
@@ -200,6 +236,12 @@ export const useForumTopicos = (topicoId) => {
   };
 
   const handleAtualizarPost = (postId, postAtualizado) => {
+    
+  if (usuario?.banido === true) {
+      toast.error("Você está banido. Entre em contato com a moderação.");
+      return;
+  }
+
     setTopico((prev) => ({
       ...prev,
       postagens: prev.postagens.map((r) =>
