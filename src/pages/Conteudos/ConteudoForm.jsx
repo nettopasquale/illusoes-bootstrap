@@ -19,7 +19,7 @@ import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import "react-quill/dist/quill.snow.css";
 import "react-datepicker/dist/react-datepicker.css";
 import "./Conteudo.css";
-import "./ConteudoForm.css";
+import "./Conteudoform.css";
 
 const TIPO_OPTIONS = [
   { value: "noticia", label: "Notícia" },

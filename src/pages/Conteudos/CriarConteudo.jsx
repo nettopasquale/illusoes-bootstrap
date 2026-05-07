@@ -12,6 +12,8 @@ import DatePicker from "react-datepicker";
 import api from "../../services/api";
 import "react-quill/dist/quill.snow.css";
 import "react-datepicker/dist/react-datepicker.css";
+import "./Conteudoform.css";
+import "./Conteudo.css";
 
 const tipoOptions = [
   { value: "noticia", label: "Notícia" },

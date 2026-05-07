@@ -18,6 +18,8 @@ import { Navegacao } from "../../components/Navegacao/Navegacao";
 import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useConteudo } from "../../hooks/useConteudo";
+import "./Conteudoform.css";
+import "./Conteudo.css";
 
 export const EditarConteudo = () => {
   const { id, tipo:tipoParams } = useParams();

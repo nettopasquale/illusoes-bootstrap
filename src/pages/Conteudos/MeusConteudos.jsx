@@ -17,7 +17,7 @@ import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import {fetchMeusConteudos} from "../../services/userService";
-import "./ConteudoForm.css";
+import "./Conteudoform.css";
 import "./Conteudo.css";
 
 const TIPO_OPTIONS = [
