@@ -6,6 +6,7 @@ import { useAuth } from "../../context/useAuth";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import api from "../../services/api";
+import './Layout.css'
 
 LayoutGeral.propTypes = {
   children: PropTypes.node,
@@ -23,15 +24,21 @@ function LayoutGeral({ children }) {
   return (
     <div className="d-flex flex-column min-vh-100 bg-body-secondary">
       <div className="position-fixed top-0 w-100 z-3">
-        <Header onUserClick={handleUserClick} autenticado={autenticado} usuario={usuario}/>
-        
+        <Header
+          onUserClick={handleUserClick}
+          autenticado={autenticado}
+          usuario={usuario}
+        />
+
         <ModalLogin show={modalShow} onClose={handleModalClose} />
       </div>
 
       {/* Espaço reservado do header */}
       <div style={{ height: "70px" }} />
 
-      <main className="flex-grow-1 w-100 px-3 align-content-center">{children}</main>
+      <main className="flex-grow-1 w-100 px-3 align-content-center">
+        {children}
+      </main>
 
       <footer className="w-100 text-white mt-auto">
         <Footer></Footer>

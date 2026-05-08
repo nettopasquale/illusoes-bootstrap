@@ -7,12 +7,12 @@ import {
   Modal,
   Button,
   Form,
-  Spinner
+  Spinner,
+  Alert,
 } from "react-bootstrap";
 import { PlusCircle } from "react-bootstrap-icons";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import CreatableSelect from "react-select/creatable";
-import axios from "axios";
 import api from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
@@ -35,7 +35,7 @@ const TIPO_LABEL = {
   campeonato: "Campeonato",
 };
 
-export const MeusConteudos = () => {
+const MeusConteudos = ()=>{
   const [conteudos, setConteudos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
@@ -173,7 +173,7 @@ export const MeusConteudos = () => {
   //     </Container>
   //   </LayoutGeral>
   // );
- return (
+  return (
    <LayoutGeral>
      <section className="meus-conteudos-section">
        <Container>
@@ -402,3 +402,5 @@ export const MeusConteudos = () => {
    </LayoutGeral>
  );
 };
+
+export default MeusConteudos

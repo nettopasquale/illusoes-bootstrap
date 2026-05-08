@@ -1,8 +1,8 @@
-import PrivateRoute from "../context/PrivateRoute";
-import { MeusConteudos } from "../pages/Conteudos/MeusConteudos";
-import DashboardUsuario from "../pages/DashBoardUsuario/DashBoardUsuario";
 import { Route } from "react-router-dom";
+import PrivateRoute from "../context/PrivateRoute";
 import { PerfilUsuario } from "../pages/PerfilUsuario/PerfilUsuario";
+import MeusConteudos from "../pages/Conteudos/MeusConteudos";
+import DashboardUsuario from "../pages/DashBoardUsuario/DashBoardUsuario";
 import MinhasColecoes from "../pages/Colecoes/MinhasColecoes";
 import ColecaoLista from "../pages/Colecoes/ColecaoLista";
 import ForumPaginaCategoria from "../pages/Forum/ForumPaginaCategoria";

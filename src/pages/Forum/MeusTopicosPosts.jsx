@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { Container, Spinner, Badge, Nav, Alert, Row, Button, Modal } from "react-bootstrap";
 import { AuthContext } from "../../context/AuthContext";
 import { fetchMeusTopicos, fetchMinhasPostagens} from "../../services/userService";
+import { deletarTopico, deletarPostagem } from "../../services/forumService";
 import { Navegacao } from "../../components/Navegacao/Navegacao";
 import { toast } from "react-toastify";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";

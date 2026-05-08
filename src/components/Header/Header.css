@@ -1,0 +1,198 @@
+/* ─────────────────────────────────────────────
+   IMPORTAÇÃO DE FONTES
+   Merriweather para títulos (editorial, autoridade)
+   Source Serif 4 para o corpo (leitura longa confortável)
+   ───────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600&display=swap');
+
+/* ─────────────────────────────────────────────
+   VARIÁVEIS
+   ───────────────────────────────────────────── */
+:root {
+    --cor-destaque: #c0392b;
+    /* vermelho editorial — igual ao GoNintendo */
+    --cor-destaque-hover: #a93226;
+    --cor-texto: #1a1a1a;
+    --cor-texto-suave: #555e68;
+    --cor-borda: #e5e7eb;
+    --cor-fundo-pagina: #f4f4f4;
+    --cor-fundo-header: #000;
+    --cor-fundo-footer: #000;
+    --cor-fundo-artigo: #ffffff;
+    --fonte-titulo: 'Merriweather', Georgia, serif;
+    --fonte-corpo: 'Source Serif 4', Georgia, serif;
+    --fonte-ui: 'Inter', system-ui, sans-serif;
+    --largura-artigo: 720px;
+    --raio: 6px;
+}
+
+/* ─────────────────────────────────────────────
+   HEADER
+   ───────────────────────────────────────────── */
+
+.site-header {
+    width: 100%;
+    background: #000 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    font-family: var(--fonte-ui);
+    padding: 0.65rem 0;
+}
+
+/* container */
+.site-header .container-fluid {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: nowrap;
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+/* LOGO */
+.site-header-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* título */
+.header-title {
+    font-size: 1.35rem;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+}
+
+/* link da navbar */
+.site-header .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: white !important;
+    transition: opacity 0.15s ease;
+}
+
+.site-header .nav-link:hover {
+    opacity: 0.85;
+}
+
+/* busca */
+.header-search {
+    flex: 1;
+    max-width: 520px;
+    min-width: 180px;
+    gap: 0.5rem;
+}
+
+.header-search .form-control {
+    border-radius: var(--raio);
+    border: none;
+    font-size: 0.95rem;
+    font-family: var(--fonte-ui);
+}
+
+.header-search .btn {
+    border-radius: var(--raio);
+    white-space: nowrap;
+}
+
+/* ações */
+.header-actions {
+    flex-shrink: 0;
+}
+
+/* avatar */
+.header-actions img {
+    object-fit: cover;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+/* ─────────────────────────────────────────────
+   TABLET
+   ───────────────────────────────────────────── */
+
+@media (max-width: 992px) {
+
+    .header-search {
+        max-width: 320px;
+    }
+
+    .header-title {
+        font-size: 1.1rem;
+    }
+
+    .site-header-logo {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+/* ─────────────────────────────────────────────
+   MOBILE
+   ───────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+
+    .site-header {
+        padding: 0.55rem 0;
+    }
+
+    .site-header .container-fluid {
+        gap: 0.5rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    /* remove barra de busca */
+    .header-search {
+        display: none !important;
+    }
+
+    .header-actions {
+        gap: 0.75rem !important;
+    }
+
+    .site-header-logo {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header-title {
+        font-size: 1rem;
+    }
+
+    .header-actions .nav-link {
+        padding: 0;
+    }
+
+    .header-actions svg {
+        font-size: 1.1rem;
+    }
+}
+
+/* ─────────────────────────────────────────────
+   MOBILE PEQUENO
+   ───────────────────────────────────────────── */
+
+@media (max-width: 480px) {
+
+    .site-header .container-fluid {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .site-header-logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .header-actions {
+        gap: 0.5rem !important;
+    }
+
+    .header-actions svg {
+        font-size: 1rem;
+    }
+}
