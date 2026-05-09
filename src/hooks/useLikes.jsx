@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import api from "../services/api";
 import { toast } from "react-toastify";
+import { AuthContext } from "../context/AuthContext";
 
 export const useLike = (targetId, targetTipo, token) => {
   const [curtido, setCurtido] = useState(false);
   const [curtidasTotais, setcurtidasTotais] = useState(0);
   const [loading, setLoading] = useState(false);
+  const {usuario} = useContext(AuthContext)
 
   // buscar total inicial
   useEffect(() => {

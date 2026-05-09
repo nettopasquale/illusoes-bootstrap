@@ -412,8 +412,11 @@ export default function ListarDenuncias() {
          <Navegacao
            itens={[
              { label: "Home", to: "/" },
-             { label: "Dashboard", to: "/usuario/dashboard" },
-             { label: isAdmin ? "Gerenciar Denúncias" : "Minhas Denúncias" },
+             { label: "Dashboard", to: "/dashboard" },
+             {
+               label: isAdmin ? "Gerenciar Denúncias" : "Minhas Denúncias",
+               to: "/denuncias",
+             },
            ]}
          />
 

@@ -15,6 +15,7 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
+import { outrosRoutes } from "./routes/routesOutros";
 
 export const App = ()=> {
     tokenExp(); // vai deslogar quando a sessão expirar
@@ -39,6 +40,9 @@ export const App = ()=> {
 
             {/* Denúncias */}
             {denunciaRoutes}
+            
+            {/* Outros */}
+            {outrosRoutes}
 
             {/* Cadastro */}
             <Route path="/cadastro" element={<CadastroUsuario />} />

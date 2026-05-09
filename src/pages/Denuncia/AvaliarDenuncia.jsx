@@ -163,6 +163,7 @@ export default function AvaliarDenuncia() {
           <Navegacao
               itens={[
                 { label: "Home", to: "/" },
+                { label: "Home", to: "/" },
                 { label: "Avaliar Denúnicas", to: `/denuncias/${id}/avaliar` },
               ]}
             />

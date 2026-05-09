@@ -212,8 +212,8 @@ export const PerfilUsuario = () => {
          <Navegacao
            itens={[
              { label: "Home", to: "/" },
-             { label: "Dashboard", to: "/usuario/dashboard" },
-             { label: "Meu Perfil" },
+             { label: "Dashboard", to: "/dashboard" },
+             { label: "Meu Perfil", to: "/userProfile/me" },
            ]}
          />
 

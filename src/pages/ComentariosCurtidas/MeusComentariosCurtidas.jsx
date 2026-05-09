@@ -72,10 +72,10 @@ export default function MeusComentariosCurtidas() {
           <Navegacao
             itens={[
               { label: "Home", to: "/" },
-              { label: "Dashboard", to: "/usuario/dashboard" },
+              { label: "Dashboard", to: "/dashboard" },
               {
                 label: "Comentários e Curtidas",
-                to: "/usuario/comentarios-curtidas",
+                to: "/userProfile/me/comentarios",
               },
             ]}
           />

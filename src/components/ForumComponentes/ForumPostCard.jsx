@@ -46,7 +46,7 @@ const [salvando, setSalvando] = useState(false);
 const [successo, setSuccesso] = useState("");
 
 const ehAutor = String(postagem.autor?._id) === String(atualUserId);
-const ehAdmin = usuario.tipo === 'admin';
+const ehAdmin = usuario?.tipo === 'admin';
 const modoEdicao = ehAutor || ehAdmin;
 
 const flash = (msg) => {

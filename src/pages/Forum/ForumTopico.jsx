@@ -285,7 +285,7 @@ export default function ForumTopico() {
               { label: "Fórum", to: "/forum" },
               {
                 label: cat.label || topico.categoria,
-                to: `/forum/categoria/${topico.categoria}/topicos`,
+                to: `/forum/categorias/${topico.categoria}/topicos`,
               },
               { label: topico.titulo },
             ]}

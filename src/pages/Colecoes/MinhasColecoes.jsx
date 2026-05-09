@@ -233,8 +233,8 @@ export default function MinhasColecoes() {
           <Navegacao
             itens={[
               { label: "Home", to: "/" },
-              { label: "Dashboard", to: "/usuario/dashboard" },
-              { label: "Minhas Coleções", to: "/usuario/colecoes" },
+              { label: "Dashboard", to: "/dashboard" },
+              { label: "Minhas Coleções", to: "/userProfile/me/colecoes" },
             ]}
           />
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Dropdown, Button, DropdownMenu } from "react-bootstrap";
 import {
   FacebookShareButton,
@@ -14,13 +15,19 @@ import {
 import { toast } from "react-toastify";
 
 export default function ShareLinks({url, title}){
+  const [aberto, setAberto] = useState(false);
+
   const copiarLink = async () => {
     await navigator.clipboard.writeText(url);
     toast.success("Link copiado!");
+    setAberto(false); // fecha ao copiar
   };
-
   return (
-    <Dropdown>
+    <Dropdown
+      show={aberto}
+      onToggle={(isOpen) => setAberto(isOpen)}
+      autoClose="outside"
+    >
       <Dropdown.Toggle variant="outline-secondary" size="sm">
         Compartilhar
       </Dropdown.Toggle>

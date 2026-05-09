@@ -180,7 +180,7 @@ const MeusConteudos = ()=>{
          <Navegacao
            itens={[
              { label: "Home", to: "/" },
-             { label: "Dashboard", to: "/usuario/dashboard" },
+             { label: "Dashboard", to: "/dashboard" },
              { label: "Meus Conteúdos" },
            ]}
          />

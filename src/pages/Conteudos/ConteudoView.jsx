@@ -55,6 +55,7 @@ export default function ConteudoView() {
   const isAutor = usuario?._id === conteudo?.autor?._id;
   const isAdmin = usuario?.tipo === "admin";
   const podeEditar = isAutor || isAdmin;
+  console.log("TipoParam: ", tipoParam)
 
   //url para compartilhar
   const url = `${window.location.origin}/conteudos/${tipoParam}/${id}`;
@@ -81,14 +82,14 @@ export default function ConteudoView() {
       <LayoutGeral>
         <section id="conteudo" className="conteudo-section">
           <Container className="text-center py-5">
-              <Navegacao
-                itens={[
-                  { label: "Home", to: "/" },
-                  { label: "Todos os Conteudos", to: `/conteudos` },
-                  { label: "Conteudo" },
-                ]}
-              />
-              <div className="text-center text-danger mt-5">{erro}</div>
+            <Navegacao
+              itens={[
+                { label: "Home", to: "/" },
+                { label: "Todos os Conteudos", to: `/conteudos/${tipoParam}` },
+                { label: "Conteudo" },
+              ]}
+            />
+            <div className="text-center text-danger mt-5">{erro}</div>
           </Container>
         </section>
       </LayoutGeral>
@@ -98,14 +99,14 @@ export default function ConteudoView() {
       <LayoutGeral>
         <section id="conteudo" className="conteudo-section">
           <Container className="text-center py-5">
-              <Navegacao
-                itens={[
-                  { label: "Home", to: "/" },
-                  { label: "Todos os Conteudos", to: `/conteudo` },
-                  { label: "Conteudo" },
-                ]}
-              />
-              <div className="text-center text-danger mt-5">Carregando...</div>
+            <Navegacao
+              itens={[
+                { label: "Home", to: "/" },
+                { label: "Todos os Conteudos", to: `/conteudos/${tipoParam}` },
+                { label: "Conteudo" },
+              ]}
+            />
+            <div className="text-center text-danger mt-5">Carregando...</div>
           </Container>
         </section>
       </LayoutGeral>
@@ -297,7 +298,7 @@ export default function ConteudoView() {
           <Navegacao
             itens={[
               { label: "Home", to: "/" },
-              { label: "Conteúdos", to: "/conteudos" },
+              { label: `${tipoParam}s`, to: `/conteudos/${tipoParam}` },
               { label: conteudo.titulo, to: "#" },
             ]}
           />
@@ -346,7 +347,7 @@ export default function ConteudoView() {
               </div>
 
               {/* Info de evento/campeonato */}
-              {(conteudo.dataEvento && conteudo.valorEntrada !== undefined) && (
+              {conteudo.dataEvento && conteudo.valorEntrada !== undefined && (
                 <div className="conteudo-evento-info">
                   {conteudo.dataEvento && (
                     <span>

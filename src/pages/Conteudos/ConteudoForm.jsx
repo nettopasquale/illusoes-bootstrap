@@ -82,8 +82,8 @@ export const ConteudoForm = () => {
           <Navegacao
             itens={[
               { label: "Home", to: "/" },
-              { label: "Dashboard", to: "/usuario/dashboard" },
-              { label: "Meus Conteúdos", to: "/usuario/conteudos" },
+              { label: "Dashboard", to: "/dashboard" },
+              { label: "Meus Conteúdos", to: "/userProfile/me/conteudos" },
               {
                 label: modoEdicao
                   ? `Editar ${tipoLabel}`
@@ -103,7 +103,7 @@ export const ConteudoForm = () => {
             <Button
               variant="outline-secondary"
               size="sm"
-              onClick={() => navigate("/usuario/conteudos")}
+              onClick={() => navigate("/userProfile/me/conteudos")}
             >
               <ArrowLeft className="me-1" size={13} />
               Voltar

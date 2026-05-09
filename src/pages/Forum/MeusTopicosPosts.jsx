@@ -99,8 +99,8 @@ export default function MeusTopicosPosts() {
           <Navegacao
             itens={[
               { label: "Home", to: "/" },
-              { label: "Dashboard", to: "/usuario/dashboard" },
-              { label: "Meus Tópicos e Posts" },
+              { label: "Dashboard", to: "/dashboard" },
+              { label: "Meus Tópicos e Posts", to: "/userProfile/me/topicos" },
             ]}
           />
 
