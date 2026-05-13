@@ -35,7 +35,6 @@ export default function Carrossel(){
       .catch(() => setErro("Não foi possível carregar os destaques."))
       .finally(() => setLoading(false));
   }, []);
-  console.log("Destaques", destaques)
 
   const handleSelect = (selectedIndex) => setIndex(selectedIndex);
 

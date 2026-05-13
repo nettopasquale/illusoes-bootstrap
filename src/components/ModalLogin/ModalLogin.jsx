@@ -129,6 +129,11 @@ export default function ModalLoginteste({ show, onClose }) {
                   Cadastre-se
                 </Link>
               </p>
+              <p className="fs-5">
+                <Link to="/users/esqueceu-senha" onClick={onClose}>
+                  Esqueci a senha
+                </Link>
+              </p>
             </div>
           </Stack>
         </Form>

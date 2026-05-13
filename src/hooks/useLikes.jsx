@@ -18,7 +18,6 @@ export const useLike = (targetId, targetTipo, token) => {
         }
       try {
         const res = await api.get(`/likes/${targetId}/${targetTipo}`);
-        console.log("resposta de curtidas: ", res.data)
         setcurtidasTotais(res.data.curtidasTotais);
       } catch (err) {
         console.error(err);
@@ -40,7 +39,6 @@ export const useLike = (targetId, targetTipo, token) => {
 
     try {
       const res = await api.post("/likes",{ targetId, targetTipo });
-      console.log("resposta curtida: ", res)
       setCurtido(res.data.curtiu);
       setcurtidasTotais(res.data.curtidasTotais);
     } catch (err) {

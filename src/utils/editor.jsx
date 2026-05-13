@@ -21,7 +21,7 @@ export const quill = new Quill('#editor', {
               const imageUrl = await uploadImage(formData)
               return imageUrl
           } catch (error) {
-            console.log(error)
+            console.error(error)
           }
         },
         loadingClass: 'uploading-image', // default 'quill-image-uploading'

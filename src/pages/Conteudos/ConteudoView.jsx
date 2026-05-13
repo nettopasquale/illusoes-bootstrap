@@ -55,7 +55,6 @@ export default function ConteudoView() {
   const isAutor = usuario?._id === conteudo?.autor?._id;
   const isAdmin = usuario?.tipo === "admin";
   const podeEditar = isAutor || isAdmin;
-  console.log("TipoParam: ", tipoParam)
 
   //url para compartilhar
   const url = `${window.location.origin}/conteudos/${tipoParam}/${id}`;
@@ -375,7 +374,10 @@ export default function ConteudoView() {
                   curtidasTotais={curtidasTotais}
                   onClick={toggleLike}
                 />
-                <ShareLinks url={url} title={conteudo?.titulo} />
+
+                {usuario && (
+                  <ShareLinks url={url} title={conteudo?.titulo} />
+                )}
 
                 {usuario && !isAutor && (
                   <button

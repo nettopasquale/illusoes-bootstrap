@@ -25,6 +25,8 @@ const userModel = new Schema(
     banido: { type: Boolean, default: false },
     bio: { type: String },
     reputacao: { type: Number },
+    resetSenhaToken: { type: String, default: null },
+    resetSenhaExpira: { type: Date, default: null },
   },
   { timestamps: true },
 );

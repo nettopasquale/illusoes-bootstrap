@@ -13,7 +13,6 @@ export const useComentarios = (targetId, targetTipo, token) => {
     const fetchComentarios = async () => {
       try {
         const res = await api.get(`/comentarios/${targetId}?targetTipo=${targetTipo}`);
-        console.log("Buscando comentários:", targetId, targetTipo);
 
         setComentarios(res.data);
       } catch (err) {

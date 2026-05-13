@@ -1,62 +1,104 @@
 import { useState } from "react";
-import { Dropdown, Button, DropdownMenu } from "react-bootstrap";
-import {
-  FacebookShareButton,
-  FacebookIcon,
-  WhatsappShareButton,
-  WhatsappIcon,
-  TelegramShareButton,
-  TelegramIcon,
-  RedditShareButton,
-  RedditIcon,
-  XShareButton,
-  XIcon,
-} from "react-share";
+import { Button, Modal } from "react-bootstrap";
 import { toast } from "react-toastify";
 
-export default function ShareLinks({url, title}){
+import {
+  FacebookShareButton,
+  WhatsappShareButton,
+  TelegramShareButton,
+  RedditShareButton,
+  XShareButton,
+  FacebookIcon,
+  WhatsappIcon,
+  TelegramIcon,
+  RedditIcon,
+  XIcon,
+} from "react-share";
+
+export default function ShareLinks({ url, title }) {
   const [aberto, setAberto] = useState(false);
 
-  const copiarLink = async () => {
-    await navigator.clipboard.writeText(url);
-    toast.success("Link copiado!");
-    setAberto(false); // fecha ao copiar
+  const fecharModal = () => {
+    setAberto(false);
   };
+
+  const copiarLink = async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+
+      toast.success("Link copiado!");
+      fecharModal();
+    } catch {
+      toast.error("Erro ao copiar link.");
+    }
+  };
+
+  const handleShare = () => {
+    // pequeno delay para não conflitar com popup
+    setTimeout(() => {
+      fecharModal();
+    }, 100);
+  };
+
   return (
-    <Dropdown
-      show={aberto}
-      onToggle={(isOpen) => setAberto(isOpen)}
-      autoClose="outside"
-    >
-      <Dropdown.Toggle variant="outline-secondary" size="sm">
+    <>
+      {/* Botão */}
+      <Button
+        variant="outline-secondary"
+        size="sm"
+        onClick={() => setAberto(true)}
+      >
         Compartilhar
-      </Dropdown.Toggle>
+      </Button>
 
-      <Dropdown.Menu className="p-3 d-flex flex-column gap-2">
-        <FacebookShareButton url={url} quote={title}>
-          <FacebookIcon size={32} round />
-        </FacebookShareButton>
+      {/* Modal */}
+      <Modal show={aberto} onHide={fecharModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Compartilhar conteúdo</Modal.Title>
+        </Modal.Header>
 
-        <WhatsappShareButton url={url} title={title}>
-          <WhatsappIcon size={32} round />
-        </WhatsappShareButton>
+        <Modal.Body>
+          {/* Ícones */}
+          <div className="d-flex flex-wrap gap-3 justify-content-center mb-4">
+            <div onClick={handleShare}>
+              <FacebookShareButton url={url} quote={title}>
+                <FacebookIcon size={42} round />
+              </FacebookShareButton>
+            </div>
 
-        <TelegramShareButton url={url} title={title}>
-          <TelegramIcon size={32} round />
-        </TelegramShareButton>
+            <div onClick={handleShare}>
+              <WhatsappShareButton url={url} title={title}>
+                <WhatsappIcon size={42} round />
+              </WhatsappShareButton>
+            </div>
 
-        <RedditShareButton url={url} title={title}>
-          <RedditIcon size={32} round />
-        </RedditShareButton>
+            <div onClick={handleShare}>
+              <TelegramShareButton url={url} title={title}>
+                <TelegramIcon size={42} round />
+              </TelegramShareButton>
+            </div>
 
-        <XShareButton url={url} title={title}>
-          <XIcon size={32} round />
-        </XShareButton>
+            <div onClick={handleShare}>
+              <RedditShareButton url={url} title={title}>
+                <RedditIcon size={42} round />
+              </RedditShareButton>
+            </div>
 
-        <Button size="sm" variant="outline-dark" onClick={copiarLink}>
-          Copiar link
-        </Button>
-      </Dropdown.Menu>
-    </Dropdown>
+            <div onClick={handleShare}>
+              <XShareButton url={url} title={title}>
+                <XIcon size={42} round />
+              </XShareButton>
+            </div>
+          </div>
+
+          {/* Copiar link */}
+          <div className="d-grid">
+            <Button variant="dark" onClick={copiarLink}>
+              Copiar link
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </>
   );
-};
+}

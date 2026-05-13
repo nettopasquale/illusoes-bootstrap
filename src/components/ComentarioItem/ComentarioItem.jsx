@@ -13,7 +13,7 @@ export default function ComentarioItem({
   onReply,
   onDelete,
 }) {
-  const { token } = useContext(AuthContext);
+  const { token, isAdmin } = useContext(AuthContext);
   const [resposta, setResposta] = useState("");
   const [mostrarReply, setMostrarReply] = useState(false);
   const [denunciaMotivo, setDenunciaMotivo] = useState("");
@@ -27,26 +27,7 @@ export default function ComentarioItem({
   );
 
   const ehAutor = usuario?._id === comentario.autor?._id;
-
-  const handleDenunciarComentario = async () => {
-    if (!denunciaMotivo.trim()) return;
-    setSalvando(true);
-    try {
-      await criarDenuncia({
-        denunciado: comentario.autor?._id,
-        targetId: comentario._id,
-        targetTipo: "comentario",
-        motivo: denunciaMotivo,
-      });
-      setShowDenuncia(false);
-      setDenunciaMotivo("");
-      toast.success("Denúncia enviada. Obrigado!");
-    } catch {
-      toast.error("Erro ao enviar denúncia.");
-    } finally {
-      setSalvando(false);
-    }
-  };
+  const podeEditar = ehAutor || isAdmin;
 
   return (
     <Card className="mb-2 ms-3">
@@ -80,7 +61,7 @@ export default function ComentarioItem({
             Responder
           </Button>
 
-          {ehAutor && (
+          {podeEditar && (
             <Button
               size="sm"
               variant="outline-danger"

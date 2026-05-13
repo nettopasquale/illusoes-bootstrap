@@ -63,6 +63,8 @@ export default function ForumTopico() {
   const [tagsEditadas, setTagsEditadas] = useState("");
   const POSTS_POR_PAGINA = 20;
 
+  const navigate = useNavigate();
+
   //carregar topicos existentes
   useEffect(() => {
     const buscarTopico = async () => {
@@ -104,7 +106,6 @@ export default function ForumTopico() {
     try {
       const { data } = await criarBookmarkTopico(topicoId);
       setBookmarked(data.bookmarked);
-      console.log("Bookmarked?: ", data.bookmarked);
       flash(
         data.bookmarked ? "Tópico salvo nos bookmarks!" : "Bookmark removido.",
       );
@@ -113,21 +114,25 @@ export default function ForumTopico() {
     }
   };
 
-  const handleDeletarTopico = async () => {
-    const msg =
-      usuario?.tipo === "admin" &&
-      String(topico.autor?._id) !== String(usuario?._id)
-        ? "Remover este tópico como administrador?"
-        : "Excluir este tópico?";
-    if (!window.confirm(msg)) return;
-    try {
-      await deletarTopico(topicoId);
-      toast.success("tópico deletado com sucesso")
-      navigate("/forum");
-    } catch {
-      toast.error("Erro ao excluir.");
-    }
-  };
+const handleDeletarTopico = async () => {
+  const msg =
+    usuario?.tipo === "admin" &&
+    String(topico.autor?._id) !== String(usuario?._id)
+      ? "Remover este tópico como administrador?"
+      : "Excluir este tópico?";
+
+  if (!window.confirm(msg)) return;
+
+  try {
+    await deletarTopico(topicoId);
+    toast.success("Tópico deletado com sucesso.");
+    navigate("/forum"); // ← navega imediatamente após o delete
+  } catch (err) {
+    // Só cai aqui se a requisição de delete falhar — não se o navigate falhar
+    const msg = err.response?.data?.message || "Erro ao excluir.";
+    toast.error(msg);
+  }
+};
 
   const handleDenunciarTopico = async () => {
     if (!denunciaMotivo.trim()) return;

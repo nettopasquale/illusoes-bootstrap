@@ -37,27 +37,25 @@ export default function MeusComentariosCurtidas() {
   const [loading, setLoading] = useState(true);
   const [erro, setErro] = useState(null);
 
+  //traz comentários se existirem
   useEffect(() => {
-    const carregarDados = async () => {
-      setLoading(true);
-      setErro(null);
-      try {
-        if (tab === "curtidas") {
-          const res = await fetchMeusLikes();
-          setLikes(res.data || []);
-        } else {
-          const res = await fetchMeusComentarios();
-          setComentarios(res.data || []);
-        }
-      } catch {
-        setErro("Erro ao carregar dados.");
-        toast.error("Erro ao carregar dados.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    carregarDados();
-  }, [tab]);
+    fetchMeusComentarios()
+    .then(({data})=>{
+      setComentarios(data);
+    })
+    .catch(()=> setErro("Erro ao carregar comentarios."))
+    .finally(()=> setLoading(false))
+  }, []);
+
+  //traz curtidas se existirem
+  useEffect(() => {
+    fetchMeusLikes()
+    .then(({data})=>{
+      setLikes(data);
+    })
+    .catch(()=> setErro("Erro ao carregar Curtidas"))
+    .finally(()=> setLoading(false))
+  }, []);
 
   const linkParaEntidade = (targetTipo, targetId, tipo) => {
     if (targetTipo === "conteudo") return `/conteudos/${tipo}/${targetId}`;

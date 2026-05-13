@@ -87,7 +87,6 @@ export const useForumTopicos = (topicoId) => {
     try {
       const { data } = await criarBookmarkTopico(topicoId);
       setBookmarked(data.bookmarked);
-      console.log("Bookmarked?: ", data.bookmarked);
       flash(
         data.bookmarked ? "Tópico salvo nos bookmarks!" : "Bookmark removido.",
       );

@@ -40,7 +40,6 @@ export default function TopicoPost({
   const ehAdmin = usuario?.tipo === "admin";
   const canEdit = ehAutor || ehAdmin;
   const cat = CATEGORIA_META[topico.categoria] || {};
-  console.log("Autor info:", topico.autor.usuario);
 
   return (
     <div className="card border rounded-3 overflow-hidden mb-0">

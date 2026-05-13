@@ -25,7 +25,6 @@ export const useColecao = (colecaoId, edicao) => {
     const buscarColecao = async () => {
       try {
         const response = await api.get(`/colecoes`);
-        console.log("resposta: ", response.data);
         setColecoes(response.data);
       } catch (error) {
         setErro("Erro ao buscar coleção.");
@@ -45,7 +44,6 @@ export const useColecao = (colecaoId, edicao) => {
         try {
           const res = await api.get(`/colecoes/${colecaoId}`);
           const colecao = res.data;
-          console.log("Colecao atual: ", colecao);
 
           setNome(colecao.nome);
           setDescricao(colecao.descricao);
@@ -89,8 +87,6 @@ export const useColecao = (colecaoId, edicao) => {
         setMensagem("Coleção atualizada com sucesso!");
       } else {
         const resultado = await api.post(`/colecoes`, payload);
-        console.log("coleção enviada: ", payload);
-
         setMensagem(`Coleção criada com sucesso! ${resultado.data}`);
         setErro(null);
       }
@@ -103,14 +99,12 @@ export const useColecao = (colecaoId, edicao) => {
   //salva a imagem na variavel capa e envia a imagem para o cloudinary
   const handleCapa = async (e) => {
     const file = e.target.files[0];
-    console.log("a imagem:", file);
 
     if (!file) return;
     setUploadingCapa(true);
 
     try {
       const url = await cloudinaryUpload(file, "capa");
-      console.log("URL da capa: ", url);
 
       setCapa(url);
     } catch (error) {

@@ -9,6 +9,9 @@ import ForumPaginaCategoria from "../pages/Forum/ForumPaginaCategoria";
 import ListarDenuncias from "../pages/Denuncia/ListarDenuncias";
 import MeusTopicosPosts from "../pages/Forum/MeusTopicosPosts";
 import MeusComentariosCurtidas from "../pages/ComentariosCurtidas/MeusComentariosCurtidas";
+import RedefinirSenha from "../pages/PerfilUsuario/RedefinirSenha";
+import EsqueceuSenha from "../pages/PerfilUsuario/EsqueceuSenha";
+
 
 export const usuarioRoutes = [
   <Route
@@ -17,6 +20,23 @@ export const usuarioRoutes = [
       <PrivateRoute>
         <DashboardUsuario />
       </PrivateRoute>
+    }
+    key="usuario-id"
+  />,
+
+  <Route
+    path="/users/esqueceu-senha"
+    element={
+      <EsqueceuSenha />
+    }
+    key="usuario-id"
+  />,
+
+  <Route
+    path="/users/redefinir-senha"
+    element={
+        <RedefinirSenha />
+
     }
     key="usuario-id"
   />,

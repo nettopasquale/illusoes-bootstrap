@@ -47,6 +47,7 @@ export const useCadastroUsuario = () => {
           confirmarSenha: "",
         });
       }
+      setTimeout(()=>navigate("/"), 3000)
     } catch (error) {
       if (error.response && error.response.data?.error) {
         //erro do backend
@@ -64,8 +65,5 @@ export const useCadastroUsuario = () => {
       setSucesso(false);
     }
   };
-
-  console.log("Enviando", formData);
-
   return {formData, erro, sucesso, handleChange, handleSubmit};
 };

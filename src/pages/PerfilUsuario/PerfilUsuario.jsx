@@ -54,13 +54,11 @@ export const PerfilUsuario = () => {
     //handleImageProfile
   const handleAvatar = async (e) => {
     const file = e.target.files[0]
-      console.log(file);
     
     if (!file) return;
     setUploadingAvatar(true);
     try {
       const url = await cloudinaryUpload(file, "avatar");
-      console.log("URL da imagem de avatar:", url);
     
       setAvatar(url);
     }catch (err) {

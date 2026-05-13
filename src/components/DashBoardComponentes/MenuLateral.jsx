@@ -77,6 +77,11 @@ export default function MenuLateral(){
                     Editar
                     </Nav.Link>
                 )}
+                {submenus[menu] == 0 && !menuToRouteMap[menu] && (
+                    <Nav.Link as={Link} to={`/users/redefinir-senha`}>
+                    Redefinir senha
+                    </Nav.Link>
+                )}
                 </div>
             ))}
             </Nav>

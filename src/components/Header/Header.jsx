@@ -15,9 +15,6 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
   const navigate = useNavigate();
   const { logout, isAdmin, } = useAuth();
 
-  console.log("É admin?", isAdmin);
-  console.log("Tipo do usuário", usuario);
-
   const handleLogout = () => {
     logout();
     navigate("/");
@@ -82,15 +79,9 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
           ) : (
             <Nav.Link onClick={onUserClick} className="text-white fw-bold">
               <BsFillPersonFill size={24} />
+              Fazer Login
             </Nav.Link>
           )}
-          <Nav.Link className="text-white">
-            <BsEnvelope size={22} />
-          </Nav.Link>
-          <Nav.Link className="text-white">
-            <BsCart3 size={22} />
-          </Nav.Link>
-
           {/* Menu lateral */}
           <MenuGaveta autenticado={autenticado} />
         </div>

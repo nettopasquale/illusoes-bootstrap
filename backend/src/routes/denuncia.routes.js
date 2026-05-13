@@ -21,7 +21,6 @@ denunciaRoutes.get(
   "/denuncias/:id",
   verificarToken,
   verificarBanido,
-  verificarAdmin,
   buscarDenunciaPorId,
 );
 denunciaRoutes.delete("/denuncias/:id", verificarToken, cancelarDenuncia);

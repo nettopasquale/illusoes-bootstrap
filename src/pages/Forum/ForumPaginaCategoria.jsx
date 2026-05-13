@@ -31,7 +31,6 @@ export default function ForumPaginaCategoria() {
   const navigate = useNavigate();
   const { usuario } = useContext(AuthContext);
 
-  console.log("Categoria: ", categoria)
 
   const meta = CATEGORIA_META[categoria] || {
     label: categoria,
@@ -49,7 +48,6 @@ export default function ForumPaginaCategoria() {
   const LIMITE = 30;
 
   const isDono = usuario?._id === topicos?.autor?._id;
-  console.log("eh dono: ", isDono)
 
   const load = useCallback(async () => {
     setLoading(true);

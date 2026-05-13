@@ -178,14 +178,12 @@ export const deletarTopico = async (req, res) => {
     if (!topico)
       return res.status(404).json({ message: "Tópico não encontrado" });
 
-    // if (topico.autor.toString() !== req.userId.toString())
-    //   return res.status(403).json({ message: "Sem permissão para excluir" });
-
     if (!ehAdminOuUsuario(topico.autor, req))
       return res.status(403).json({ message: "Sem permissão para excluir" });
 
-    topico.deletado = true;
-    await topico.save();
+    // topico.deletado = true; //soft delete
+    // await topico.save();
+    await topico.deleteOne() // hard delete, deleta do banco
     return res.status(201).json({ message: "Tópico removido com sucesso" });
   } catch (err) {
     return res.status(500).json({ message: "Erro ao excluir tópico", error: err.message });

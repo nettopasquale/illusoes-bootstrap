@@ -32,45 +32,7 @@ const Footer = () => {
           {[
             {
               title: "Como podemos ajudar ?",
-              links: [
-                "Contate o suporte",
-                "Central de ajuda",
-                "Acessibilidade",
-                "Feedback",
-                "Política de retorno",
-              ],
-            },
-            {
-              title: "Artigos e Decks",
-              links: [
-                "Magic",
-                "Yu-Gi-Oh!",
-                "Pokémon",
-                "Digimon",
-                "Flesh and Blood",
-              ],
-            },
-            {
-              title: "Eventos e Campeonatos",
-              links: [
-                "Criar e Participar",
-                "Regras",
-                "Planos",
-                "Ajuda",
-                "Política de Eventos",
-              ],
-            },
-            {
-              title: "Fórum e Comunidade",
-              links: ["Como participar", "Ajuda", "Política"],
-            },
-            {
-              title: "Coleções e Leilões",
-              links: ["Como vender", "Cadastro", "Ajuda", "Política de vendas"],
-            },
-            {
-              title: "Sobre Nós",
-              links: ["Contato", "Valores", "Trabalhe Conosco", "Ética"],
+              links: ["Contate o suporte", "Sobre nós"],
             },
           ].map((section, idx) => (
             <Col key={idx} md="auto" sm={6}>
@@ -87,10 +49,7 @@ const Footer = () => {
         </Row>
 
         <Row className="site-footer-bottom">
-          <Col>
-            <span className="footer-title">Siga nossas redes sociais</span>
-          </Col>
-          <Col className="text-end">
+          <Col className="footer-title text-end">
             <small>© {new Date().getFullYear()} Ilusões Industriais</small>
           </Col>
         </Row>

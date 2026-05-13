@@ -16,8 +16,6 @@ function LayoutGeral({ children }) {
     const [modalShow, setModalShow] = useState(false);
     const { autenticado, usuario } = useAuth();
 
-  //console.log("Modal aberto?", modalShow);
-
   const handleUserClick = useCallback(() => setModalShow(true), []);
   const handleModalClose = useCallback(() => setModalShow(false), []);
 

@@ -9,9 +9,10 @@ import DenunciaModel from "../models/denuncia.model.js";
 import ComentarioModel from "../models/comentario.model.js";
 import LikeModel from "../models/like.model.js"
 import mongoose from "mongoose";
+import { enviarEmailRedefinicao } from "../configs/mailer.js";
+
 
 // rota do Login
-
 export const login = async (req, res) => {
   const { login, senha } = req.body;
 
@@ -141,6 +142,58 @@ export const deleteUser = async (req, res) => {
     res.json({ message: "Usuário deletado com sucesso!" });
   } catch (erro) {
     res.status(500).json({ erro: erro.message });
+  }
+};
+
+//redefinir senha
+export const solicitarRedefinicaoSenha = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await UserModel.findOne({ email });
+
+    // Responde igual mesmo se email não existir — evita enumerar usuários
+    if (!user)
+      return res
+        .status(200)
+        .json({ message: "Se este email existir, você receberá um link." });
+
+    const token = crypto.randomBytes(32).toString("hex");
+    user.resetSenhaToken = token;
+    user.resetSenhaExpira = new Date(Date.now() + 60 * 60 * 1000); // 1 hora
+    await user.save();
+
+    // Enviar email com o link
+    await enviarEmailRedefinicao(user.email, token); // função separada com nodemailer
+
+    return res
+      .status(200)
+      .json({ message: "Se este email existir, você receberá um link." });
+  } catch (erro) {
+    return res.status(500).json({ error: erro.message });
+  }
+};
+
+// user.controller.js — redefinir senha com o token
+export const redefinirSenha = async (req, res) => {
+  try {
+    const { token, novaSenha } = req.body;
+
+    const user = await UserModel.findOne({
+      resetSenhaToken: token,
+      resetSenhaExpira: { $gt: new Date() }, // token ainda válido
+    });
+
+    if (!user)
+      return res.status(400).json({ error: "Token inválido ou expirado." });
+
+    user.senha = await bcrypt.hash(novaSenha, 10);
+    user.resetSenhaToken = null;
+    user.resetSenhaExpira = null;
+    await user.save();
+
+    return res.status(200).json({ message: "Senha redefinida com sucesso." });
+  } catch (erro) {
+    return res.status(500).json({ error: erro.message });
   }
 };
 

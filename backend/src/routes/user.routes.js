@@ -7,6 +7,8 @@ import {
   deleteUser,
   funcaoProtegida,
   login,
+  solicitarRedefinicaoSenha,
+  redefinirSenha,
   getUserConteudo,
   getUserColecoes,
   getUserTopicos,
@@ -31,6 +33,8 @@ userRouters.get('/users', getAllUsers);
 userRouters.post('/users', createUser);
 userRouters.post('/users/login', login);
 userRouters.get('/users/:id', getUserByID);
+userRouters.post("/users/solicitar-redefinicao", solicitarRedefinicaoSenha);
+userRouters.post("/users/redefinir-senha", redefinirSenha);
 
 //-------rotas usuario logado--------------------------------------
 userRouters.get("/userProfile/me", verificarToken, getUserProfile);
@@ -48,7 +52,7 @@ userRouters.get(
   verificarToken,
   getUserComentarios,
 );
-// userRouters.get("/userProfile/me/denuncias", verificarToken, getUserDenuncias);
+userRouters.get("/userProfile/me/denuncias", verificarToken, getUserDenuncias);
 
 //ADMIN
 userRouters.get("/protected", verificarToken, verificarAdmin, funcaoProtegida);

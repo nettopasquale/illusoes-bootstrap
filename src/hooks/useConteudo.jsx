@@ -109,14 +109,12 @@ export const useConteudo = (id, edicao) => {
     }else{
       try{
         const result = await api.post(`/conteudos/${tipo.value}`, payload);
-        // console.log("dados enviados:", payload);
         setMensagem(`Publicação realizada com sucesso! ${result.data}`);
         toast.success("Publicação realizada com sucesso!");
         setErro(null);
         setTimeout(() => navigate("/"), 3000);
         }catch (err) {
           console.error(err);
-          console.log(`Erro: ${err.data}`);
           setErro("Erro ao publicar conteúdo");
           toast.error("Erro ao publicar conteúdo :(");
         }
@@ -145,14 +143,11 @@ export const useConteudo = (id, edicao) => {
   //handleThumb
   const handleThumb = async (e) => {
     const file = e.target.files[0]
-    console.log(file);
-  
+
     if (!file) return;
     setUploadingThumb(true);
     try {
       const url = await cloudinaryUpload(file, "thumbs");
-      console.log("URL da thumb:", url);
-  
       setThumbs(url);
     } catch (err) {
       console.error("Erro ao subir thumb:", err);
@@ -164,13 +159,11 @@ export const useConteudo = (id, edicao) => {
   //handleImagens
     const handleImagens = async(e) => {
       const file = e.target.files[0]
-      console.log(file);
   
       if (!file) return;
       setUploadingImagens(true);
       try {
         const url = await cloudinaryUpload(file, "imagesConteudo");
-        console.log("URL das imagens:", url); // 👈 teste
   
         setImagens(url);
       } catch (err) {
@@ -199,7 +192,6 @@ export const useConteudo = (id, edicao) => {
 
     try {
       const denuncia = await criarDenuncia(payload);
-      console.log("Denuncia registrada: ", denuncia)
       setShowDenuncia(false);
       setDenunciaMotivo("");
       toast.success("Denúncia enviada. Obrigado!");
