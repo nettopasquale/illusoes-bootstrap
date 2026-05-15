@@ -89,12 +89,20 @@ function MenuGaveta({ autenticado }) {
                     ) : (
                       <Nav.Link
                         as={Link}
-                        to="/conteudos/noticia"
+                        to="/userProfile/me/conteudos?tipo=noticia"
                         className="ps-4"
                       >
                         Gerenciar Notícias
                       </Nav.Link>
                     )}
+                    <Nav.Link
+                      as={Link}
+                      to={`/conteudos/noticia`}
+                      className="ps-4"
+                    >
+                      Todas as Notícias
+                    </Nav.Link>
+
                     <Nav.Link
                       as={Link}
                       to={`/conteudos/noticia/criar`}
@@ -126,12 +134,19 @@ function MenuGaveta({ autenticado }) {
                     ) : (
                       <Nav.Link
                         as={Link}
-                        to="/conteudos/artigo"
+                        to="/userProfile/me/conteudos?tipo=artigo"
                         className="ps-4"
                       >
                         Gerenciar Artigos
                       </Nav.Link>
                     )}
+                    <Nav.Link
+                      as={Link}
+                      to={`/conteudos/artigo`}
+                      className="ps-4"
+                    >
+                      Todos os Artigos
+                    </Nav.Link>
                     <Nav.Link
                       as={Link}
                       to={`/conteudos/artigo/criar`}
@@ -153,15 +168,30 @@ function MenuGaveta({ autenticado }) {
                 </Nav.Link>
                 {submenuAberto.eventos && (
                   <>
-                  {isAdmin ? (
-                    <Nav.Link as={Link} to="/conteudos/evento" className="ps-4">
-                      Moderar Eventos
+                    {isAdmin ? (
+                      <Nav.Link
+                        as={Link}
+                        to="/conteudos/evento"
+                        className="ps-4"
+                      >
+                        Moderar Eventos
+                      </Nav.Link>
+                    ) : (
+                      <Nav.Link
+                        as={Link}
+                        to="/userProfile/me/conteudos?tipo=evento"
+                        className="ps-4"
+                      >
+                        Gerenciar Eventos
+                      </Nav.Link>
+                    )}
+                    <Nav.Link
+                      as={Link}
+                      to={`/conteudos/evento`}
+                      className="ps-4"
+                    >
+                      Todos os Eventos
                     </Nav.Link>
-                  ): (
-                    <Nav.Link as={Link} to="/conteudos/evento" className="ps-4">
-                      Gerenciar Eventos
-                    </Nav.Link>
-                  )}
                     <Nav.Link
                       as={Link}
                       to={`/conteudos/evento/criar`}
@@ -187,23 +217,30 @@ function MenuGaveta({ autenticado }) {
                 </Nav.Link>
                 {submenuAberto.campeonatos && (
                   <>
-                  {isAdmin ? (
-                     <Nav.Link
-                      as={Link}
-                      to="/conteudos/campeonato"
-                      className="ps-4"
-                    >
-                      Moderar Campeonatos
-                    </Nav.Link>                   
-                  ):(
+                    {isAdmin ? (
+                      <Nav.Link
+                        as={Link}
+                        to="/conteudos/campeonato"
+                        className="ps-4"
+                      >
+                        Moderar Campeonatos
+                      </Nav.Link>
+                    ) : (
+                      <Nav.Link
+                        as={Link}
+                        to="/userProfile/me/conteudos?tipo=campeonato"
+                        className="ps-4"
+                      >
+                        Gerenciar Campeonatos
+                      </Nav.Link>
+                    )}
                     <Nav.Link
                       as={Link}
-                      to="/conteudos/campeonato"
+                      to={`/conteudos/campeonato`}
                       className="ps-4"
                     >
-                      Gerenciar Campeonatos
+                      Todos os Campeonatos
                     </Nav.Link>
-                  )}
                     <Nav.Link
                       as={Link}
                       to={`/conteudos/campeonato/criar`}

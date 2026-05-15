@@ -33,7 +33,7 @@ export const usuarioRoutes = [
   />,
 
   <Route
-    path="/users/redefinir-senha"
+    path="/users/redefinir-senha/:token"
     element={
         <RedefinirSenha />
 

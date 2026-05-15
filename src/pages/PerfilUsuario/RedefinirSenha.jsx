@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import * as yup from "yup";
 import LayoutGeral from "../../components/LayoutGeral/LayoutGeral";
 import api from "../../services/api";
@@ -22,9 +22,8 @@ const schema = yup.object().shape({
 });
 
 export default function RedefinirSenha() {
-  const [searchParams] = useSearchParams();
+  const { token } = useParams();
   const navigate = useNavigate();
-  const token = searchParams.get("token");
 
   const [formData, setFormData] = useState({
     novaSenha: "",
@@ -40,7 +39,7 @@ export default function RedefinirSenha() {
       <LayoutGeral>
         <section className="auth-section">
           <div className="auth-card">
-            <div className="auth-logo">CardHub</div>
+            <div className="auth-logo">Ilusões Industriais</div>
             <div className="text-center mb-3" style={{ fontSize: "2rem" }}>
               ⚠️
             </div>

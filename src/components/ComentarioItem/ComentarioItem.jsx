@@ -1,11 +1,13 @@
 import { useState, useContext } from "react";
-import { Card, Button, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import { formatDistanceToNow } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { FlagFill } from "react-bootstrap-icons";
 import { toast } from "react-toastify";
 import { AuthContext } from "../../context/AuthContext";
 import { useLike } from "../../hooks/useLikes";
 import { criarDenuncia } from "../../services/denunciasService";
+import "./Comentario.css"; 
 
 export default function ComentarioItem({
   comentario,
@@ -14,6 +16,7 @@ export default function ComentarioItem({
   onDelete,
 }) {
   const { token, isAdmin } = useContext(AuthContext);
+
   const [resposta, setResposta] = useState("");
   const [mostrarReply, setMostrarReply] = useState(false);
   const [denunciaMotivo, setDenunciaMotivo] = useState("");
@@ -29,79 +32,107 @@ export default function ComentarioItem({
   const ehAutor = usuario?._id === comentario.autor?._id;
   const podeEditar = ehAutor || isAdmin;
 
+  // ✅ função declarada — estava faltando no arquivo original
+  const handleDenunciarComentario = async () => {
+    if (!denunciaMotivo.trim()) return;
+    setSalvando(true);
+    try {
+      await criarDenuncia({
+        denunciado: comentario.autor?._id,
+        targetId: comentario._id,
+        targetTipo: "comentario",
+        motivo: denunciaMotivo,
+      });
+      setShowDenuncia(false);
+      setDenunciaMotivo("");
+      toast.success("Denúncia enviada. Obrigado!");
+    } catch {
+      toast.error("Erro ao enviar denúncia.");
+    } finally {
+      setSalvando(false);
+    }
+  };
+
   return (
-    <Card className="mb-2 ms-3">
-      <Card.Body>
-        <Card.Title className="d-flex justify-content-between align-items-center">
-          <span>{comentario.autor?.usuario || "Usuário desconhecido"}</span>
-          <small className="text-muted">
+    <div className={`comentario-card ${comentario.parentId ? "aninhado" : ""}`}>
+      <div className="comentario-card-body">
+        {/* Header — autor + tempo */}
+        <div className="comentario-header">
+          <span className="comentario-autor">
+            {comentario.autor?.usuario || "Usuário desconhecido"}
+          </span>
+          <span className="comentario-tempo">
             {formatDistanceToNow(new Date(comentario.createdAt), {
               addSuffix: true,
+              locale: ptBR,
             })}
-          </small>
-        </Card.Title>
+          </span>
+        </div>
 
-        <Card.Text>{comentario.conteudo}</Card.Text>
+        {/* Conteúdo */}
+        <p className="comentario-conteudo">{comentario.conteudo}</p>
 
-        <div className="d-flex gap-2 align-items-center flex-wrap">
-          <Button
-            size="sm"
-            variant={curtido ? "primary" : "outline-primary"}
+        {/* Ações */}
+        <div className="comentario-acoes">
+          {/* Curtir */}
+          <button
+            className={`comentario-btn-acao ${curtido ? "curtido" : ""}`}
             onClick={toggleLike}
             disabled={!token || loading}
           >
             ❤️ {curtidasTotais}
-          </Button>
+          </button>
 
-          <Button
-            size="sm"
-            variant="outline-secondary"
-            onClick={() => setMostrarReply(!mostrarReply)}
-          >
-            Responder
-          </Button>
+          {/* Responder */}
+          {usuario && (
+            <button
+              className="comentario-btn-acao"
+              onClick={() => setMostrarReply((v) => !v)}
+            >
+              ↩ Responder
+            </button>
+          )}
 
+          {/* Excluir — autor ou admin */}
           {podeEditar && (
-            <Button
-              size="sm"
-              variant="outline-danger"
+            <button
+              className="comentario-btn-acao danger"
               onClick={() => onDelete(comentario._id)}
             >
               Excluir
-            </Button>
+            </button>
           )}
 
-          {/* Denúncia */}
+          {/* Denunciar — só para quem não é autor */}
           {usuario && !ehAutor && (
-            <Button
-              variant="link"
-              size="sm"
-              className="p-0 text-warning text-decoration-none"
-              style={{ fontSize: "0.78rem" }}
+            <button
+              className="comentario-btn-denuncia"
               onClick={() => setShowDenuncia((v) => !v)}
+              title="Denunciar comentário"
             >
-              <FlagFill />
-            </Button>
+              <FlagFill size={11} />
+              Denunciar
+            </button>
           )}
         </div>
 
         {/* Campo de denúncia */}
         {showDenuncia && (
-          <div className="mt-2 d-flex gap-2 align-items-center flex-wrap">
+          <div className="comentario-denuncia-form">
             <Form.Control
               size="sm"
               placeholder="Motivo da denúncia..."
               value={denunciaMotivo}
               onChange={(e) => setDenunciaMotivo(e.target.value)}
-              style={{ maxWidth: 300 }}
+              style={{ maxWidth: 280 }}
             />
             <Button
               size="sm"
-              variant="warning"
+              variant="danger"
               onClick={handleDenunciarComentario}
-              disabled={salvando}
+              disabled={salvando || !denunciaMotivo.trim()}
             >
-              Enviar
+              {salvando ? "Enviando..." : "Enviar"}
             </Button>
             <Button
               size="sm"
@@ -116,24 +147,39 @@ export default function ComentarioItem({
           </div>
         )}
 
-        {/* Resposta */}
+        {/* Editor de resposta */}
         {mostrarReply && (
-          <div className="mt-2">
+          <div className="comentario-reply-form">
             <textarea
-              className="form-control mb-2"
+              className="comentario-reply-textarea"
+              placeholder="Escreva sua resposta..."
               value={resposta}
               onChange={(e) => setResposta(e.target.value)}
             />
-            <Button
-              size="sm"
-              onClick={() => {
-                onReply(resposta, comentario._id);
-                setResposta("");
-                setMostrarReply(false);
-              }}
-            >
-              Enviar
-            </Button>
+            <div className="d-flex gap-2">
+              <Button
+                size="sm"
+                variant="primary"
+                disabled={!resposta.trim()}
+                onClick={() => {
+                  onReply(resposta, comentario._id);
+                  setResposta("");
+                  setMostrarReply(false);
+                }}
+              >
+                Enviar resposta
+              </Button>
+              <Button
+                size="sm"
+                variant="outline-secondary"
+                onClick={() => {
+                  setMostrarReply(false);
+                  setResposta("");
+                }}
+              >
+                Cancelar
+              </Button>
+            </div>
           </div>
         )}
 
@@ -147,7 +193,7 @@ export default function ComentarioItem({
             onDelete={onDelete}
           />
         ))}
-      </Card.Body>
-    </Card>
+      </div>
+    </div>
   );
 }

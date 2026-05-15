@@ -38,9 +38,8 @@ function LayoutGeral({ children }) {
         {children}
       </main>
 
-      <footer className="w-100 text-white mt-auto">
-        <Footer></Footer>
-      </footer>
+      <Footer></Footer>
+
     </div>
   );
 }

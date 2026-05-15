@@ -1,6 +1,7 @@
 import UserModel from "../models/user.model.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 import { key } from "../configs/jwtConfig.js";
 import ConteudoModel from "../models/conteudo.model.js";
 import ColecaoModel from "../models/colecao.model.js";
@@ -9,7 +10,7 @@ import DenunciaModel from "../models/denuncia.model.js";
 import ComentarioModel from "../models/comentario.model.js";
 import LikeModel from "../models/like.model.js"
 import mongoose from "mongoose";
-import { enviarEmailRedefinicao } from "../configs/mailer.js";
+import { enviarEmailRedefinicao } from "../configs/resend.js";
 
 
 // rota do Login
@@ -38,8 +39,6 @@ export const login = async (req, res) => {
       key,
       { expiresIn: "24h" },
     );
-
-    // console.log(token);
 
     res.json({
       token,

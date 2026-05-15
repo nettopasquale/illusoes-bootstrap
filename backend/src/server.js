@@ -14,6 +14,7 @@ import forumRouters from "./routes/forum.routes.js";
 import likesRouters from "./routes/likes.routes.js";
 import denunciaRoutes from "./routes/denuncia.routes.js";
 import comentariosRouters from "./routes/comentarios.routes.js";
+import buscaRouters from "./routes/busca.routes.js";
 
 // necessário para resolver bug do DNS, a partir do node v24.13.1
 dns.setDefaultResultOrder("ipv4first");
@@ -81,6 +82,7 @@ app.use("/", forumRouters);
 app.use("/", likesRouters);
 app.use("/", comentariosRouters);
 app.use("/", denunciaRoutes);
+app.use("/", buscaRouters)
 app.use(fileUpload({useTempFiles: true}));
 
 app.use((req, res, next) => {

@@ -9,6 +9,7 @@ import MenuGaveta from "../MenuGaveta/MenuGaveta";
 import PropTypes from "prop-types";
 import { useAuth } from "../../context/useAuth";
 import { Link } from "react-router-dom";
+import BuscaHeader from "./BuscaHeader";
 import "./Header.css"
 
 const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
@@ -44,7 +45,8 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
         </div>
 
         {/* Campo de busca */}
-        <Form
+        <BuscaHeader/>
+        {/* <Form
           className="header-search d-none d-md-flex"
           style={{ flex: 1, maxWidth: "600px" }}
         >
@@ -54,7 +56,9 @@ const Header = memo(function Header({ onUserClick, autenticado, usuario }) {
             className="form-control"
           />
           <Button variant="light">Buscar</Button>
-        </Form>
+        </Form> */}
+
+
 
         {/* Ações e menu */}
         <div className="header-actions d-flex align-items-center gap-3">

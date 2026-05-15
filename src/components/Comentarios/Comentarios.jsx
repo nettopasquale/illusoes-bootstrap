@@ -4,6 +4,7 @@ import {
   Button
 } from "react-bootstrap";
 import ComentarioItem from "../ComentarioItem/ComentarioItem";
+import "./Comentario.css"
 
 const montarArvore = (comentarios) => {
   const mapa = {};
