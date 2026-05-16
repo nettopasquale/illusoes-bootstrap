@@ -10,7 +10,8 @@ import DenunciaModel from "../models/denuncia.model.js";
 import ComentarioModel from "../models/comentario.model.js";
 import LikeModel from "../models/like.model.js"
 import mongoose from "mongoose";
-import { enviarEmailRedefinicao } from "../configs/resend.js";
+// import { enviarEmailRedefinicao } from "../configs/resend.js";
+import { enviarEmailRedefinicao } from "../configs/mailer.js";
 
 
 // rota do Login
